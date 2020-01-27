@@ -150,7 +150,7 @@ class BezierCurve(Generic[_G]):
             for a, b in zip(points, points[1:]):
                 time = len(elevated_points) / len(points)
                 elevated_points.append(a * time + b * (1 - time))
-            points = elevated_points + points[-1:]
+            points = elevated_points + [points[-1]]
         return type(self)(*points)
 
     @lru_cache
