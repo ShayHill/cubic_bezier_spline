@@ -12,12 +12,14 @@ import pytest
 
 from bezier.bezier_curves import (
     BezierCurve,
-    _cbez,
-    _cbez_d1,
-    _cbez_d2,
-)
+    Point)
 
-from ttf_extractor import extract_glyphs
+
+def normalized(a, axis=-1, order=2):
+    l2 = np.atleast_1d(np.linalg.norm(a, order, axis))
+    l2[l2 == 0] = 1
+    return a / np.expand_dims(l2, axis)
+
 
 class TestCubicBezier:
     def test_call(self) -> None:
@@ -74,29 +76,71 @@ class TestCubicBezier:
             time = np.random.random()
             curve = BezierCurve(*points)
             beg, end = curve.split(time)
-            np.testing.assert_allclose(
-                curve.planar_curvature(0), beg.planar_curvature(0)
-            )
-            np.testing.assert_allclose(
-                curve.planar_curvature(time), beg.planar_curvature(1)
-            )
-            np.testing.assert_allclose(
-                curve.planar_curvature(time), end.planar_curvature(0)
-            )
-            np.testing.assert_allclose(
-                curve.planar_curvature(1), end.planar_curvature(1)
-            )
+            np.testing.assert_allclose(beg(1), end(0))
+            np.testing.assert_allclose(curve(0), beg(0))
+            np.testing.assert_allclose(curve(1), end(1))
+            for derivative in range(1, 4):
+                np.testing.assert_allclose(
+                    normalized(beg(1, derivative)), normalized(end(0, derivative))
+                )
+                np.testing.assert_allclose(
+                    normalized(curve(0, derivative)), normalized(beg(0, derivative))
+                )
+                np.testing.assert_allclose(
+                    normalized(curve(1, derivative)), normalized(end(1, derivative))
+                )
 
-    def test_curvature_min(self) -> None:
-        """
-        Return 0 when curve is flat.
-        """
-        curve = BezierCurve((0, 0), (1, 0), (2, 0))
-        assert curve.planar_curvature(0.5) == 0
 
-    def test_curvature_max(self) -> None:
-        """
-        Return nan when curvature is infinite (curve reverses on self).
-        """
-        curve = BezierCurve((0, 0), (1, 0), (0, 0))
-        assert isnan(curve.planar_curvature(0.5))
+def _cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
+    """
+    Cubic Bezier curve.
+
+    :param p0: control point
+    :param p1: control point
+    :param p2: control point
+    :param p3: control point
+    :param time: time value on curve, typically 0 to 1
+    :return: cubic Bezier curve value at time
+    """
+    return sum(
+        (
+            (1 - time) ** 3 * p0,
+            3 * (1 - time) ** 2 * time * p1,
+            3 * (1 - time) * time ** 2 * p2,
+            time ** 3 * p3,
+        )
+    )
+
+
+def _cbez_d1(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
+    """
+    First derivative of cubic Bezier at time.
+
+    :param p0: control point
+    :param p1: control point
+    :param p2: control point
+    :param p3: control point
+    :param time: time value on curve, typically 0 to 1
+    :return: first derivative of cubic Bezier curve at time
+    """
+    return sum(
+        (
+            3 * (1 - time) ** 2 * (p1 - p0),
+            6 * (1 - time) * time * (p2 - p1),
+            3 * time ** 2 * (p3 - p2),
+        )
+    )
+
+
+def _cbez_d2(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
+    """
+    Second derivative of cubic Bezier at time.
+
+    :param p0: control point
+    :param p1: control point
+    :param p2: control point
+    :param p3: control point
+    :param time: time value on curve, typically 0 to 1
+    :return: second derivative of cubic Bezier curve at time
+    """
+    return sum((6 * (1 - time) * (p2 - 2 * p1 + p0), 6 * time * (p3 - 2 * p2 + p1),))

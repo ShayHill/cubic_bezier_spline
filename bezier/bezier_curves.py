@@ -14,13 +14,13 @@ wanted these for testing, so I went ahead and made them available in the module.
 Bezier object uses De Casteljau for accuracy / stability.
 """
 
-import numpy as np
-from dataclasses import dataclass, astuple
-from nptyping import Array
-from typing import Iterable, Sequence, List, Iterator, Tuple, TypeVar, Generic
+from dataclasses import dataclass
 from functools import lru_cache
+from typing import Any, Generic, Iterable, Iterator, List, Optional, Tuple, TypeVar
 
-Point = Array[float]
+import numpy as np
+
+Point = Any  # 'np.ndarray[float]'
 
 
 def iter_decasteljau_steps(
@@ -52,57 +52,31 @@ def iter_decasteljau_steps(
         yield points
 
 
-def get_derivative_points(points: Sequence[Point], derivative) -> List[Point]:
+def decasteljau(points: Iterable[Point], time: float) -> Point:
     """
-    Control points for the derivative of a Bezier curve.
-
-    :param points: control points
-    :param derivative: 0 -> curve itself, 1 -> 1st derivative -> 2nd derivative
-    :return: control points for derivative-th derivative.
-
-    The derivative of a Bezier curve of degree n is a Bezier curve of degree n-1 with
-    control points n*(p1-p0), n(p2-p1), n(p3-p2), ...
-    """
-    if derivative == 0:
-        return [x for x in points]
-    if derivative >= len(points):
-        raise ValueError(
-            f"Bezier curve of degree {len(points) - 1} "
-            f"does not have a {derivative}th derivative."
-        )
-    points = get_derivative_points(points, derivative - 1)
-    degree = len(points) - 1
-    if points[1:]:
-        return [(y - x) * degree for x, y in zip(points, points[1:])]
-
-
-def decasteljau(points: Iterable[Point], time: float, derivative: int = 0) -> Point:
-    """
-    Value of a non-rational Bezier curve (or its derivative) at time.
+    Value of a non-rational Bezier curve at time.
 
     :param points: curve points
     :param time: time on curve
-    :param derivative:
     :return:
     """
-    points = [x for x in points]
-    points = get_derivative_points(points, derivative)
     return tuple(iter_decasteljau_steps(points, time))[-1][-1]
 
 
 _G = TypeVar("_G", bound=Point)
 
 
-@dataclass
+CurveT = TypeVar("CurveT", bound="BezierCurve")
+
+
+@dataclass(frozen=True)
 class BezierCurve(Generic[_G]):
     """
-    Bog-standard Bezier.
-
-    This is mostly just a holder for the Bezier points. Most of the functionality is
-    available in functions in this module.
+    A non-rational Bezier curve.
     """
 
-    _points: List[_G]
+    _points: Tuple[_G]
+    degree: int
 
     def __init__(self, *points: Iterable[float]) -> None:
         """
@@ -111,12 +85,11 @@ class BezierCurve(Generic[_G]):
         This allows for easy math and has the effect of ensuring no references exist
         in Bezier points.
         """
-        self._points = [np.array(x) for x in points]
+        object.__setattr__(self, "_points", tuple(np.array(x) for x in points))
+        object.__setattr__(self, "degree", len(points) - 1)
 
     def __hash__(self) -> int:
-        """
-        So we can cache method calls
-        """
+        """To cache method calls"""
         return id(self)
 
     def __iter__(self):
@@ -138,9 +111,11 @@ class BezierCurve(Generic[_G]):
         :param time: time on curve (typically 0 - 1)
         :return: Non-rational cubic Bezier at time
         """
-        return decasteljau(self.derivative(derivative), time)
+        if derivative == 0:
+            return decasteljau(self, time)
+        return self.derivative(derivative)(time)
 
-    def split(self, time: float) -> Tuple["BezierCurve", "BezierCurve"]:
+    def split(self: CurveT, time: float) -> Tuple[CurveT, CurveT]:
         """
         Split a BezierCurve into two Bezier curves of the same degree.
 
@@ -150,14 +125,38 @@ class BezierCurve(Generic[_G]):
         """
         steps = tuple(iter_decasteljau_steps(self._points, time))
         return (
-            BezierCurve(*(x[0] for x in steps)),
-            BezierCurve(*(x[-1] for x in reversed(steps))),
+            type(self)(*(x[0] for x in steps)),
+            type(self)(*(x[-1] for x in reversed(steps))),
         )
 
-    @lru_cache
-    def derivative(self, derivative: int) -> "BezierCurve":
+    def elevated(self: CurveT, to_degree: Optional[int] = None) -> CurveT:
         """
-        Control points for the nth derivative of a Bezier curve
+        A new curve, elevated 1 or optionally more degrees.
+
+        :param to_degree:
+        :return:
+        """
+        if to_degree is None:
+            to_degree = self.degree + 1
+        if to_degree < self.degree:
+            raise ValueError(
+                "cannot elevate BezierCurve degree={self.degree} "
+                "to BezierCurve degree={to_degree}"
+            )
+
+        points = self._points
+        while len(points) - 1 < to_degree:
+            elevated_points = [points[0]]
+            for a, b in zip(points, points[1:]):
+                time = len(elevated_points) / len(points)
+                elevated_points.append(a * time + b * (1 - time))
+            points = elevated_points + points[-1:]
+        return type(self)(*points)
+
+    @lru_cache
+    def derivative(self: CurveT, derivative: int) -> CurveT:
+        """
+        nth derivative of a Bezier curve
 
         :param derivative: 0 -> the curve itself, 1 -> 1st, 2 -> 2nd, etc.
         :return: points to calculate nth derivative.
@@ -165,80 +164,14 @@ class BezierCurve(Generic[_G]):
         The derivative of a Bezier curve of degree n is a Bezier curve of degree
         n-1 with control points n*(p1-p0), n(p2-p1), n(p3-p2), ...
         """
-        return BezierCurve(*get_derivative_points(self._points, derivative))
-
-    def planar_curvature(self, time: float) -> float:
-        """
-        TODO: probably remove this. I don't think I'm using it.
-        Curvature of a planar Bezier spline at time.
-
-        :param time: time on spline
-        :return: curvature from 0 to (theoretically) infinity
-
-        This formula for curvature only works on planar curves, so all point values
-        except x and y will be ignored. I am not checking against >2 dimensional
-        points, because the dimensions >2 may not be holding geometric information.
-        For instance, I plan to keep radius in the z dimension of x, y planar curves
-        for an ersatz (but more robust) sphere sweep. In that instance, z would not
-        contribute to curvature.
-        """
-        xi, yi = self(time, 1)[:2]
-        xii, yii = self(time, 2)[:2]
-        num = (xi * yii) - (yi * xii)
-        den = (xi ** 2 + yi ** 2) ** (3 / 2)
-        return num / den
+        if derivative == 0:
+            return self
+        if derivative > self.degree:
+            raise ValueError(
+                f"Bezier curve of degree {self.degree} "
+                f"does not have a {derivative}th derivative."
+            )
+        points = [(y - x) * self.degree for x, y in zip(self, self[1:])]
+        return type(self)(*points).derivative(derivative - 1)
 
 
-def _cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
-    """
-    Cubic Bezier curve.
-
-    :param p0: control point
-    :param p1: control point
-    :param p2: control point
-    :param p3: control point
-    :param time: time value on curve, typically 0 to 1
-    :return: cubic Bezier curve value at time
-    """
-    return sum(
-        (
-            (1 - time) ** 3 * p0,
-            3 * (1 - time) ** 2 * time * p1,
-            3 * (1 - time) * time ** 2 * p2,
-            time ** 3 * p3,
-        )
-    )
-
-
-def _cbez_d1(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
-    """
-    First derivative of cubic Bezier at time.
-
-    :param p0: control point
-    :param p1: control point
-    :param p2: control point
-    :param p3: control point
-    :param time: time value on curve, typically 0 to 1
-    :return: first derivative of cubic Bezier curve at time
-    """
-    return sum(
-        (
-            3 * (1 - time) ** 2 * (p1 - p0),
-            6 * (1 - time) * time * (p2 - p1),
-            3 * time ** 2 * (p3 - p2),
-        )
-    )
-
-
-def _cbez_d2(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
-    """
-    Second derivative of cubic Bezier at time.
-
-    :param p0: control point
-    :param p1: control point
-    :param p2: control point
-    :param p3: control point
-    :param time: time value on curve, typically 0 to 1
-    :return: second derivative of cubic Bezier curve at time
-    """
-    return sum((6 * (1 - time) * (p2 - 2 * p1 + p0), 6 * time * (p3 - 2 * p2 + p1),))

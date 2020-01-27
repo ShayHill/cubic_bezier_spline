@@ -1,1 +1,1 @@
-from bezier.bezier_curves import BezierCurve
+from .bezier.bezier_curves import BezierCurve
