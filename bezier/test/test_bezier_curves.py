@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # _*_ coding: utf-8 _*_
-"""Test functions in ttf_extractor.bezier_curves.py
+"""Test functions in ttf_extractor.curve_type.py
 
 :author: Shay Hill
 :created: 1/18/2020
@@ -10,7 +10,7 @@ from math import isnan
 import numpy as np
 import pytest
 
-from bezier.bezier_curves import (
+from bezier.curve_type import (
     BezierCurve,
     Point)
 

@@ -7,7 +7,7 @@
 
 I have a lot of Bezier curve code, but most of it is mixed up with other spline
 types, rational Bezier, etc., none of which (except perhaps rational Bezier) are
-useful for SVG creation. Creating new cubic-Bezier-only functionality here.
+useful for SVG creation. Creating new Bezier functionality here.
 
 Toward the bottom, there are some explicit cubic Bezier functions using formulas. I
 wanted these for testing, so I went ahead and made them available in the module. The
