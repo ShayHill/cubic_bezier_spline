@@ -16,7 +16,7 @@ from typing import Iterator, List, Optional, Tuple
 
 import numpy as np
 from nptyping import Array
-from bezier import BezierCurve
+from ..bezier import BezierCurve
 
 Point = Array[float, 2]
 Curve = Tuple[Point, ...]

@@ -9,7 +9,7 @@
 import os
 from pathlib import Path
 
-from ttf_extractor.font_glyphs import _create_temp_svg_file, extract_glyphs
+from ..font_glyphs import _create_temp_svg_file, extract_glyphs
 
 impact_font = Path(__file__, "../test_resources/impact.ttf").resolve()
 
