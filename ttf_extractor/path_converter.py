@@ -122,6 +122,7 @@ class _PathConverter:
             yield from self.exec_command(command, points)
             return
         if command in "CS":
+            """All points after transformation"""
             yield self._issue_curve(points, 3)
             yield from self.exec_command(command, points)
             return
