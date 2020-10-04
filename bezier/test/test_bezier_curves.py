@@ -9,86 +9,134 @@ from math import isnan
 
 import numpy as np
 import pytest
+from typing import Iterator, Any, Tuple, Union
+from nptyping import NDArray
+import random
+from bezier.bezier_curve import BezierCurve, Point
+from bezier.other_solvers import (
+    get_decasteljau,
+    get_bezier_basis,
+    get_split_decasteljau,
+)
+from bezier.matrices import get_pascals
+from itertools import count
 
-from bezier.curve_type import (
-    BezierCurve,
-    Point)
+
+def random_bezier_points(
+    degree_limits: Union[int, Tuple[int, int]] = (0, 10),
+    dimension_limits: Union[int, Tuple[int, int]] = (1, 10),
+) -> Iterator[NDArray[(Any, Any), float]]:
+    """
+    Iter sets of Bezier control points
+
+    :yield: (degree + 1, dimensions) array of floats
+    """
+    if isinstance(degree_limits, int):
+        degree_limits = (degree_limits, degree_limits)
+    if isinstance(dimension_limits, int):
+        dimension_limits = (dimension_limits, dimension_limits)
+    for _ in range(100):
+        degree = random.randint(*degree_limits)
+        dimensions = random.randint(*dimension_limits)
+        yield np.array(
+            [
+                [random.random() * 100 for i in range(dimensions)]
+                for j in range(degree + 1)
+            ]
+        )
 
 
-def normalized(a, axis=-1, order=2):
+def random_times() -> Iterator[float]:
+    """
+    Infinite random values between 0 and 1
+    :return:
+    """
+    return (random.random() for _ in count())
+
+
+def get_normalized(a, axis=-1, order=2):
     l2 = np.atleast_1d(np.linalg.norm(a, order, axis))
     l2[l2 == 0] = 1
     return a / np.expand_dims(l2, axis)
 
 
-class TestCubicBezier:
-    def test_call(self) -> None:
+class TestCall:
+    @pytest.mark.parametrize("points,time", zip(random_bezier_points(), random_times()))
+    def test_call(self, points, time) -> None:
         """Test against formula"""
-        for _ in range(100):
-            points = [np.random.random(3) for _ in range(4)]
-            time = np.random.random()
+        curve = BezierCurve(*points)(time)
+        decasteljau = get_decasteljau(points, time)
+        basis = get_bezier_basis(points, time)
+        np.testing.assert_allclose(curve, decasteljau)
+        np.testing.assert_allclose(curve, basis)
 
-            curve = BezierCurve(*points)
-            np.testing.assert_allclose(curve(time), _cbez(*curve, time))
 
-    def test_d1(self) -> None:
+class TestCubicBezierDerivatives:
+    """
+    Test derivative argument in __call__ against explicitly defined cubic Bezier
+    derivative formulas
+    """
+
+    @pytest.mark.parametrize(
+        "points,time", zip(random_bezier_points(degree_limits=3), random_times())
+    )
+    def test_d1(self, points, time) -> None:
         """Test against formula"""
-        for _ in range(100):
-            points = [np.random.random(3) for _ in range(4)]
-            time = np.random.random()
+        curve = BezierCurve(*points)
+        np.testing.assert_allclose(curve(time, 1), _cbez_d1(*curve, time))
 
-            curve = BezierCurve(*points)
-            np.testing.assert_allclose(curve(time, 1), _cbez_d1(*curve, time))
-
-    def test_d2(self) -> None:
+    @pytest.mark.parametrize(
+        "points,time", zip(random_bezier_points(degree_limits=3), random_times())
+    )
+    def test_d2(self, points, time) -> None:
         """Test against formula"""
-        for _ in range(100):
-            points = [np.random.random(3) for _ in range(4)]
-            time = np.random.random()
+        curve = BezierCurve(*points)
+        np.testing.assert_allclose(curve(time, 2), _cbez_d2(*curve, time))
 
-            curve = BezierCurve(*points)
-            np.testing.assert_allclose(curve(time, 2), _cbez_d2(*curve, time))
-
-    def test_d3(self) -> None:
+    @pytest.mark.parametrize(
+        "points,time", zip(random_bezier_points(degree_limits=3), random_times())
+    )
+    def test_d3(self, points, time) -> None:
         """Test against formula"""
-        for _ in range(100):
-            points = [np.random.random(3) for _ in range(4)]
-            time = np.random.random()
+        curve = BezierCurve(*points)
+        p0, p1, p2, p3 = curve
+        np.testing.assert_allclose(curve(time, 3), 6 * (p3 - 3 * p2 + 3 * p1 - p0))
 
-            curve = BezierCurve(*points)
-            p0, p1, p2, p3 = curve
-            np.testing.assert_allclose(curve(time, 3), 6 * (p3 - 3 * p2 + 3 * p1 - p0))
-
-    def test_d4(self) -> None:
+    @pytest.mark.parametrize(
+        "points,time", zip(random_bezier_points(degree_limits=3), random_times())
+    )
+    def test_d4(self, points, time) -> None:
         """Raise ValueError if derivative > degree"""
-        points = [(0, 0), (1, 0), (1, 1), (0, 1)]
         curve = BezierCurve((0, 0), (1, 0), (1, 1), (0, 1))
         with pytest.raises(ValueError) as excinfo:
-            curve(0.5, 4)
+            curve(time, 4)
         assert "Bezier curve of degree" in str(excinfo.value)
 
-    def test_split(self) -> None:
+
+class TestSplit:
+    @pytest.mark.parametrize(
+        "points,time", zip(random_bezier_points(degree_limits=(0, 5)), random_times())
+    )
+    def test_against_dc(self, points, time) -> None:
         """
-        New curves are continuous at ends and split.
+        Compare results to decasteljau.
         """
-        for _ in range(100):
-            points = [np.random.random(3) for _ in range(4)]
-            time = np.random.random()
-            curve = BezierCurve(*points)
-            beg, end = curve.split(time)
-            np.testing.assert_allclose(beg(1), end(0))
-            np.testing.assert_allclose(curve(0), beg(0))
-            np.testing.assert_allclose(curve(1), end(1))
-            for derivative in range(1, 4):
-                np.testing.assert_allclose(
-                    normalized(beg(1, derivative)), normalized(end(0, derivative))
-                )
-                np.testing.assert_allclose(
-                    normalized(curve(0, derivative)), normalized(beg(0, derivative))
-                )
-                np.testing.assert_allclose(
-                    normalized(curve(1, derivative)), normalized(end(1, derivative))
-                )
+        aaa = get_split_decasteljau(points, time)
+        curve = BezierCurve(*points)
+        bbb = curve.split(time)
+        np.testing.assert_allclose(aaa[0], bbb[0]._points)
+        np.testing.assert_allclose(aaa[1], bbb[1]._points)
+
+    @pytest.mark.parametrize(
+        "points,time", zip(random_bezier_points(degree_limits=(0, 5)), random_times())
+    )
+    def test_touch(self, points, time) -> None:
+        """
+        Last point of first curve == first point of second
+        """
+        curve = BezierCurve(*points)
+        beg, end = curve.split(time)
+        np.testing.assert_array_equal(beg._points[-1], end._points[0])
 
 
 def _cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:

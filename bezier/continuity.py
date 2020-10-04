@@ -12,7 +12,7 @@ from typing import Optional
 
 import numpy as np
 
-from .curve_type import BezierCurve
+from .bezier_curve import BezierCurve
 
 
 class _Continuity:

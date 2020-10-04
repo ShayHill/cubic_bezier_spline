@@ -8,65 +8,24 @@
 I have a lot of Bezier curve code, but most of it is mixed up with other spline
 types, rational Bezier, etc., none of which (except perhaps rational Bezier) are
 useful for SVG creation. Creating new Bezier functionality here.
-
-Toward the bottom, there are some explicit cubic Bezier functions using formulas. I
-wanted these for testing, so I went ahead and made them available in the module. The
-Bezier object uses De Casteljau for accuracy / stability.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
-from functools import lru_cache
-from typing import Any, Generic, Iterable, Iterator, List, Optional, Tuple, TypeVar
+from functools import cached_property, lru_cache
+from typing import Any, Generic, Iterable, Optional, Tuple, TypeVar
 
 import numpy as np
+from nptyping import NDArray
 
-Point = Any  # 'np.ndarray[float]'
+from bezier.matrices import get_mix_matrix
 
+Point = Iterable[Iterable[float]]
 
-def iter_decasteljau_steps(
-    points: Iterable[Point], time: float
-) -> Iterator[List[Point]]:
-    """
-    Yield De Casteljau iterations.
+_G = TypeVar("_G")
 
-    :param points: Bezier control points (takes an iterable so a BezierCurve instance
-    can be passed.
-    :param time: time on Bezier spline
-    :yield: each iteration (including the first, which will = the input points) of
-    the De Casteljau algorithm
-
-    This is the value of a Bezier spline at time. De Casteljau algorithm works by
-    recursively averaging consecutive Bezier control points. Using floats as points,
-    De Casteljau would work as:
-
-    1   ,   5   ,   9
-        3   ,   8
-           5.5
-
-    In this case, the function would yield [1, 5, 9] then [3, 8] then [5.5]
-    """
-    points = [x for x in points]
-    yield points
-    while len(points) > 1:
-        points = [x * (1 - time) + y * time for x, y in zip(points, points[1:])]
-        yield points
-
-
-def decasteljau(points: Iterable[Point], time: float) -> Point:
-    """
-    Value of a non-rational Bezier curve at time.
-
-    :param points: curve points
-    :param time: time on curve
-    :return:
-    """
-    return tuple(iter_decasteljau_steps(points, time))[-1][-1]
-
-
-_G = TypeVar("_G", bound=Point)
-
-
-CurveT = TypeVar("CurveT", bound="BezierCurve")
+CurveT = TypeVar("CurveT")
 
 
 @dataclass(frozen=True)
@@ -85,7 +44,7 @@ class BezierCurve(Generic[_G]):
         This allows for easy math and has the effect of ensuring no references exist
         in Bezier points.
         """
-        object.__setattr__(self, "_points", tuple(np.array(x) for x in points))
+        object.__setattr__(self, "_points", np.array(points))
         object.__setattr__(self, "degree", len(points) - 1)
 
     def __hash__(self) -> int:
@@ -109,11 +68,33 @@ class BezierCurve(Generic[_G]):
         Cubic Bezier calculation at time.
 
         :param time: time on curve (typically 0 - 1)
-        :return: Non-rational cubic Bezier at time
+        :return: Non-rational Bezier at time
         """
         if derivative == 0:
-            return decasteljau(self, time)
+            return self._get_tmat(time) @ self._mixed_points
         return self.derivative(derivative)(time)
+
+    def _get_tmat(self, time):
+        return np.array([1] + [time ** x for x in range(1, self.degree + 1)])
+
+    def _get_zmat(self, time):
+        """ 2D zero matrix with tmat on the diagonal """
+        result = np.zeros((self.degree + 1, self.degree + 1))
+        np.fill_diagonal(result, self._get_tmat(time))
+        return result
+
+    @cached_property
+    def _mmat(self) -> NDArray[(Any, Any), float]:
+        return get_mix_matrix(self.degree + 1)
+
+    @cached_property
+    def _mixed_points(self) -> NDArray[(Any, Any), float]:
+        """
+        Points scaled by binomial coefficients
+
+        Scale this by time matrix to evaluate curve at time.
+        """
+        return self._mmat @ self._points
 
     def split(self: CurveT, time: float) -> Tuple[CurveT, CurveT]:
         """
@@ -123,18 +104,22 @@ class BezierCurve(Generic[_G]):
         :return: two new BezierCurve instances
         :raises: ValueError if not 0 <= time <= 1
         """
-        steps = tuple(iter_decasteljau_steps(self._points, time))
+        qmat = np.linalg.inv(self._mmat) @ self._get_zmat(time) @ self._mmat
+        qmat_prime = np.zeros_like(qmat)
+        for i in range(qmat.shape[0]):
+            j = i + 1
+            qmat_prime[-j, -j:] = qmat[i, :j]
         return (
-            type(self)(*(x[0] for x in steps)),
-            type(self)(*(x[-1] for x in reversed(steps))),
+            type(self)(*(qmat @ self._points)),
+            type(self)(*(qmat_prime @ self._points)),
         )
 
     def elevated(self: CurveT, to_degree: Optional[int] = None) -> CurveT:
         """
         A new curve, elevated 1 or optionally more degrees.
 
-        :param to_degree:
-        :return:
+        :param to_degree: final degree of Bezier curve
+        :return: Bezier curve of identical shape with degree increased
         """
         if to_degree is None:
             to_degree = self.degree + 1
@@ -173,5 +158,3 @@ class BezierCurve(Generic[_G]):
             )
         points = [(y - x) * self.degree for x, y in zip(self, self[1:])]
         return type(self)(*points).derivative(derivative - 1)
-
-

@@ -10,7 +10,7 @@ import numpy as np
 from typing import Callable, List, Union
 from nptyping import Array
 
-from .curve_type import BezierCurve
+from .bezier_curve import BezierCurve
 from ..ttf_extractor import extract_glyphs
 
 Glyph = List[BezierCurve]
