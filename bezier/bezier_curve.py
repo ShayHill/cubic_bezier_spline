@@ -23,6 +23,7 @@ from bezier.matrices import get_mix_matrix
 
 Point = Iterable[Iterable[float]]
 
+# TODO: get rid of _G (replace with NDArray)
 _G = TypeVar("_G")
 
 CurveT = TypeVar("CurveT")
@@ -37,14 +38,18 @@ class BezierCurve(Generic[_G]):
     _points: Tuple[_G]
     degree: int
 
-    def __init__(self, *points: Iterable[float]) -> None:
+    def __init__(self, points: Iterable[Iterable[float]]) -> None:
         """
         Convert all points to ndarray.
 
         This allows for easy math and has the effect of ensuring no references exist
         in Bezier points.
+
+        The `tuple` in `np.array(tuple(points))` allows a BezierCurve to be constructed
+        from another BezierCurve.
         """
-        object.__setattr__(self, "_points", np.array(points))
+        # TODO: check if the tuple call is necessary (see how instances *instance)
+        object.__setattr__(self, "_points", np.array([tuple(x) for x in points]))
         object.__setattr__(self, "degree", len(points) - 1)
 
     def __hash__(self) -> int:
@@ -110,8 +115,8 @@ class BezierCurve(Generic[_G]):
             j = i + 1
             qmat_prime[-j, -j:] = qmat[i, :j]
         return (
-            type(self)(*(qmat @ self._points)),
-            type(self)(*(qmat_prime @ self._points)),
+            type(self)(qmat @ self._points),
+            type(self)(qmat_prime @ self._points),
         )
 
     def elevated(self: CurveT, to_degree: Optional[int] = None) -> CurveT:
@@ -157,4 +162,4 @@ class BezierCurve(Generic[_G]):
                 f"does not have a {derivative}th derivative."
             )
         points = [(y - x) * self.degree for x, y in zip(self, self[1:])]
-        return type(self)(*points).derivative(derivative - 1)
+        return type(self)(points).derivative(derivative - 1)
