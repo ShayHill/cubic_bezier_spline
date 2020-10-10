@@ -133,7 +133,6 @@ class BezierCurve(Generic[_G]):
                 "cannot elevate BezierCurve degree={self.degree} "
                 "to BezierCurve degree={to_degree}"
             )
-
         points = self._points
         while len(points) - 1 < to_degree:
             elevated_points = [points[0]]
@@ -141,7 +140,8 @@ class BezierCurve(Generic[_G]):
                 time = len(elevated_points) / len(points)
                 elevated_points.append(a * time + b * (1 - time))
             points = elevated_points + [points[-1]]
-        return type(self)(*points)
+            breakpoint()
+        return type(self)(points)
 
     @lru_cache
     def derivative(self: CurveT, derivative: int) -> CurveT:
@@ -152,7 +152,7 @@ class BezierCurve(Generic[_G]):
         :return: points to calculate nth derivative.
 
         The derivative of a Bezier curve of degree n is a Bezier curve of degree
-        n-1 with control points n*(p1-p0), n(p2-p1), n(p3-p2), ...
+        n-1 with control points n*(p1-p0), n*(p2-p1), n*(p3-p2), ...
         """
         if derivative == 0:
             return self
@@ -161,5 +161,5 @@ class BezierCurve(Generic[_G]):
                 f"Bezier curve of degree {self.degree} "
                 f"does not have a {derivative}th derivative."
             )
-        points = [(y - x) * self.degree for x, y in zip(self, self[1:])]
+        points = (self._points[1:] - self._points[:-1]) * self.degree
         return type(self)(points).derivative(derivative - 1)

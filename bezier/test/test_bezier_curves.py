@@ -139,6 +139,50 @@ class TestSplit:
         np.testing.assert_array_equal(beg._points[-1], end._points[0])
 
 
+class TestElevated:
+    @pytest.mark.parametrize(
+        "points,elevation,time",
+        zip(
+            random_bezier_points(),
+            (random.randint(0, 5) for _ in count()),
+            random_times(),
+        ),
+    )
+    def test_elevated(self, points, elevation, time) -> None:
+        """Curve is not changed by elevation"""
+        curve = BezierCurve(points)
+        elevated = curve.elevated(curve.degree + elevation)
+        np.testing.assert_allclose(curve(time), elevated(time))
+
+    @pytest.mark.parametrize(
+        "points,elevation",
+        zip(
+            random_bezier_points(),
+            (random.randint(0, 5) for _ in count()),
+        ),
+    )
+    def test_degree_raised(self, points, elevation) -> None:
+        """Degree increases"""
+        curve = BezierCurve(points)
+        elevated = curve.elevated(curve.degree + elevation)
+        assert elevated.degree - curve.degree == elevation
+
+    @pytest.mark.parametrize(
+        "points,elevation,time",
+        zip(
+            random_bezier_points(degree_limits=(2, 10)),
+            (random.randint(0, 5) for _ in count()),
+            random_times(),
+        ),
+    )
+    def test_derivative(self, points, elevation, time) -> None:
+        """Derivative of curve is not changed by elevation"""
+        curve = BezierCurve(points)
+        elevated = curve.elevated(curve.degree + elevation)
+        np.testing.assert_allclose(curve(time), elevated(time))
+        np.testing.assert_allclose(curve(time, 2), elevated(time, 2))
+
+
 def _cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     """
     Cubic Bezier curve.
@@ -191,4 +235,9 @@ def _cbez_d2(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     :param time: time value on curve, typically 0 to 1
     :return: second derivative of cubic Bezier curve at time
     """
-    return sum((6 * (1 - time) * (p2 - 2 * p1 + p0), 6 * time * (p3 - 2 * p2 + p1),))
+    return sum(
+        (
+            6 * (1 - time) * (p2 - 2 * p1 + p0),
+            6 * time * (p3 - 2 * p2 + p1),
+        )
+    )
