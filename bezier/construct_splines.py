@@ -24,7 +24,7 @@ def _get_141_matrix(dim) -> NDArray[(Any, Any), int]:
 
 
 def get_cubic_spline(
-    cpts: Iterable[Iterable[float]], close: bool = False
+        cpts: Iterable[Iterable[float]], close: bool = False
 ) -> BezierSpline:
     """
     Interpret a set of points as a composite Bezier curve (Bezier spline)
@@ -52,19 +52,44 @@ def get_cubic_spline(
         return BezierSpline(thirds[1:-1])
     return BezierSpline(thirds)
 
+
 def get_interpolating_spline(
         cpts: Iterable[Iterable[float]], close: bool = False
 ) -> BezierSpline:
     # cpts = np.array([[1, -1], [-1, 2], [1, 4], [4, 3], [7, 5]])
+    # cpts = np.array(cpts)
+    # wrap = 0
+    # cpts = cpts[:-1]
+
+    n = len(cpts) // 2 * 2 + 1
+    aa = np.linalg.inv(_get_141_matrix(n))
+    scalars = aa[n // 2]
     cpts = np.array(cpts)
-    cpts = np.concatenate([cpts] * 10)
-    aaa = _get_141_matrix(len(cpts)-2)
-    bbb = np.array([6*cpts[1] - cpts[0]] + [6*x for x in cpts[2:-2]] + [6*cpts[-2]-cpts[-1]])
-    bbbb = np.array([6*x for x in cpts[2:-2]])
+
+    new_cpts = []
+    for i in range(len(cpts)):
+        factors = [cpts[(i + x - n // 2) % len(cpts)] for x in range(n)]
+        new_cpts.append(
+            6 * sum(x * y for x, y in zip(factors, scalars)))
+
+    breakpoint()
+
+    cpts = np.concatenate([cpts, cpts[:2]])
+
+    aaa = _get_141_matrix(len(cpts) - 2)
+    bbb = np.array(
+        # [6 * cpts[1] - cpts[0]]
+        [6 * x for x in cpts[1:-1]]
+        # + [6 * cpts[-2] - cpts[-1]]
+    )
+
+    bbbb = np.array([6 * x for x in cpts[2:-2]])
 
     # bbb = aaa @ cpts[1:-1]
     ccc = np.linalg.inv(aaa) @ bbb
-    ddd = np.linalg.inv(aaa)[:,1:-1] @ bbb[1:-1]
+    ddd = np.linalg.inv(aaa)[:, 1:-1] @ bbb[1:-1]
+    eee = np.linalg.inv(aaa) * np.linalg.det(aaa)
+    fff = [[round(x) for x in y] for y in eee]
     breakpoint()
     cccc = np.linalg.inv(aaa)[1:-1] @ bbbb
     if close:
@@ -72,7 +97,6 @@ def get_interpolating_spline(
     else:
         ddd = get_cubic_spline(np.concatenate([cpts[:1], ccc, cpts[-1:]]))
     breakpoint()
-
 
 
 aaa = [[-1, -1], [1, -1], [1, 1], [-1, 1]]
