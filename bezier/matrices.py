@@ -8,8 +8,8 @@
 from functools import lru_cache
 from typing import Any, Tuple
 
-import numpy as np
-from nptyping import NDArray
+import numpy as np # type: ignore
+from nptyping import NDArray # type: ignore
 
 
 def _get_checkerboard(
@@ -68,6 +68,8 @@ def get_pascals(num: int) -> NDArray[(Any,), float]:
     return np.array(left + left[: num - mid][::-1], dtype=float)
 
 
+
+from typing import Any
 @lru_cache
 def get_mix_matrix(num: int) -> NDArray[(Any, Any), float]:
     """
@@ -78,5 +80,5 @@ def get_mix_matrix(num: int) -> NDArray[(Any, Any), float]:
     """
     mix = [np.append(get_pascals(x), [0] * (num - x)) for x in range(1, num + 1)]
     mix = get_pascals(num).reshape([-1, 1]) * mix
-    mix *= _get_checkerboard(mix.shape, 1, -1)
+    mix *= _get_checkerboard(mix.shape, 1, -1) # type: ignore
     return mix

@@ -14,28 +14,23 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
-from typing import Any, Generic, Iterable, Optional, Tuple, TypeVar
+from typing import Any, Iterable, Optional, Tuple
 
-import numpy as np
-from nptyping import NDArray
+import numpy as np  # type: ignore
+from nptyping import NDArray  # type: ignore
 
 from bezier.matrices import get_mix_matrix
 
-Point = Iterable[Iterable[float]]
-
-# TODO: get rid of _G (replace with NDArray)
-_G = TypeVar("_G")
-
-CurveT = TypeVar("CurveT")
+Point = NDArray[(Any,), float]
 
 
 @dataclass(frozen=True)
-class BezierCurve(Generic[_G]):
+class BezierCurve:
     """
     A non-rational Bezier curve.
     """
 
-    _points: Tuple[_G]
+    _points: NDArray[(Any, Any), float]
     degree: int
 
     def __init__(self, points: Iterable[Iterable[float]]) -> None:
@@ -46,11 +41,10 @@ class BezierCurve(Generic[_G]):
         in Bezier points.
 
         The `tuple` in `np.array(tuple(points))` allows a BezierCurve to be constructed
-        from another BezierCurve.
+        from an iterable of iterables.
         """
-        # TODO: check if the tuple call is necessary (see how instances *instance)
         object.__setattr__(self, "_points", np.array([tuple(x) for x in points]))
-        object.__setattr__(self, "degree", len(points) - 1)
+        object.__setattr__(self, "degree", len(self._points) - 1)
 
     def __hash__(self) -> int:
         """To cache method calls"""
@@ -59,7 +53,7 @@ class BezierCurve(Generic[_G]):
     def __iter__(self):
         return iter(self._points)
 
-    def __getitem__(self, item: int) -> _G:
+    def __getitem__(self, item: int) -> Point:
         """
         Return item-th point
 
@@ -68,7 +62,7 @@ class BezierCurve(Generic[_G]):
         """
         return self._points[item]
 
-    def __call__(self, time: float, derivative: int = 0) -> _G:
+    def __call__(self, time: float, derivative: int = 0) -> Point:
         """
         Cubic Bezier calculation at time.
 
@@ -79,14 +73,14 @@ class BezierCurve(Generic[_G]):
             return self._get_tmat(time) @ self._mixed_points
         return self.derivative(derivative)(time)
 
-    def _get_tmat(self, time):
+    def _get_tmat(self, time) -> NDArray[(Any,), float]:
+        # noinspection PyTypeChecker
         return np.array([1] + [time ** x for x in range(1, self.degree + 1)])
 
-    def _get_zmat(self, time):
+    def _get_zmat(self, time) -> NDArray[(Any, Any), float]:
         """ 2D zero matrix with tmat on the diagonal """
-        result = np.zeros((self.degree + 1, self.degree + 1))
-        np.fill_diagonal(result, self._get_tmat(time))
-        return result
+        # noinspection PyTypeChecker
+        return np.diagflat(self._get_tmat(time))
 
     @cached_property
     def _mmat(self) -> NDArray[(Any, Any), float]:
@@ -101,7 +95,7 @@ class BezierCurve(Generic[_G]):
         """
         return self._mmat @ self._points
 
-    def split(self: CurveT, time: float) -> Tuple[CurveT, CurveT]:
+    def split(self, time: float) -> Tuple[BezierCurve, BezierCurve]:
         """
         Split a BezierCurve into two Bezier curves of the same degree.
 
@@ -119,32 +113,30 @@ class BezierCurve(Generic[_G]):
             type(self)(qmat_prime @ self._points),
         )
 
-    def elevated(self: CurveT, to_degree: Optional[int] = None) -> CurveT:
+    def elevated(self, to_degree: Optional[int] = None) -> BezierCurve:
         """
         A new curve, elevated 1 or optionally more degrees.
 
         :param to_degree: final degree of Bezier curve
         :return: Bezier curve of identical shape with degree increased
         """
+        if to_degree == self.degree:
+            return self
         if to_degree is None:
             to_degree = self.degree + 1
-        if to_degree < self.degree:
+        elif to_degree < self.degree:
             raise ValueError(
                 "cannot elevate BezierCurve degree={self.degree} "
                 "to BezierCurve degree={to_degree}"
             )
-        points = self._points
-        while len(points) - 1 < to_degree:
-            elevated_points = [points[0]]
-            for a, b in zip(points, points[1:]):
-                time = len(elevated_points) / len(points)
-                elevated_points.append(a * time + b * (1 - time))
-            points = elevated_points + [points[-1]]
-            breakpoint()
-        return type(self)(points)
+        nn, pp = len(self._points), self._points
+        rats = np.arange(1, nn)[:, None] / nn
+        return type(self)(
+            np.concatenate([pp[:1], pp[:-1] * rats + pp[1:] * (1 - rats), pp[-1:]])
+        ).elevated(to_degree)
 
     @lru_cache
-    def derivative(self: CurveT, derivative: int) -> CurveT:
+    def derivative(self, derivative: int) -> BezierCurve:
         """
         nth derivative of a Bezier curve
 

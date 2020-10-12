@@ -1,1 +1,0 @@
-* derivative by points array subtraction instead of list comprehension
