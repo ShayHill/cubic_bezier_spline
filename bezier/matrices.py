@@ -6,29 +6,10 @@
 :created: 10/2/2020
 """
 from functools import lru_cache
-from typing import Any, Tuple
+from typing import Any
 
-import numpy as np # type: ignore
-from nptyping import NDArray # type: ignore
-
-
-def _get_checkerboard(
-    shape: Tuple[int, ...], a_val: Any, b_val: Any
-) -> NDArray[Any, Any]:
-    """
-    An nD array of [[a, b], [b, a]]
-
-    :param shape: dimensions of checkerboard
-    :param a_val: value at [0][0], [0][2], ... (in 2D)
-    :param b_val: value at [0][1], [0][3], ... (in 2D)
-    :return: +1 and -1 "checkered" over dimensions. +1 at [0][0]
-    """
-    check01 = np.indices(shape).sum(axis=0) % 2
-    checkered = np.empty_like(check01)
-    checkered[np.where(check01 == 0)] = a_val
-    checkered[np.where(check01 == 1)] = b_val
-    # noinspection PyTypeChecker
-    return checkered
+import numpy as np  # type: ignore
+from nptyping import NDArray  # type: ignore
 
 
 @lru_cache
@@ -68,8 +49,9 @@ def get_pascals(num: int) -> NDArray[(Any,), float]:
     return np.array(left + left[: num - mid][::-1], dtype=float)
 
 
-
 from typing import Any
+
+
 @lru_cache
 def get_mix_matrix(num: int) -> NDArray[(Any, Any), float]:
     """
@@ -80,5 +62,6 @@ def get_mix_matrix(num: int) -> NDArray[(Any, Any), float]:
     """
     mix = [np.append(get_pascals(x), [0] * (num - x)) for x in range(1, num + 1)]
     mix = get_pascals(num).reshape([-1, 1]) * mix
-    mix *= _get_checkerboard(mix.shape, 1, -1) # type: ignore
+    check = np.sum(np.indices(mix.shape), axis=0) % 2 == 1
+    np.negative(mix, out=mix, where=check)
     return mix

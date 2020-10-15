@@ -10,8 +10,8 @@ import numpy as np
 from typing import Callable, List, Union
 from nptyping import Array
 
-from .bezier_curve import BezierCurve
-from ..ttf_extractor import extract_glyphs
+from bezier.bezier_curve import BezierCurve
+from ttf_extractor import extract_glyphs
 
 Glyph = List[BezierCurve]
 PointTransformation = Callable[[Array[float]], Array[float]]

@@ -71,7 +71,7 @@ def get_continuity(curve_a: BezierCurve, curve_b: BezierCurve) -> Optional[int]:
     [(0, 0)] at (0, 1). This function will call that c0 continuous. Those types of
     curves (double-endpoints) DO appear in fonts.
 
-    In this function, matching zero-length derivatives to not imply tangency. Of
+    In this function, matching zero-length derivatives do not imply tangency. Of
     course, now that we have TWO rules (equal AND not 0 at derivative), there's going
     to be some gray area.
 
