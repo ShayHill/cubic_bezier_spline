@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from math import floor
 from typing import Any, Iterable, Iterator, List, Sequence
 
+import numpy as np
 from nptyping import NDArray
 
 from .bezier_curve import BezierCurve
@@ -40,6 +41,10 @@ class BezierSpline:
 
     def __len__(self) -> int:
         return len(self._curves)
+
+    def __array__(self) -> NDArray[(Any, Any, Any), float]:
+        # noinspection PyTypeChecker
+        return np.array([np.array(x) for x in self._curves])
 
     def __call__(self, time: float, derivative: int = 0) -> NDArray[(Any,), float]:
         """

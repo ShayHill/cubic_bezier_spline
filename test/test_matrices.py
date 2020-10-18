@@ -1,6 +1,6 @@
 import pytest
-from bezier.matrices import binom, get_pascals, get_mix_matrix
-import numpy as np
+
+from bezier.matrices import get_mix_matrix, get_pascals
 
 
 class TestGetPascals:
@@ -10,6 +10,7 @@ class TestGetPascals:
     def test_binom(self, in_out) -> None:
         """ Test against known values """
         assert tuple(get_pascals(in_out[0])) == in_out[1:]
+
 
 class TestGetMixmat:
     def test_get_mixmat(self):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # _*_ coding: utf-8 _*_
-""" Create matrices for Bezier operations
+""" Helper code: Create matrices for Bezier operations
 
 :author: Shay Hill
 :created: 10/2/2020
@@ -47,9 +47,6 @@ def get_pascals(num: int) -> NDArray[(Any,), float]:
     left = [1] + [binom(num - 1, x) for x in range(1, mid)]
     # noinspection PyTypeChecker
     return np.array(left + left[: num - mid][::-1], dtype=float)
-
-
-from typing import Any
 
 
 @lru_cache

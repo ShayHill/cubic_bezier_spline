@@ -8,6 +8,7 @@
 
 import random
 
+import numpy as np
 import pytest
 
 from bezier.bezier_spline import BezierSpline, TimeIntervalError
@@ -16,6 +17,11 @@ SHORT_SPLINE = BezierSpline([[[0], [1]], [[1], [2]]])
 
 
 class TestBezierSpline:
+    def test_arrayable(self) -> None:
+        """Convert to array when passed to np.array()"""
+        spline = BezierSpline([[[0, 1], [1, 1]], [[1, 1], [2, 2]], [[2, 2], [3, 3]]])
+        assert np.array(spline).shape == (3, 2, 2)
+
     def test_call_low(self) -> None:
         """Raise TimeIntervalError if time < 0"""
         with pytest.raises(TimeIntervalError):

@@ -18,7 +18,14 @@ from bezier.other_solvers import (
     get_decasteljau,
     get_split_decasteljau,
 )
-from bezier.test.conftest import _cbez_d1, _cbez_d2, random_bezier_points, random_times
+from .conftest import _cbez_d1, _cbez_d2, random_bezier_points, random_times
+
+
+@pytest.mark.parametrize("points", random_bezier_points())
+def test_arrayable(points) -> None:
+    """Convert to array when passed to np.array()"""
+    curve = BezierCurve(points)
+    assert np.array(curve).shape == (len(points), len(points[0]))
 
 
 class TestCall:

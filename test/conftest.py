@@ -26,8 +26,8 @@ def random_bezier_points(
         dimensions = random.randint(*dimension_limits)
         yield np.array(
             [
-                [random.random() * 100 for i in range(dimensions)]
-                for j in range(degree + 1)
+                [random.random() * 100 for _ in range(dimensions)]
+                for _ in range(degree + 1)
             ]
         )
 

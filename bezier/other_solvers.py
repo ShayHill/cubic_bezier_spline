@@ -29,7 +29,6 @@ def get_bezier_basis(points: Sequence[Sequence[float]], time) -> NDArray[(Any,),
     """
     points = np.asarray(points)
     n = points.shape[0] - 1
-    d = points.shape[1]
     result = np.zeros((points.shape[1],))
     for i in range(n + 1):
         result += binom(n, i) * time ** i * (1 - time) ** (n - i) * points[i]

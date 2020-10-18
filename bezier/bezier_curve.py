@@ -19,7 +19,7 @@ from typing import Any, Optional, Sequence, Tuple
 import numpy as np  # type: ignore
 from nptyping import NDArray  # type: ignore
 
-from bezier.matrices import get_mix_matrix
+from .matrices import get_mix_matrix
 
 
 @dataclass(frozen=True)
@@ -59,6 +59,14 @@ class BezierCurve:
         :return: One control point as an array
         """
         return self._points[item]
+
+    def __array__(self) -> NDArray[(Any, Any), float]:
+        """
+        Return self._points (it's an array anyway)
+
+        :return: self._points when encountering np.array(self)
+        """
+        return self._points
 
     def __call__(self, time: float, derivative: int = 0) -> NDArray[(Any,), float]:
         """

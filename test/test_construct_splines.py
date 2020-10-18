@@ -5,13 +5,13 @@
 :author: Shay Hill
 :created: 10/14/2020
 """
-from bezier.test.conftest import random_bezier_points, random_times, _cbez_d2
+from math import isclose
+
+import numpy as np
+import pytest
 
 from bezier.construct_splines import get_approximating_spline, get_interpolating_spline
-
-from math import isclose
-import pytest
-import numpy as np
+from .conftest import random_bezier_points
 
 
 class TestApproximatingOpen:
@@ -52,7 +52,9 @@ class TestApproximatingClosed:
 
     def test_symmetrical(self) -> None:
         """Closed square of control points creates symmetrical spline"""
-        spline = get_approximating_spline([[-1, -1], [1, -1], [1, 1], [-1, 1]], close=True)
+        spline = get_approximating_spline(
+            [[-1, -1], [1, -1], [1, 1], [-1, 1]], close=True
+        )
         for i in range(5):
             assert abs(spline(i)[0]) == abs(spline(i)[1])
 
@@ -74,6 +76,7 @@ class TestInterpolatingOpen:
                 np.testing.assert_allclose(
                     spline[i](1, j), spline[(i + 1) % len(spline)](0, j)
                 )
+
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
     def test_interpolation(self, points) -> None:
         """spline hits control points at knots"""
