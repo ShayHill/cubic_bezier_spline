@@ -8,14 +8,13 @@
 A dead-simple container for lists of Bezier curves.
 """
 
-from typing import List, Iterable, Iterator, Any
-from .bezier_curve import BezierCurve
 from dataclasses import dataclass
-from nptyping import NDArray
 from math import floor
+from typing import Any, Iterable, Iterator, List, Sequence
 
-# TODO: something better with Point type
-Point = Any
+from nptyping import NDArray
+
+from .bezier_curve import BezierCurve
 
 
 class TimeIntervalError(Exception):
@@ -30,7 +29,7 @@ class BezierSpline:
 
     _curves: List[BezierCurve]
 
-    def __init__(self, curves: Iterable[Iterable[Point]]) -> None:
+    def __init__(self, curves: Iterable[Sequence[Sequence[float]]]) -> None:
         self._curves = [BezierCurve(x) for x in curves]
 
     def __iter__(self) -> Iterator[BezierCurve]:
@@ -44,12 +43,14 @@ class BezierSpline:
 
     def __call__(self, time: float, derivative: int = 0) -> NDArray[(Any,), float]:
         """
-        Given x.y, call curve x and time y
+        Given x.y, call curve x at time y.
 
         :param time: x.y -> curve index x and time on curve y
             between 0 and len(curves)
         :param derivative: optional derivative at time
         :return: xth non-rational Bezier at time
+
+        For a spline with 3 curves, spline(3) will return curve 2 at time=1
         """
         if not 0 <= time <= len(self):
             raise TimeIntervalError(f"{time} not in interval [0, {len(self)}]")
@@ -57,4 +58,4 @@ class BezierSpline:
             return self._curves[floor(time)](time % 1, derivative)
         except IndexError:
             # time == len(self)
-            return self._curves[floor(time)-1](1, derivative)
+            return self._curves[floor(time) - 1](1, derivative)

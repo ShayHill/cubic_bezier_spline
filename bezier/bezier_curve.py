@@ -14,14 +14,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
-from typing import Any, Iterable, Optional, Tuple
+from typing import Any, Optional, Sequence, Tuple
 
 import numpy as np  # type: ignore
 from nptyping import NDArray  # type: ignore
 
 from bezier.matrices import get_mix_matrix
-
-Point = NDArray[(Any,), float]
 
 
 @dataclass(frozen=True)
@@ -33,7 +31,7 @@ class BezierCurve:
     _points: NDArray[(Any, Any), float]
     degree: int
 
-    def __init__(self, points: Iterable[Iterable[float]]) -> None:
+    def __init__(self, points: Sequence[Sequence[float]]) -> None:
         """
         Convert all points to ndarray.
 
@@ -43,7 +41,7 @@ class BezierCurve:
         The `tuple` in `np.array(tuple(points))` allows a BezierCurve to be constructed
         from an iterable of iterables.
         """
-        object.__setattr__(self, "_points", np.array([tuple(x) for x in points]))
+        object.__setattr__(self, "_points", np.array(points, dtype=float))
         object.__setattr__(self, "degree", len(self._points) - 1)
 
     def __hash__(self) -> int:
@@ -53,16 +51,16 @@ class BezierCurve:
     def __iter__(self):
         return iter(self._points)
 
-    def __getitem__(self, item: int) -> Point:
+    def __getitem__(self, item: int) -> NDArray[(Any,), float]:
         """
         Return item-th point
 
         :param item: index of [p0, p1, p2, p3]
-        :return: Point
+        :return: One control point as an array
         """
         return self._points[item]
 
-    def __call__(self, time: float, derivative: int = 0) -> Point:
+    def __call__(self, time: float, derivative: int = 0) -> NDArray[(Any,), float]:
         """
         Cubic Bezier calculation at time.
 

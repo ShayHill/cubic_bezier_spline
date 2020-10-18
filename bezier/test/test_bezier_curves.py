@@ -6,24 +6,19 @@
 :created: 1/18/2020
 """
 
-import numpy as np
-import pytest
 import random
-from bezier.bezier_curve import BezierCurve
-from bezier.other_solvers import (
-    get_decasteljau,
-    get_bezier_basis,
-    get_split_decasteljau,
-)
 from itertools import count
 
-from bezier.test.conftest import _cbez_d1, _cbez_d2, random_bezier_points, random_times
+import numpy as np
+import pytest
 
-# TODO: document and move to my_geometry
-def get_normalized(a, axis=-1, order=2):
-    l2 = np.atleast_1d(np.linalg.norm(a, order, axis))
-    l2[l2 == 0] = 1
-    return a / np.expand_dims(l2, axis)
+from bezier.bezier_curve import BezierCurve
+from bezier.other_solvers import (
+    get_bezier_basis,
+    get_decasteljau,
+    get_split_decasteljau,
+)
+from bezier.test.conftest import _cbez_d1, _cbez_d2, random_bezier_points, random_times
 
 
 class TestCall:
@@ -147,5 +142,3 @@ class TestElevated:
         elevated = curve.elevated(curve.degree + elevation)
         np.testing.assert_allclose(curve(time), elevated(time))
         np.testing.assert_allclose(curve(time, 2), elevated(time, 2))
-
-

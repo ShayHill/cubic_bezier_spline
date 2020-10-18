@@ -1,13 +1,11 @@
+import random
 from itertools import count
+from typing import Any, Iterator, Sequence, Tuple, Union
 
-import pytest
-from typing import Any, Iterator, Tuple, Union
 import numpy as np
 from nptyping import NDArray
-from typing import Any
-import random
 
-from bezier.bezier_curve import Point
+Point = Sequence[float]
 
 
 def random_bezier_points(
