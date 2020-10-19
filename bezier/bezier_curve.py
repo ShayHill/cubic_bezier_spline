@@ -5,9 +5,8 @@
 :author: Shay Hill
 :created: 1/18/2020
 
-I have a lot of Bezier curve code, but most of it is mixed up with other spline
-types, rational Bezier, etc., none of which (except perhaps rational Bezier) are
-useful for SVG creation. Creating new Bezier functionality here.
+This uses matrix math to evaluate the Bezier curve. The math benefits from caching, so
+the curve object is immutable.
 """
 
 from __future__ import annotations
