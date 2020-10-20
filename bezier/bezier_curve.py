@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # _*_ coding: utf-8 _*_
-"""Bezier curve objects.
+"""BezierCurve object
 
 :author: Shay Hill
 :created: 1/18/2020
 
-This uses matrix math to evaluate the Bezier curve. The math benefits from caching, so
+This uses matrix math to evaluate the Bezier curve. The math benefits from cacheing, so
 the curve object is immutable.
 """
 
