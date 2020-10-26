@@ -7,9 +7,10 @@ from typing import Any, Iterator, Sequence, Tuple, Union
 import numpy as np
 from nptyping import NDArray
 
+sys.path.append(os.path.join(__file__, "../.."))
+
 Point = Sequence[float]
 
-sys.path.append(os.path.join(__file__, "../.."))
 
 def random_bezier_points(
     degree_limits: Union[int, Tuple[int, int]] = (0, 10),
