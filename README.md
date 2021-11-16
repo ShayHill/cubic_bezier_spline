@@ -5,13 +5,13 @@ a sequence of points into a sequence of non-rational cubic Bezier curves.
 
 Should be relatively fast, but this may not be production ready. Feel free to learn from and fork this project (that's why I made it public), but I will most likely not respond to issues or feature requests. For me, this is a helper tool to create svg files, not an exercise in completism. As such
 
-###this package will
+### this package will
 
 * Evaluate, differentiate, elevate, and split non-rational Bezier curves of any degree
 * Construct non-rational cubic Bezier splines (open and closed, approximating and interpolating)
 * Evaluate and differentiate non-rational Bezier splines of any degree
 
-###this package will not**
+### this package will not**
 
 * Work with rational Bezier splines, b-splines, NURBS, or any other generalization of Bezier curves
 * Decrease curve degree
@@ -21,7 +21,7 @@ Should be relatively fast, but this may not be production ready. Feel free to le
 
 ** much of the above can be found here: https://github.com/dhermes/bezier
 
-###Public classes / functions
+### Public classes / functions
 
     # control_points -> array.shape(j, k) where
     #     j is number of control points
@@ -50,10 +50,6 @@ Should be relatively fast, but this may not be production ready. Feel free to le
     get_approximating_spline(control_points: NDArray[(Any, Any), float], close: bool)
 
     get_interpolating_spline(control_points: NDArray[(Any, Any), float], close: bool)
-
-
-
-
 
 Most of the math can be found in:
 
