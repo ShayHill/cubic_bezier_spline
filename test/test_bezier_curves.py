@@ -18,7 +18,14 @@ from bezier.other_solvers import (
     get_decasteljau,
     get_split_decasteljau,
 )
-from .conftest import _cbez_d1, _cbez_d2, random_bezier_points, random_times
+from .conftest import (
+    _cbez_d1,
+    _cbez_d2,
+    random_bezier_points,
+random_bezier_curves,
+    random_times,
+    random_indices,
+)
 
 
 @pytest.mark.parametrize("points", random_bezier_points())
@@ -37,6 +44,15 @@ class TestCall:
         basis = get_bezier_basis(points, time)
         np.testing.assert_allclose(curve, decasteljau)
         np.testing.assert_allclose(curve, basis)
+
+
+class TestGetitem:
+    @pytest.mark.parametrize("points", random_bezier_points())
+    def test_getitem(self, points) -> None:
+        """Test against formula"""
+        curve = BezierCurve(points)
+        index = random.randint(0, curve.degree)
+        np.testing.assert_array_equal(curve[index], points[index])
 
 
 class TestCubicBezierDerivatives:
@@ -92,8 +108,8 @@ class TestSplit:
         aaa = get_split_decasteljau(points, time)
         curve = BezierCurve(points)
         bbb = curve.split(time)
-        np.testing.assert_allclose(aaa[0], bbb[0]._points)
-        np.testing.assert_allclose(aaa[1], bbb[1]._points)
+        np.testing.assert_allclose(aaa[0], bbb[0].points)
+        np.testing.assert_allclose(aaa[1], bbb[1].points)
 
     @pytest.mark.parametrize(
         "points,time", zip(random_bezier_points(degree_limits=(0, 5)), random_times())
@@ -104,7 +120,7 @@ class TestSplit:
         """
         curve = BezierCurve(points)
         beg, end = curve.split(time)
-        np.testing.assert_array_equal(beg._points[-1], end._points[0])
+        np.testing.assert_array_equal(beg.points[-1], end.points[0])
 
 
 class TestElevated:
@@ -122,12 +138,28 @@ class TestElevated:
         elevated = curve.elevated(curve.degree + elevation)
         np.testing.assert_allclose(curve(time), elevated(time))
 
+    @pytest.mark.parametrize("points,time", zip(random_bezier_points(), random_times()))
+    def test_default_elevation(self, points, time):
+        """Elevate curve to degree + 1 when None passed to elevated."""
+        curve = BezierCurve(points)
+        elevated = curve.elevated()
+        assert elevated.degree == curve.degree + 1
+        np.testing.assert_allclose(curve(time), elevated(time))
+
+    @pytest.mark.parametrize("points", random_bezier_points((2, 10)))
+    def test_error_when_decreasing_degree(self, points):
+        curve = BezierCurve(points)
+        to_degree = random.randint(0, curve.degree - 1)
+        err_msg = (
+            f"cannot elevate BezierCurve degree={curve.degree} "
+            f"to BezierCurve degree={to_degree}"
+        )
+        with pytest.raises(ValueError, match=err_msg):
+            _ = curve.elevated(to_degree)
+
     @pytest.mark.parametrize(
         "points,elevation",
-        zip(
-            random_bezier_points(),
-            (random.randint(0, 5) for _ in count()),
-        ),
+        zip(random_bezier_points(), (random.randint(0, 5) for _ in count())),
     )
     def test_degree_raised(self, points, elevation) -> None:
         """Degree increases"""
