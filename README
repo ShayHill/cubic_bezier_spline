@@ -1,0 +1,39 @@
+Bezier curves and splines (composite Bezier curves).
+
+This package exists mostly to create C2-continuous, cubic splines. In other words, this will approximate or interpolate
+a sequence of points into a sequence of cubic Bezier curves.
+
+Uses Numpy matrix math, so it should be relatively fast, but this may not be production ready. Feel free to learn from
+and fork this project (that's why I made it public), but I will most likely not respond to issues or feature requests.
+For me, this is a helper tool to create svg files, not an exercise in completism. As such
+
+this will
+    * Work with non-rational Bezier splines.
+    * Evaluate, differentiate, elevate, and split Bezier curves and splines
+    * Construct and evaluate Bezier splines (open and closed, approximating and interpolating)
+
+this will not
+    * Work with rational Bezier splines, b-splines, NURBS, or any other generalization of Bezier curves.
+    * Decrease curve degree
+    * Approximate curve intersections
+    * Approximate the length of a curve
+    * "Stroke" (move left or right) a curve
+    (much of the above can be found here: https://github.com/dhermes/bezier)
+
+Public classes / functions
+    BezierCurve(control_points)
+        * __call__ (time, derivative=0)
+        * .elevated (to_degree)
+        * .derivative (derivative)
+        * .split (at time)
+    BezierSpline(control_points)
+        * __call__(time, derivative=0)
+    get_approximating_spline(control_points, close=False)
+    get_interpolating_spline(control_points, close=False)
+
+Most of the math can be found in:
+    * A Primer on Bezier Curves
+      https://pomax.github.io/bezierinfo/
+    * UCLS-Math-149-Mathematics-of-Computer-Graphics-lecture-notes
+      https://www.stkent.com/assets/pdfs/UCLA-Math-149-Mathematics-of-Computer-Graphics-lecture-notes.pdf
+

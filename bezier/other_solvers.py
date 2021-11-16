@@ -13,7 +13,7 @@ from typing import Any, Iterator, List, Sequence, Tuple
 import numpy as np
 from nptyping import NDArray
 
-from bezier.matrices import binom
+from .matrices import binom
 
 
 def get_bezier_basis(points: Sequence[Sequence[float]], time) -> NDArray[(Any,), float]:

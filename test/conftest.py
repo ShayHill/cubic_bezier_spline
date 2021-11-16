@@ -1,10 +1,14 @@
+import os
 import random
+import sys
 from itertools import count
 from typing import Any, Iterator, Sequence, Tuple, Union
 
 import numpy as np
 from nptyping import NDArray
 from bezier.bezier_curve import BezierCurve
+
+sys.path.append(os.path.join(__file__, "../.."))
 
 Point = Sequence[float]
 

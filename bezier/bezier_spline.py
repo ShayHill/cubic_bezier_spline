@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # _*_ coding: utf-8 _*_
-""" Bezier splines (composite curves)
+"""Bezier splines (composite curves)
 
 :author: Shay Hill
 :created: 10/4/2020
