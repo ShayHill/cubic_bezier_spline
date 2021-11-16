@@ -34,7 +34,7 @@ Should be relatively fast, but this may not be production ready. Feel free to le
     .derivative (derivative: int)
     .split (at_time: float)
 
-.
+<br/>
 
     # Spline control points: An array.shape = (i, j, k) where
     #     i is number of curve-control-point instances (e.g., four each for cubic curves)
@@ -45,7 +45,7 @@ Should be relatively fast, but this may not be production ready. Feel free to le
 
     __call__(time, derivative: int=0)
 
-.
+<br/>
 
     get_approximating_spline(control_points: NDArray[(Any, Any), float], close: bool)
 
