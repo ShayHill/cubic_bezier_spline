@@ -6,22 +6,26 @@
 :created: 10/4/2020
 """
 
-from typing import Any, Sequence
+from typing import Any, Callable, Sequence, Union
 
 import numpy as np
 from nptyping import NDArray
 
 from .bezier_spline import BezierSpline
 
-Cpts = Sequence[Sequence[float]]
+Cpts = Union[
+    Sequence[Sequence[float]], Sequence[NDArray[Any, float]], NDArray[(Any, Any), float]
+]
 
 
-def _remove_matching_ends(cpts: Cpts) -> NDArray[(Any, Any), float]:
+def _remove_matching_ends(
+    func: Callable[[Cpts, Any], Any]
+) -> Callable[[Cpts, Any], Any]:
     """
     Remove last when first == last.
 
-    :param cpts:
-    :return:
+    :param func: a function taking a sequence of control points as its first argument
+    :return: a function which checks that Cpts are not wrapped (end != begin)
 
     To simplify the code, functions in this module will assume control points are
     never closed (e.g., a square will be defined by four points, whether the spline
@@ -30,13 +34,18 @@ def _remove_matching_ends(cpts: Cpts) -> NDArray[(Any, Any), float]:
     Just in case I forget or come across some data with closed (first == last)
     control points, this function will return the data to the expected format.
     """
-    cpts = np.asarray(cpts)
-    if np.array_equal(cpts[0], cpts[-1]):
-        return cpts[:-1]
-    return cpts
+
+    def wrapped(cpts: Cpts, *args, **kwargs) -> Any:
+        """Remove last control point if wrapped. Cast to array."""
+        cpts = np.asarray(cpts, dtype=float)
+        if np.array_equal(cpts[0], cpts[-1]):
+            cpts = cpts[:-1]
+        return func(cpts, *args, **kwargs)
+
+    return wrapped
 
 
-def _get_141_matrix(dim: int, close: bool = False) -> NDArray[(Any, Any), int]:
+def _get_141_matrix(dim: int, close: bool) -> NDArray[(Any, Any), int]:
     """
     Create the 141 matrix necessary to get interpolated points from control points.
 
@@ -52,7 +61,8 @@ def _get_141_matrix(dim: int, close: bool = False) -> NDArray[(Any, Any), int]:
     return mat_141
 
 
-def get_approximating_spline(cpts: Cpts, close: bool = False) -> BezierSpline:
+@_remove_matching_ends
+def get_approximating_spline(cpts: Cpts, close: bool) -> BezierSpline:
     """
     Approximate a set of points as a composite Bezier curve (Bezier spline)
 
@@ -63,7 +73,6 @@ def get_approximating_spline(cpts: Cpts, close: bool = False) -> BezierSpline:
         or, if closed, a spline shaped by all control points, beginning and ending at
         the same point.
     """
-    cpts = _remove_matching_ends(cpts)
     if close:
         if not np.array_equal(cpts[0], cpts[-1]):
             cpts = np.concatenate([cpts, cpts[:1]])
@@ -80,6 +89,7 @@ def get_approximating_spline(cpts: Cpts, close: bool = False) -> BezierSpline:
     return BezierSpline(thirds)
 
 
+@_remove_matching_ends
 def get_closed_interpolating_spline(cpts: Cpts) -> BezierSpline:
     """
     Get a closed cubic interpolating spline.
@@ -88,11 +98,11 @@ def get_closed_interpolating_spline(cpts: Cpts) -> BezierSpline:
     :return: A spline passing through all control points, beginning and ending at
         cpts[0]
     """
-    cpts = _remove_matching_ends(cpts)
     cpts = np.linalg.inv(_get_141_matrix(len(cpts), close=True)) @ cpts * 6
-    return get_approximating_spline(cpts, close=True)
+    return get_approximating_spline(cpts, True)
 
 
+@_remove_matching_ends
 def get_open_interpolating_spline(cpts: Cpts) -> BezierSpline:
     """
     Get an open cubic interpolating spline.
@@ -100,21 +110,25 @@ def get_open_interpolating_spline(cpts: Cpts) -> BezierSpline:
     :param cpts: points to interpolate
     :return: A spline passing through all control points.
     """
-    cpts = _remove_matching_ends(cpts)
     if len(cpts) == 2:
-        return get_approximating_spline(cpts)
+        return get_approximating_spline(cpts, False)
     if len(cpts) == 3:
         midpt = (-cpts[0] + 6 * cpts[1] - cpts[2]) / 4
-        return get_approximating_spline([cpts[0], midpt, cpts[2]])
-    mat_141 = _get_141_matrix(len(cpts) - 2)
+        # noinspection PyTypeChecker
+        return get_approximating_spline(np.asarray([cpts[0], midpt, cpts[2]]), False)
+    mat_141 = _get_141_matrix(len(cpts) - 2, False)
     mat_b = np.concatenate(
         [[6 * cpts[1] - cpts[0]], 6 * cpts[2:-2], [6 * cpts[-2] - cpts[-1]]]
     )
     interior_pts = np.linalg.inv(mat_141) @ mat_b
-    return get_approximating_spline(np.concatenate([cpts[:1], interior_pts, cpts[-1:]]))
+    # noinspection PyTypeChecker
+    return get_approximating_spline(
+        np.concatenate([cpts[:1], interior_pts, cpts[-1:]]), False
+    )
 
 
-def get_interpolating_spline(cpts: Cpts, close: bool = False) -> BezierSpline:
+# noinspection PyArgumentList
+def get_interpolating_spline(cpts: Cpts, close: bool) -> BezierSpline:
     """
     Interpolate a set of points as a composite Bezier curve (Bezier spline)
 
