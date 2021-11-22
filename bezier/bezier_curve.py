@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
-from typing import Any, Optional, Sequence, Tuple
+from typing import Any, Optional, Sequence, Tuple, List
 
 import numpy as np  # type: ignore
 from nptyping import NDArray  # type: ignore
@@ -105,24 +105,30 @@ class BezierCurve:
         """
         return self._mmat @ self.points
 
-    def split(self, time: float) -> Tuple[BezierCurve, BezierCurve]:
+    def split(self, *times: float) -> List[BezierCurve]:
         """
         Split a BezierCurve into two Bezier curves of the same degree.
 
-        :param time: time at which to split the curve.
+        :param times: time at which to split the curve.
         :return: two new BezierCurve instances
         :raises: ValueError if not 0 <= time <= 1
         """
-        qmat = np.linalg.inv(self._mmat) @ self._get_zmat(time) @ self._mmat
-        qmat_prime = np.zeros_like(qmat)
-        for i in range(qmat.shape[0]):
-            j = i + 1
-            qmat_prime[-j, -j:] = qmat[i, :j]
-        # noinspection PyArgumentList
-        return (
-            type(self)(qmat @ self.points),
-            type(self)(qmat_prime @ self.points),
-        )
+        curves = [self]
+        time_at = 0
+        for time in times:
+            time_prime = np.interp(time, (time_at, 1), (0, 1))
+            qmat = np.linalg.inv(curves[-1]._mmat) @ curves[-1]._get_zmat(time_prime) @ curves[-1]._mmat
+
+            qmat_prime = np.zeros_like(qmat)
+            for i in range(qmat.shape[0]):
+                j = i + 1
+                qmat_prime[-j, -j:] = qmat[i, :j]
+            curves[-1:] = [
+                type(self)(qmat @ curves[-1].points),
+                type(self)(qmat_prime @ curves[-1].points)
+            ]
+            time_at = time
+        return curves
 
     def elevated(self, to_degree: Optional[int] = None) -> BezierCurve:
         """
