@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "cubic-bezier-spline"
+version = "0.1.0"
+description = "Create C2-continuous, non-rational cubic Bézier splines. In other words, this will approximate or interpolate a sequence of points into a sequence of non-rational cubic Bézier curves."
+authors = ["Shay Hill <shay_public@hotmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "cubic_bezier_spline"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.24.2"
+nptyping = "^2.4.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
+commitizen = "^2.40.0"
+pre-commit = "^3.0.4"
+tox-poetry-installer = {extras = ["poetry"], version = "^0.10.0"}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
