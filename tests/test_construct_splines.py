@@ -67,7 +67,7 @@ class TestApproximatingClosed:
             [[-1, -1], [1, -1], [1, 1], [-1, 1]], close=True
         )
         for i in range(5):
-            assert abs(spline(i)[0]) == abs(spline(i)[1])
+            assert isclose(abs(spline(i)[0]), abs(spline(i)[1]))
 
 
 class TestInterpolatingOpen:

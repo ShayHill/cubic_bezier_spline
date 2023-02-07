@@ -44,13 +44,13 @@ class BezierSpline:
     def __len__(self) -> int:
         return len(self._curves)
 
-    def __array__(self) -> Farray:
+    def __array__(self) -> FArray:
         # noinspection PyTypeChecker
         return np.array([np.array(x) for x in self._curves])
 
     def __call__(
         self, time: float, derivative: int = 0
-    ) -> Farray:
+    ) -> FArray:
         """
         Given x.y, call curve x at time y.
 

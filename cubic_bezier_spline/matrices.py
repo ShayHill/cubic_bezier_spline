@@ -52,7 +52,7 @@ def get_pascals(num: int) -> FArray:
 
 
 @lru_cache
-def get_mix_matrix(num: int) -> Farray:
+def get_mix_matrix(num: int) -> FArray:
     """
     Matrix of binomial coefficients for Bezier calculation.
 
