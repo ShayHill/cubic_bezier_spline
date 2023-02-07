@@ -2,10 +2,9 @@ import os
 import random
 import sys
 from itertools import count
-from typing import Any, Iterator, Sequence, Tuple, Union
+from typing import Any, Iterator, Sequence, Tuple, Union, Annotated
 
 import numpy as np
-from nptyping import NDArray
 import numpy.typing as npt
 from cubic_bezier_spline.bezier_curve import BezierCurve
 
@@ -20,7 +19,7 @@ Point = Sequence[float]
 def random_bezier_points(
     degree_limits: Union[int, Tuple[int, int]] = (0, 10),
     dimension_limits: Union[int, Tuple[int, int]] = (1, 10),
-) -> Iterator[AFArray]:
+) -> Iterator[Annotated[FArray, (-1, -1)]]:
     """
     Iter sets of Bezier control points
 
@@ -44,7 +43,7 @@ def random_bezier_curves(
         degree_limits: Union[int, Tuple[int, int]] = (0, 10),
         dimension_limits: Union[int, Tuple[int, int]] = (1, 10),
         splines_limits: Union[int, Tuple[int, int]] = (1, 10)
-) -> Iterator[NDArray[(Any, Any), float]]:
+) -> Iterator[Annotated[FArray, (-1, -1)]]:
     """
     A 3-D vector of spline curve points.
     [ curve, curve, curve ]

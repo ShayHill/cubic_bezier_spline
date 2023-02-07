@@ -9,8 +9,9 @@ from functools import lru_cache
 from typing import Any
 
 import numpy as np  # type: ignore
-# from nptyping import NDArray  # type: ignore
 import numpy.typing as npt # type: ignore
+
+FArray = npt.NDArray[np.float_]
 
 
 @lru_cache
@@ -32,7 +33,7 @@ def binom(n, k):
 
 
 @lru_cache
-def get_pascals(num: int) -> npt.NDArray[np.floating[Any]]:
+def get_pascals(num: int) -> FArray:
     """
     One line of Pascal's triangle.
 
@@ -51,7 +52,7 @@ def get_pascals(num: int) -> npt.NDArray[np.floating[Any]]:
 
 
 @lru_cache
-def get_mix_matrix(num: int) -> npt.NDArray[np.floating[Any]]:
+def get_mix_matrix(num: int) -> Farray:
     """
     Matrix of binomial coefficients for Bezier calculation.
 

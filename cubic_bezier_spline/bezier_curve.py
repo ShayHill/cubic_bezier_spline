@@ -16,7 +16,6 @@ from functools import cached_property, lru_cache
 from typing import Any, Optional, Sequence, Tuple, List
 
 import numpy as np  # type: ignore
-from nptyping import NDArray  # type: ignore
 
 from .matrices import get_mix_matrix
 

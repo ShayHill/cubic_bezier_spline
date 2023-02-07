@@ -11,12 +11,14 @@ De Casteljau is Bezier at it's most basic. Here for testing / illustration.
 from typing import Any, Iterator, List, Sequence, Tuple
 
 import numpy as np
-from nptyping import NDArray
+import numpy.typing as npt
 
 from .matrices import binom
 
+FArray = npt.NDArray[np.float_]
 
-def get_bezier_basis(points: Sequence[Sequence[float]], time) -> NDArray[(Any,), float]:
+
+def get_bezier_basis(points: Sequence[Sequence[float]], time) -> FArray:
     """
     Bezier basis function for testing.
 
@@ -38,7 +40,7 @@ def get_bezier_basis(points: Sequence[Sequence[float]], time) -> NDArray[(Any,),
 
 def iter_decasteljau_steps(
     points: Sequence[Sequence[float]], time: float
-) -> Iterator[List[NDArray[(Any,), float]]]:
+) -> Iterator[List[FArray]]:
     """
     Yield De Casteljau iterations.
 
@@ -67,7 +69,7 @@ def iter_decasteljau_steps(
 
 def get_decasteljau(
     points: Sequence[Sequence[float]], time: float
-) -> NDArray[(Any,), float]:
+) -> FArray:
     """
     Value of a non-rational Bezier curve at time.
 
@@ -80,7 +82,7 @@ def get_decasteljau(
 
 def get_split_decasteljau(
     points: Sequence[Sequence[float]], time: float
-) -> Tuple[List[NDArray[(Any,), float]], List[NDArray[(Any,), float]]]:
+) -> Tuple[List[FArray], List[FArray]]:
     """
     Split bezier at time using De Casteljau's algorithm.
 

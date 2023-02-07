@@ -17,6 +17,8 @@ import numpy.typing as npt
 
 from .bezier_curve import BezierCurve
 
+FArray = npt.NDArray[np.float_]
+
 
 class TimeIntervalError(Exception):
     """Time value out of range in BezierSpline.__call__"""
@@ -42,13 +44,13 @@ class BezierSpline:
     def __len__(self) -> int:
         return len(self._curves)
 
-    def __array__(self) -> npt.NDArray[np.floating[Any]]:
+    def __array__(self) -> Farray:
         # noinspection PyTypeChecker
         return np.array([np.array(x) for x in self._curves])
 
     def __call__(
         self, time: float, derivative: int = 0
-    ) -> npt.NDArray[np.floating[Any]]:
+    ) -> Farray:
         """
         Given x.y, call curve x at time y.
 
