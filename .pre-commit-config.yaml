@@ -3,7 +3,7 @@ ci:
   autofix_commit_msg: 'style: pre-commit fixes'
   autoupdate_commit_msg: 'chore: update pre-commit hooks'
 
-exclude: tests|resources
+exclude: tests|resources|doc
 
 repos:
 

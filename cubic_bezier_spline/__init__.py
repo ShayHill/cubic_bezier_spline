@@ -3,16 +3,20 @@
 :author: Shay Hill
 :created: 2023-02-08
 """
+from .bezier_curve import BezierCurve
+from .bezier_spline import BezierSpline
 from .construct_splines import (
-    get_closed_approximating_spline,
-    get_closed_interpolating_spline,
-    get_open_approximating_spline,
-    get_open_interpolating_spline,
+    new_closed_approximating_spline,
+    new_closed_interpolating_spline,
+    new_open_approximating_spline,
+    new_open_interpolating_spline,
 )
 
 __all__ = [
-    "get_open_approximating_spline",
-    "get_closed_approximating_spline",
-    "get_open_interpolating_spline",
-    "get_closed_interpolating_spline",
+    "new_open_approximating_spline",
+    "new_closed_approximating_spline",
+    "new_open_interpolating_spline",
+    "new_closed_interpolating_spline",
+    "BezierCurve",
+    "BezierSpline",
 ]

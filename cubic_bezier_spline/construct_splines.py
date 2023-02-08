@@ -45,7 +45,7 @@ def _get_141_matrix(dim: int, open_or_closed: _OpenOrClosed) -> npt.NDArray[np.b
     return mat_141
 
 
-def _get_approximating_spline(
+def _new_approximating_spline(
     cpts: Points, open_or_closed: _OpenOrClosed
 ) -> BezierSpline:
     """Approximate a set of points as a composite Bezier curve (Bezier spline).
@@ -76,27 +76,27 @@ def _get_approximating_spline(
     return BezierSpline(thirds)
 
 
-def get_open_approximating_spline(cpts: Points) -> BezierSpline:
+def new_open_approximating_spline(cpts: Points) -> BezierSpline:
     """Approximate a set of points as a composite Bezier curve (Bezier spline).
 
     :param cpts: points to approximate
     :return: A spline beginning at cpts[0], ending at cpts[-1], and shaped by
         cpts[1:-1].
     """
-    return _get_approximating_spline(cpts, _OpenOrClosed.OPEN)
+    return _new_approximating_spline(cpts, _OpenOrClosed.OPEN)
 
 
-def get_closed_approximating_spline(cpts: Points) -> BezierSpline:
+def new_closed_approximating_spline(cpts: Points) -> BezierSpline:
     """Approximate a set of points as a composite Bezier curve (Bezier spline).
 
     :param cpts: points to approximate
     :return: A spline passing through all control points, beginning and ending at
         the same point.
     """
-    return _get_approximating_spline(cpts, _OpenOrClosed.CLOSED)
+    return _new_approximating_spline(cpts, _OpenOrClosed.CLOSED)
 
 
-def get_closed_interpolating_spline(cpts: Points) -> BezierSpline:
+def new_closed_interpolating_spline(cpts: Points) -> BezierSpline:
     """Get a closed cubic interpolating spline.
 
     :param cpts: points to interpolate
@@ -106,7 +106,7 @@ def get_closed_interpolating_spline(cpts: Points) -> BezierSpline:
     cpts_ = as_open_points_array(cpts)
     mat_141 = _get_141_matrix(len(cpts_), open_or_closed=_OpenOrClosed.CLOSED)
     cpts_ = np.linalg.inv(mat_141) @ cpts_ * 6
-    return get_closed_approximating_spline(cpts_)
+    return new_closed_approximating_spline(cpts_)
 
 
 def _get_b_matrix(cpts: APoints) -> Annotated[FArray, "(p-2,v)"]:
@@ -125,7 +125,7 @@ def _get_b_matrix(cpts: APoints) -> Annotated[FArray, "(p-2,v)"]:
     return np.append(mat_b, end, axis=0)
 
 
-def get_open_interpolating_spline(cpts: Points) -> BezierSpline:
+def new_open_interpolating_spline(cpts: Points) -> BezierSpline:
     """Get an open cubic interpolating spline.
 
     :param cpts: points to interpolate
@@ -133,13 +133,13 @@ def get_open_interpolating_spline(cpts: Points) -> BezierSpline:
     """
     cpts_ = as_open_points_array(cpts)
     if len(cpts_) == _LINEAR:
-        return get_open_approximating_spline(cpts_)
+        return new_open_approximating_spline(cpts_)
     if len(cpts_) == _QUADRATIC:
         midpt = (-cpts_[0] + 6 * cpts_[1] - cpts_[2]) / 4
-        return get_open_approximating_spline(np.asarray([cpts_[0], midpt, cpts_[2]]))
+        return new_open_approximating_spline(np.asarray([cpts_[0], midpt, cpts_[2]]))
     mat_141 = _get_141_matrix(len(cpts_) - 2, _OpenOrClosed.OPEN)
     mat_b = _get_b_matrix(cpts_)
     interior_pts = np.linalg.inv(mat_141) @ mat_b
-    return get_open_approximating_spline(
+    return new_open_approximating_spline(
         np.concatenate([cpts_[:1], interior_pts, cpts_[-1:]])
     )

@@ -9,6 +9,7 @@ A dead-simple container for lists of Bezier curves.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cached_property
 from math import floor
 from typing import TYPE_CHECKING, Annotated
 
@@ -26,6 +27,19 @@ if TYPE_CHECKING:
 
 class TimeIntervalError(Exception):
     """Time value out of range in BezierSpline.__call__."""
+
+
+def _get_tuple_strings(tuples: Iterable[Sequence[float]]) -> list[str]:
+    """Get a list of strings for a list of tuples.
+
+    :param tuples: list of tuples
+    :param precision: number of digits after decimal point
+    :return: list of strings
+
+    This limits the precision of float strings to 6 digits, which is appropriate for
+    svg.
+    """
+    return [f"{','.join(f'{x:.6f}' for x in t)}" for t in tuples]
 
 
 @dataclass
@@ -66,6 +80,27 @@ class BezierSpline:
         :return: numpy array of curves
         """
         return np.array([np.array(x) for x in self._curves])
+
+    def _yield_svg_commands(self) -> Iterator[str]:
+        """Get the SVG data for the spline.
+
+        :return: SVG data
+        """
+        prev_pnt = ""
+        for curve in self._curves:
+            pnt_0, pnt_1, pnt_2, pnt_3 = _get_tuple_strings(curve.control_points)
+            if prev_pnt != pnt_0:
+                yield f"M {pnt_0}"
+            yield f"C {pnt_1} {pnt_2} {pnt_3}"
+            prev_pnt = pnt_3
+
+    @cached_property
+    def svg_data(self) -> str:
+        """Get the SVG data for the spline.
+
+        :return: SVG data string (the d="" attribute of an svg "path" element)
+        """
+        return " ".join(self._yield_svg_commands())
 
     def __call__(self, time: float, derivative: int = 0) -> Point:
         """Given x.y, call curve x at time y.

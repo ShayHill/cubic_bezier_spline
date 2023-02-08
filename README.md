@@ -1,9 +1,8 @@
 ## Non-rational Bezier curves and splines (composite Bezier curves)
 
-This package exists mostly to create C2-continuous, non-rational cubic Bezier splines. In other words, this will approximate or interpolate
-a sequence of points into a sequence of non-rational cubic Bezier curves.
+This package exists mostly to create C2-continuous, non-rational cubic Bezier splines. In other words, this will approximate or interpolate a sequence of points into a sequence of non-rational cubic Bezier curves.
 
-Should be relatively fast, but this may not be production ready. Feel free to learn from and fork this project (that's why I made it public), but I will most likely not respond to issues or feature requests. For me, this is a helper tool to create svg files, not an exercise in completism. As such
+Should be relatively fast, but this isn't suited for heavy math. This is for taking some points you have and making a nice-looking curve out of them. Specifically, a cubic Bezier spline, which is made from the type of curves used in SVG, fonts, and other vector-base programs. I am only interested in feature requests that directly apply to that purpose. This is not an exercise in completism.
 
 ### this package will
 
@@ -19,39 +18,39 @@ Should be relatively fast, but this may not be production ready. Feel free to le
 * Approximate the length of a curve
 * "Stroke" (move left or right) a curve<br/>
 
-** much of the above can be found here: https://github.com/dhermes/bezier
+** much of the "will not" features can be found here: https://github.com/dhermes/bezier
 
 ### Public classes / functions
 
-    # control_points -> array.shape(j, k) where
-    #     j is number of control points
-    #     k is any number of dimensions (x, y, z, etc.)
+    # a c2-continuous cubic Bezier spline near the control points
+    new_open_approximating_spline([(x0, y0), (x1, y1), ...])
 
-    BezierCurve(control_points: NDArray[(Any, Any), float])
+    # a c2-continuous cubic Bezier spline near the control points
+    new_closed_approximating_spline([(x0, y0), (x1, y1), ...])
 
-    __call__ (time: float, derivative: int=0)
-    .elevated (to_degree: int)
-    .derivative (derivative: int)
-    .split (at_time: float)
+    # a c2-continuous cubic Bezier spline through the control points
+    new_open_interpolating_spline([(x0, y0), (x1, y1), ...])
 
-<br/>
+    # a c2-continuous cubic Bezier spline through the control points
+    new_closed_interpolating_spline([(x0, y0), (x1, y1), ...])
 
-    # Spline control points: An array.shape = (i, j, k) where
-    #     i is number of curve-control-point instances (e.g., four each for cubic curves)
-    #     j is number of control points in each spline
-    #     k is any number of dimensions (x, y, z, etc.)
+Any of these will return a BezierSpline object. This object has a some of the usual methods (e.g., elevate, derivative, split) to help find path normals or do some light modeling, but you may be most interested in.
 
-    BezierSpline(control_points: NDArray[(Any, Any, Any), float])
+    # plot the spline at a given point, where time is 0 to
+    # (number of input points + 1)
+    spline(time: float)
 
-    __call__(time, derivative: int=0)
+    # an svg data string
+    # (the d="" attribute of an SVG path object)
+    spline.svg_data
 
-<br/>
+### Examples
 
-    get_approximating_spline(control_points: NDArray[(Any, Any), float], close: bool)
+Some of these use double and triple repeated points to create "knots". This isn't a special function, just a feature of Bezier math. The idea is clearer with a picture.
 
-    get_interpolating_spline(control_points: NDArray[(Any, Any), float], close: bool)
+![spline types](doc/knot_examples.png)
 
-Most of the math can be found in:
+### Most of the math can be found in:
 
 * A Primer on Bezier Curves<br/>
 https://pomax.github.io/bezierinfo/
