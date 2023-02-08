@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cubic-bezier-spline"
-version = "0.2.3"
+version = "0.3.0"
 description = "Create C2-continuous, non-rational cubic Bézier splines. In other words, this will approximate or interpolate a sequence of points into a sequence of non-rational cubic Bézier curves."
 authors = ["Shay Hill <shay_public@hotmail.com>"]
 license = "MIT"
@@ -24,7 +24,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.2.3"
+version = "0.3.0"
 tag_format = "$version"
 version_files = [
     "pyproject.toml:^version"
