@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import floor
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
 import numpy as np
 
@@ -19,7 +19,9 @@ from .bezier_curve import BezierCurve
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Sequence
 
-    from .type_hints import FArray
+    import numpy.typing as npt
+
+    from .type_hints import Point
 
 
 class TimeIntervalError(Exception):
@@ -58,14 +60,14 @@ class BezierSpline:
         """
         return len(self._curves)
 
-    def __array__(self) -> FArray:
+    def __array__(self) -> Annotated[npt.NDArray[np.float_], (-1, -1, -1)]:
         """Get the spline as a numpy array.
 
         :return: numpy array of curves
         """
         return np.array([np.array(x) for x in self._curves])
 
-    def __call__(self, time: float, derivative: int = 0) -> FArray:
+    def __call__(self, time: float, derivative: int = 0) -> Point:
         """Given x.y, call curve x at time y.
 
         :param time: x.y -> curve index x and time on curve y
