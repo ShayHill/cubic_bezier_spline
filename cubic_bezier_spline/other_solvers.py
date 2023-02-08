@@ -8,7 +8,7 @@ De Casteljau is Bezier at it's most basic. Here for testing / illustration.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator, Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -16,6 +16,8 @@ from .control_point_casting import as_points_array
 from .matrices import binom
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator, Sequence
+
     from .type_hints import FArray, Points
 
 

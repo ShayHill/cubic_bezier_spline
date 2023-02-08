@@ -4,7 +4,8 @@
 :created: 2023-02-08
 """
 
-from typing import Annotated, Sequence, TypeAlias
+from collections.abc import Sequence
+from typing import Annotated, TypeAlias
 
 import numpy as np
 import numpy.typing as npt

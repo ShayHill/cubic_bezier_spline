@@ -10,13 +10,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import floor
-from typing import TYPE_CHECKING, Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from .bezier_curve import BezierCurve
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator, Sequence
+
     from .type_hints import FArray
 
 
