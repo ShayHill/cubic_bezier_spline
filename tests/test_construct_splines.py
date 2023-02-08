@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# _*_ coding: utf-8 _*_
 """ Test cubic spline construction
 
 :author: Shay Hill
@@ -10,7 +9,13 @@ from math import isclose
 import numpy as np
 import pytest
 
-from cubic_bezier_spline.construct_splines import get_approximating_spline, get_interpolating_spline
+from cubic_bezier_spline.construct_splines import (
+    get_open_approximating_spline,
+    get_closed_approximating_spline,
+    get_open_interpolating_spline,
+    get_closed_interpolating_spline,
+)
+
 from .conftest import random_bezier_points
 
 
@@ -18,9 +23,9 @@ class TestClosedControlPoints:
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(2, 10)))
     def test_approximating_open(self, points) -> None:
         """Returns same value for closed or open control points"""
-        open_pts = get_approximating_spline(points, False)
-        closed_pts = get_approximating_spline(
-            np.concatenate([points, points[:1]]), False
+        open_pts = get_open_approximating_spline(points)
+        closed_pts = get_open_approximating_spline(
+            np.concatenate([points, points[:1]])
         )
         np.testing.assert_allclose(open_pts, closed_pts)
 
@@ -28,7 +33,7 @@ class TestClosedControlPoints:
 class TestApproximatingOpen:
     def test_linear(self) -> None:
         """Produce one cubic curve from two points."""
-        spline = get_approximating_spline([[0, 0], [1, 1]], False)
+        spline = get_open_approximating_spline([[0, 0], [1, 1]])
         assert len(spline) == 1
         np.testing.assert_allclose(spline(0), [0, 0])
         np.testing.assert_allclose(spline(1), [1, 1])
@@ -36,7 +41,7 @@ class TestApproximatingOpen:
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(2, 10)))
     def test_continuity(self, points) -> None:
         """degree 0, 1, and 2 continuous at ends"""
-        spline = get_approximating_spline(points, False)
+        spline = get_open_approximating_spline(points)
         for i in range(1, len(spline) - 1):
             for j in range(3):
                 np.testing.assert_allclose(spline[i](1, j), spline[i + 1](0, j))
@@ -45,7 +50,7 @@ class TestApproximatingOpen:
 class TestApproximatingClosed:
     def test_linear(self) -> None:
         """Produce two cubic curves in a "loop" from two points."""
-        spline = get_approximating_spline([[0, 0], [1, 1]], close=True)
+        spline = get_closed_approximating_spline([[0, 0], [1, 1]])
         assert len(spline) == 2
         np.testing.assert_allclose(spline(0), [1 / 3, 1 / 3])
         np.testing.assert_allclose(spline(1), [2 / 3, 2 / 3])
@@ -54,7 +59,7 @@ class TestApproximatingClosed:
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
     def test_continuity(self, points) -> None:
         """degree 0, 1, and 2 continuous at ends"""
-        spline = get_approximating_spline(points, close=True)
+        spline = get_closed_approximating_spline(points)
         for i in range(0, len(spline)):
             for j in range(3):
                 np.testing.assert_allclose(
@@ -63,8 +68,8 @@ class TestApproximatingClosed:
 
     def test_symmetrical(self) -> None:
         """Closed square of control points creates symmetrical spline"""
-        spline = get_approximating_spline(
-            [[-1, -1], [1, -1], [1, 1], [-1, 1]], close=True
+        spline = get_closed_approximating_spline(
+            [[-1, -1], [1, -1], [1, 1], [-1, 1]]
         )
         for i in range(5):
             assert isclose(abs(spline(i)[0]), abs(spline(i)[1]))
@@ -73,7 +78,7 @@ class TestApproximatingClosed:
 class TestInterpolatingOpen:
     def test_linear(self) -> None:
         """Produce two cubic curves in a "loop" from two points."""
-        spline = get_interpolating_spline([[0, 0], [1, 1]], False)
+        spline = get_open_interpolating_spline([[0, 0], [1, 1]])
         assert len(spline) == 1
         np.testing.assert_allclose(spline(0), [0, 0])
         np.testing.assert_allclose(spline(1), [1, 1])
@@ -81,7 +86,7 @@ class TestInterpolatingOpen:
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
     def test_continuity(self, points) -> None:
         """degree 0, 1, and 2 continuous at ends"""
-        spline = get_interpolating_spline(points, False)
+        spline = get_open_interpolating_spline(points)
         for i in range(0, len(spline) - 1):
             for j in range(3):
                 np.testing.assert_allclose(
@@ -91,7 +96,7 @@ class TestInterpolatingOpen:
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
     def test_interpolation(self, points) -> None:
         """spline hits control points at knots"""
-        spline = get_interpolating_spline(points, False)
+        spline = get_open_interpolating_spline(points)
         for i in range(0, len(spline)):
             np.testing.assert_allclose(spline(i), points[i])
 
@@ -99,7 +104,7 @@ class TestInterpolatingOpen:
 class TestInterpolatingClosed:
     def test_linear(self) -> None:
         """Produce two cubic curves in a "loop" from two points."""
-        spline = get_interpolating_spline([[0, 0], [1, 1]], True)
+        spline = get_closed_interpolating_spline([[0, 0], [1, 1]])
         assert len(spline) == 2
         np.testing.assert_allclose(spline(0), [0, 0])
         np.testing.assert_allclose(spline(1), [1, 1])
@@ -108,7 +113,7 @@ class TestInterpolatingClosed:
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
     def test_continuity(self, points) -> None:
         """degree 0, 1, and 2 continuous at ends"""
-        spline = get_interpolating_spline(points, True)
+        spline = get_closed_interpolating_spline(points)
         for i in range(0, len(spline)):
             for j in range(3):
                 np.testing.assert_allclose(
@@ -118,12 +123,12 @@ class TestInterpolatingClosed:
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
     def test_interpolation(self, points) -> None:
         """degree 0, 1, and 2 continuous at ends"""
-        spline = get_interpolating_spline(points, True)
+        spline = get_closed_interpolating_spline(points)
         for i in range(0, len(spline)):
             np.testing.assert_allclose(spline(i), points[i])
 
     def test_symmetrical(self) -> None:
         """Closed square of control points creates symmetrical spline"""
-        spline = get_interpolating_spline([[-1, -1], [1, -1], [1, 1], [-1, 1]], True)
+        spline = get_closed_interpolating_spline([[-1, -1], [1, -1], [1, 1], [-1, 1]])
         for i in range(5):
             assert isclose(abs(spline(i)[0]), abs(spline(i)[1]))

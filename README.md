@@ -57,4 +57,3 @@ Most of the math can be found in:
 https://pomax.github.io/bezierinfo/
 * UCLS-Math-149-Mathematics-of-Computer-Graphics-lecture-notes<br/>
 https://www.stkent.com/assets/pdfs/UCLA-Math-149-Mathematics-of-Computer-Graphics-lecture-notes.pdf
-

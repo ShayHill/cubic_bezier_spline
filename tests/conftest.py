@@ -2,14 +2,14 @@ import os
 import random
 import sys
 from itertools import count
-from typing import Any, Iterator, Sequence, Tuple, Union, Annotated
+from typing import Annotated, Any, Iterator, Sequence, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
+
 from cubic_bezier_spline.bezier_curve import BezierCurve
 
 sys.path.append(os.path.join(__file__, "../.."))
-
 
 
 FArray = npt.NDArray[np.float_]
@@ -39,10 +39,11 @@ def random_bezier_points(
             ]
         )
 
+
 def random_bezier_curves(
-        degree_limits: Union[int, Tuple[int, int]] = (0, 10),
-        dimension_limits: Union[int, Tuple[int, int]] = (1, 10),
-        splines_limits: Union[int, Tuple[int, int]] = (1, 10)
+    degree_limits: Union[int, Tuple[int, int]] = (0, 10),
+    dimension_limits: Union[int, Tuple[int, int]] = (1, 10),
+    splines_limits: Union[int, Tuple[int, int]] = (1, 10),
 ) -> Iterator[Annotated[FArray, (-1, -1)]]:
     """
     A 3-D vector of spline curve points.
@@ -63,7 +64,16 @@ def random_bezier_curves(
         degree = random.randint(*degree_limits)
         dimensions = random.randint(*dimension_limits)
         splines = random.randint(*splines_limits)
-        yield np.array([[[random.random() * 100 for x in range(dimensions)] for y in range(degree+1)] for z in range(splines)])
+        yield np.array(
+            [
+                [
+                    [random.random() * 100 for x in range(dimensions)]
+                    for y in range(degree + 1)
+                ]
+                for z in range(splines)
+            ]
+        )
+
 
 def random_times() -> Iterator[float]:
     """
@@ -71,6 +81,7 @@ def random_times() -> Iterator[float]:
     :return:
     """
     return (random.random() for _ in count())
+
 
 def random_indices() -> Iterator[int]:
     """
@@ -95,8 +106,8 @@ def _cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
         (
             (1 - time) ** 3 * p0,
             3 * (1 - time) ** 2 * time * p1,
-            3 * (1 - time) * time ** 2 * p2,
-            time ** 3 * p3,
+            3 * (1 - time) * time**2 * p2,
+            time**3 * p3,
         )
     )
 
@@ -116,7 +127,7 @@ def _cbez_d1(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
         (
             3 * (1 - time) ** 2 * (p1 - p0),
             6 * (1 - time) * time * (p2 - p1),
-            3 * time ** 2 * (p3 - p2),
+            3 * time**2 * (p3 - p2),
         )
     )
 
@@ -132,9 +143,4 @@ def _cbez_d2(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     :param time: time value on curve, typically 0 to 1
     :return: second derivative of cubic Bezier curve at time
     """
-    return sum(
-        (
-            6 * (1 - time) * (p2 - 2 * p1 + p0),
-            6 * time * (p3 - 2 * p2 + p1),
-        )
-    )
+    return sum((6 * (1 - time) * (p2 - 2 * p1 + p0), 6 * time * (p3 - 2 * p2 + p1)))

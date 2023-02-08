@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-# _*_ coding: utf-8 _*_
-""" De Casteljau Bezier operations
+"""De Casteljau Bezier operations.
 
 :author: Shay Hill
 :created: 10/2/2020
@@ -8,47 +6,49 @@
 De Casteljau is Bezier at it's most basic. Here for testing / illustration.
 
 """
-from typing import Any, Iterator, List, Sequence, Tuple
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Iterator, Sequence
 
 import numpy as np
-import numpy.typing as npt
 
+from .control_point_casting import as_points_array
 from .matrices import binom
 
-FArray = npt.NDArray[np.float_]
+if TYPE_CHECKING:
+    from .type_hints import FArray, Points
 
 
-def get_bezier_basis(points: Sequence[Sequence[float]], time) -> FArray:
-    """
-    Bezier basis function for testing.
+def get_bezier_basis(points: Points, time: float) -> FArray:
+    """Bezier basis function for testing.
 
     :param points: Bezier control points (takes an iterable so a BezierCurve instance
     can be passed.
+        [ [x1, y1, z1], [x2, y2, z2], [x3, y3, z3], ...  ]
     :param time: time on Bezier spline
     :return: Bezier curve evaluated at time
+    :raises ValueError: if points is not a 2D array of floats
 
     Another straightforward way to calculate a point on a Bezier curve. For testing.
     """
-    points = np.asarray(points)
-    n = points.shape[0] - 1
-    result = np.zeros((points.shape[1],))
+    points_ = as_points_array(points)
+    n = points_.shape[0] - 1
+    result = np.zeros((points_.shape[1],))
     for i in range(n + 1):
-        result += binom(n, i) * time ** i * (1 - time) ** (n - i) * points[i]
-    # noinspection PyTypeChecker
+        point = points_[i]
+        result += binom(n, i) * time**i * (1 - time) ** (n - i) * point
     return result
 
 
-def iter_decasteljau_steps(
-    points: Sequence[Sequence[float]], time: float
-) -> Iterator[List[FArray]]:
-    """
-    Yield De Casteljau iterations.
+def iter_decasteljau_steps(points: Points, time: float) -> Iterator[list[FArray]]:
+    """Yield De Casteljau iterations.
 
     :param points: Bezier control points (takes an iterable so a BezierCurve instance
-    can be passed.
+        can be passed.
     :param time: time on Bezier spline
     :yield: each iteration (including the first, which will = the input points) of
-    the De Casteljau algorithm
+        the De Casteljau algorithm
+    :return: None
 
     This is the value of a Bezier spline at time. De Casteljau algorithm works by
     recursively averaging consecutive Bezier control points. Using floats as points,
@@ -60,18 +60,16 @@ def iter_decasteljau_steps(
 
     In this case, the function would yield [1, 5, 9] then [3, 8] then [5.5]
     """
-    points = [np.asarray(x) for x in points]
-    yield points
-    while len(points) > 1:
-        points = [x * (1 - time) + y * time for x, y in zip(points, points[1:])]
-        yield points
+    points_ = as_points_array(points)
+    points_list = [np.asarray(x).astype(np.float_) for x in points_]
+    yield points_list
+    while len(points_) > 1:
+        points_ = [x * (1 - time) + y * time for x, y in zip(points_, points_[1:])]
+        yield points_
 
 
-def get_decasteljau(
-    points: Sequence[Sequence[float]], time: float
-) -> FArray:
-    """
-    Value of a non-rational Bezier curve at time.
+def get_decasteljau(points: Points, time: float) -> FArray:
+    """Value of a non-rational Bezier curve at time.
 
     :param points: curve points
     :param time: time on curve
@@ -82,9 +80,8 @@ def get_decasteljau(
 
 def get_split_decasteljau(
     points: Sequence[Sequence[float]], time: float
-) -> Tuple[List[FArray], List[FArray]]:
-    """
-    Split bezier at time using De Casteljau's algorithm.
+) -> tuple[list[FArray], list[FArray]]:
+    """Split bezier at time using De Casteljau's algorithm.
 
     :param points: points in curve
     :param time: time at split

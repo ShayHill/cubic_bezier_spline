@@ -1,23 +1,25 @@
-#!/usr/bin/env python3
-# _*_ coding: utf-8 _*_
-""" Helper code: Create matrices for Bezier operations
+"""Helper code: Create matrices for Bezier operations.
 
 :author: Shay Hill
 :created: 10/2/2020
 """
+
+from __future__ import annotations
+
 from functools import lru_cache
-from typing import Any
+from typing import TYPE_CHECKING
 
-import numpy as np  # type: ignore
-import numpy.typing as npt # type: ignore
+import numpy as np
 
-FArray = npt.NDArray[np.float_]
+if TYPE_CHECKING:
+    import numpy.typing as npt
+
+    from .type_hints import FArray
 
 
-@lru_cache
-def binom(n, k):
-    """
-    n choose k
+@lru_cache(maxsize=128)
+def binom(n: int, k: int) -> int:
+    """Return n choose k.
 
     :param n: number of candidates
     :param k: number of candidates in selection
@@ -28,14 +30,13 @@ def binom(n, k):
     result = 1
     for i in range(1, k + 1):
         result *= n - (k - i)
-        result /= i
+        result //= i
     return result
 
 
 @lru_cache
 def get_pascals(num: int) -> FArray:
-    """
-    One line of Pascal's triangle.
+    """One line of Pascal's triangle.
 
     :param num: number of terms
     :return:
@@ -47,20 +48,29 @@ def get_pascals(num: int) -> FArray:
     """
     mid = sum(divmod(num, 2))
     left = [1] + [binom(num - 1, x) for x in range(1, mid)]
-    # noinspection PyTypeChecker
     return np.array(left + left[: num - mid][::-1], dtype=float)
+
+
+def _get_boolean_checkerboard(shape: tuple[int, int]) -> npt.NDArray[np.bool_]:
+    """Create a checkerboard of True/False values.
+
+    :param shape: (rows, cols)
+    :return: (rows, cols) array of True/False values
+    """
+    checkerboard = np.sum(np.indices(shape), axis=0) % 2 == 1  # type: ignore
+    return np.array(checkerboard).astype(np.bool_)
 
 
 @lru_cache
 def get_mix_matrix(num: int) -> FArray:
-    """
-    Matrix of binomial coefficients for Bezier calculation.
+    """Matrix of binomial coefficients for Bezier calculation.
 
     :param num: how many points in the Bezier curve
     :return: (num, num) matrix of binomial coefficients
     """
-    mix = [np.append(get_pascals(x), [0] * (num - x)) for x in range(1, num + 1)]
+    mix = np.zeros((num, num), dtype=float)
+    for i in range(1, num + 1):
+        mix[i - 1, :i] = get_pascals(i)
     mix = get_pascals(num).reshape([-1, 1]) * mix
-    check = np.sum(np.indices(mix.shape), axis=0) % 2 == 1
-    np.negative(mix, out=mix, where=check)
-    return mix
+    check = _get_boolean_checkerboard(mix.shape)
+    return np.negative(mix, out=mix, where=check)

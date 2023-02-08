@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# _*_ coding: utf-8 _*_
 """Test functions in ttf_extractor.curve_type.py
 
 :author: Shay Hill
@@ -18,13 +17,14 @@ from cubic_bezier_spline.other_solvers import (
     get_decasteljau,
     get_split_decasteljau,
 )
+
 from .conftest import (
     _cbez_d1,
     _cbez_d2,
+    random_bezier_curves,
     random_bezier_points,
-random_bezier_curves,
-    random_times,
     random_indices,
+    random_times,
 )
 
 
@@ -108,8 +108,8 @@ class TestSplit:
         aaa = get_split_decasteljau(points, time)
         curve = BezierCurve(points)
         bbb = curve.split(time)
-        np.testing.assert_allclose(aaa[0], bbb[0].points)
-        np.testing.assert_allclose(aaa[1], bbb[1].points)
+        np.testing.assert_allclose(aaa[0], bbb[0].control_points)
+        np.testing.assert_allclose(aaa[1], bbb[1].control_points)
 
     @pytest.mark.parametrize(
         "points,time", zip(random_bezier_points(degree_limits=(0, 5)), random_times())
@@ -120,7 +120,7 @@ class TestSplit:
         """
         curve = BezierCurve(points)
         beg, end = curve.split(time)
-        np.testing.assert_array_equal(beg.points[-1], end.points[0])
+        np.testing.assert_array_equal(beg.control_points[-1], end.control_points[0])
 
 
 class TestElevated:

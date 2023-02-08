@@ -3,6 +3,8 @@ ci:
   autofix_commit_msg: 'style: pre-commit fixes'
   autoupdate_commit_msg: 'chore: update pre-commit hooks'
 
+exclude: tests|resources
+
 repos:
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -49,7 +51,7 @@ repos:
     types: [python]
     require_serial: true
     verbose: true
-    additional_dependencies: ['types-requests']
+    # additional_dependencies: ['types-requests', ']
     # exclude: "tests"
     # args:
     # - --ignore-missing-imports
@@ -92,7 +94,7 @@ repos:
     exclude: "tests"
     name: pylint
     args:
-    - --good-names=i,j,_,f
+    - --good-names=i,j,_,f,x,y,n,nn,ps,k
     - --disable=protected-access
     - --disable=no-member
     - --disable=import-error

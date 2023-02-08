@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# _*_ coding: utf-8 _*_
 """Test methods in BezierSpline class
 
 :author: Shay Hill
@@ -7,14 +6,14 @@
 """
 
 import random
+from itertools import count
 
 import numpy as np
 import pytest
 
 from cubic_bezier_spline.bezier_spline import BezierSpline, TimeIntervalError
 
-from itertools import count
-from .conftest import random_bezier_points, random_times, random_bezier_curves
+from .conftest import random_bezier_curves, random_bezier_points, random_times
 
 SHORT_SPLINE = BezierSpline([[[0], [1]], [[1], [2]]])
 
@@ -59,16 +58,12 @@ class TestBezierSpline:
             spline(time), spline._curves[int(time)](time - int(time))
         )
 
-    @pytest.mark.parametrize(
-        "points", random_bezier_curves()
-    )
+    @pytest.mark.parametrize("points", random_bezier_curves())
     def test_bottom(self, points):
         """Return spline value at bottom of time interval"""
         np.testing.assert_allclose(BezierSpline(points)(0), points[0][0])
 
-    @pytest.mark.parametrize(
-        "points", random_bezier_curves()
-    )
+    @pytest.mark.parametrize("points", random_bezier_curves())
     def test_top(self, points):
         """Return spline value at top of time interval"""
         np.testing.assert_allclose(BezierSpline(points)(len(points)), points[-1][-1])
