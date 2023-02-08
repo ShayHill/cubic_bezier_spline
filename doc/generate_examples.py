@@ -117,3 +117,7 @@ def draw_examples():
                 new_sub_element(group, "path", d=c_to_d, **cp_stroke)
 
             write_svg("test_knot_examples.svg", svg)
+
+if __name__ == "__main__":
+    draw_examples()
+
