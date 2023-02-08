@@ -4,6 +4,10 @@ This package exists mostly to create C2-continuous, non-rational cubic Bezier sp
 
 Should be relatively fast, but this isn't suited for heavy math. This is for taking some points you have and making a nice-looking curve out of them. Specifically, a cubic Bezier spline, which is made from the type of curves used in SVG, fonts, and other vector-base programs. I am only interested in feature requests that directly apply to that purpose. This is not an exercise in completism.
 
+### install
+
+    pip install cubic_bezier_spline
+
 ### this package will
 
 * Evaluate, differentiate, elevate, and split non-rational Bezier curves of any degree
