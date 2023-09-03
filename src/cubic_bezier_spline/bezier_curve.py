@@ -193,7 +193,7 @@ class BezierCurve:
         ).elevated(to_degree)
 
     def derivative(self, derivative: int) -> BezierCurve:
-        """nth derivative of a Bezier curve.
+        """Nth derivative of a Bezier curve.
 
         :param derivative: 0 -> the curve itself, 1 -> 1st, 2 -> 2nd, etc.
         :return: points to calculate nth derivative.
