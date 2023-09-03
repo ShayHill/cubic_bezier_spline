@@ -52,7 +52,11 @@ Any of these will return a BezierSpline object. This object has a some of the us
 
 Some of these use double and triple repeated points to create "knots". This isn't a special function, just a feature of Bezier math. The idea is clearer with a picture.
 
-![spline types](doc/knot_examples.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="doc/test_knot_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="doc/test_knot_light.png">
+  <img alt="knot examples" src="doc/test_knot_dark.png">
+</picture>
 
 ### Most of the math can be found in:
 

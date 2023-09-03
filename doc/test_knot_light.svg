@@ -1,0 +1,698 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="-0.38 -0.78 4.56 7.56" width="1200" height="1989.473684">
+  <g transform="translate(0.0, 0.0)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">single control points, open approx spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (1, 0), (1, 1), (0, 1)]</text>
+    <path d="M 0.000000,0.000000 C 0.333333,0.000000 0.666667,0.000000 0.833333,0.166667 C 1.000000,0.333333 1.000000,0.666667 0.833333,0.833333 C 0.666667,1.000000 0.333333,1.000000 0.000000,1.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.3333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.6666666666666666 0.0 L 0.8333333333333333 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 0.16666666666666666 L 1.0 0.3333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.6666666666666666 L 0.8333333333333333 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 0.8333333333333333 L 0.6666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.3333333333333333 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(0.0, 1.7999999999999998)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">single control points, closed approx spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (1, 0), (1, 1), (0, 1)]</text>
+    <path d="M 0.166667,0.166667 C 0.333333,0.000000 0.666667,0.000000 0.833333,0.166667 C 1.000000,0.333333 1.000000,0.666667 0.833333,0.833333 C 0.666667,1.000000 0.333333,1.000000 0.166667,0.833333 C 0.000000,0.666667 0.000000,0.333333 0.166667,0.166667" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0.166667" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 0.16666666666666666 L 0.3333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.6666666666666666 0.0 L 0.8333333333333333 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 0.16666666666666666 L 1.0 0.3333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.6666666666666666 L 0.8333333333333333 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 0.8333333333333333 L 0.6666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.3333333333333333 1.0 L 0.16666666666666666 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 0.8333333333333333 L 0.0 0.6666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.3333333333333333 L 0.16666666666666666 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(0.0, 3.5999999999999996)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">single control points, open interp spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (1, 0), (1, 1), (0, 1)]</text>
+    <path d="M 0.000000,0.000000 C 0.400000,-0.111111 0.800000,-0.222222 1.000000,0.000000 C 1.200000,0.222222 1.200000,0.777778 1.000000,1.000000 C 0.800000,1.222222 0.400000,1.111111 0.000000,1.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.4" cy="-0.111111" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.8" cy="-0.222222" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.4000000000000001 -0.1111111111111111" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.8000000000000002 -0.2222222222222222 L 1.0000000000000002 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.2" cy="0.222222" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.2" cy="0.777778" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0000000000000002 0.0 L 1.2000000000000002 0.2222222222222222" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.2 0.7777777777777777 L 1.0 0.9999999999999999" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.8" cy="1.222222" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.4" cy="1.111111" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.9999999999999999 L 0.7999999999999999 1.222222222222222" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.39999999999999997 1.111111111111111 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(0.0, 5.3999999999999995)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">single control points, closed interp spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (1, 0), (1, 1), (0, 1)]</text>
+    <path d="M -0.000000,0.000000 C 0.250000,-0.250000 0.750000,-0.250000 1.000000,0.000000 C 1.250000,0.250000 1.250000,0.750000 1.000000,1.000000 C 0.750000,1.250000 0.250000,1.250000 0.000000,1.000000 C -0.250000,0.750000 -0.250000,0.250000 -0.000000,0.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="-0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.25" cy="-0.25" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.75" cy="-0.25" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M -2.7755575615628914e-17 6.938893903907228e-17 L 0.25 -0.24999999999999992" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.7500000000000001 -0.24999999999999992 L 1.0000000000000002 6.938893903907228e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.25" cy="0.25" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.25" cy="0.75" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0000000000000002 6.938893903907228e-17 L 1.2500000000000002 0.25000000000000006" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.25 0.75 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.75" cy="1.25" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.25" cy="1.25" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 0.75 1.25" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.25000000000000006 1.25 L 2.7755575615628914e-17 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.25" cy="0.75" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.25" cy="0.25" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 2.7755575615628914e-17 1.0 L -0.25 0.75" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.25000000000000006 0.25000000000000006 L -2.7755575615628914e-17 6.938893903907228e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(1.4, 0.0)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">double control points, open approx spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (0, 0), (1, 0), (1, 0), (1, 1), (1, 1), (0, 1), (0, 1)]</text>
+    <path d="M 0.000000,0.000000 C 0.000000,0.000000 0.000000,0.000000 0.166667,0.000000 C 0.333333,0.000000 0.666667,0.000000 0.833333,0.000000 C 1.000000,0.000000 1.000000,0.000000 1.000000,0.166667 C 1.000000,0.333333 1.000000,0.666667 1.000000,0.833333 C 1.000000,1.000000 1.000000,1.000000 0.833333,1.000000 C 0.666667,1.000000 0.333333,1.000000 0.166667,1.000000 C 0.000000,1.000000 0.000000,1.000000 0.000000,1.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.16666666666666666 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 0.0 L 0.3333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.6666666666666666 0.0 L 0.8333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 0.0 L 1.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.0 L 1.0 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.16666666666666666 L 1.0 0.3333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.6666666666666666 L 1.0 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.8333333333333333 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 0.8333333333333333 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 1.0 L 0.6666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.3333333333333333 1.0 L 0.16666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(1.4, 1.7999999999999998)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">double control points, closed approx spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (0, 0), (1, 0), (1, 0), (1, 1), (1, 1), (0, 1), (0, 1)]</text>
+    <path d="M 0.000000,0.166667 C 0.000000,0.000000 0.000000,0.000000 0.166667,0.000000 C 0.333333,0.000000 0.666667,0.000000 0.833333,0.000000 C 1.000000,0.000000 1.000000,0.000000 1.000000,0.166667 C 1.000000,0.333333 1.000000,0.666667 1.000000,0.833333 C 1.000000,1.000000 1.000000,1.000000 0.833333,1.000000 C 0.666667,1.000000 0.333333,1.000000 0.166667,1.000000 C 0.000000,1.000000 0.000000,1.000000 0.000000,0.833333 C 0.000000,0.666667 0.000000,0.333333 0.000000,0.166667" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.16666666666666666 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.16666666666666666 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 0.0 L 0.3333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.6666666666666666 0.0 L 0.8333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 0.0 L 1.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.0 L 1.0 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.16666666666666666 L 1.0 0.3333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.6666666666666666 L 1.0 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.8333333333333333 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 0.8333333333333333 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 1.0 L 0.6666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.3333333333333333 1.0 L 0.16666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.0 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.8333333333333333 L 0.0 0.6666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.3333333333333333 L 0.0 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(1.4, 3.5999999999999996)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">double control points, open interp spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (0, 0), (1, 0), (1, 0), (1, 1), (1, 1), (0, 1), (0, 1)]</text>
+    <path d="M 0.000000,0.000000 C -0.112676,-0.008130 -0.225352,-0.016260 0.000000,0.000000 C 0.225352,0.016260 0.788732,0.056911 1.000000,-0.000000 C 1.211268,-0.056911 1.070423,-0.211382 1.000000,0.000000 C 0.929577,0.211382 0.929577,0.788618 1.000000,1.000000 C 1.070423,1.211382 1.211268,1.056911 1.000000,1.000000 C 0.788732,0.943089 0.225352,0.983740 0.000000,1.000000 C -0.225352,1.016260 -0.112676,1.008130 0.000000,1.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.112676" cy="-0.00813" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.225352" cy="-0.01626" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L -0.11267605633802819 -0.008130081300813006" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.22535211267605637 -0.01626016260162601 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.225352" cy="0.01626" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.788732" cy="0.056911" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.22535211267605637 0.01626016260162601" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.7887323943661974 0.05691056910569104 L 1.0000000000000002 -1.3877787807814457e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.211268" cy="-0.056911" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.070423" cy="-0.211382" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0000000000000002 -1.3877787807814457e-17 L 1.211267605633803 -0.05691056910569107" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0704225352112677 -0.21138211382113822 L 1.0 1.3877787807814457e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.929577" cy="0.211382" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.929577" cy="0.788618" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 1.3877787807814457e-17 L 0.9295774647887325 0.21138211382113825" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.9295774647887325 0.7886178861788619 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.070423" cy="1.211382" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.211268" cy="1.056911" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 1.0704225352112677 1.2113821138211383" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.2112676056338028 1.056910569105691 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.788732" cy="0.943089" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.225352" cy="0.98374" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 0.7887323943661971 0.9430894308943089" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.22535211267605634 0.983739837398374 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.225352" cy="1.01626" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.112676" cy="1.00813" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 1.0 L -0.22535211267605634 1.016260162601626" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.11267605633802817 1.008130081300813 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(1.4, 5.3999999999999995)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">double control points, closed interp spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (0, 0), (1, 0), (1, 0), (1, 1), (1, 1), (0, 1), (0, 1)]</text>
+    <path d="M -0.000000,0.000000 C -0.071429,-0.214286 -0.214286,-0.071429 -0.000000,-0.000000 C 0.214286,0.071429 0.785714,0.071429 1.000000,-0.000000 C 1.214286,-0.071429 1.071429,-0.214286 1.000000,-0.000000 C 0.928571,0.214286 0.928571,0.785714 1.000000,1.000000 C 1.071429,1.214286 1.214286,1.071429 1.000000,1.000000 C 0.785714,0.928571 0.214286,0.928571 0.000000,1.000000 C -0.214286,1.071429 -0.071429,1.214286 0.000000,1.000000 C 0.071429,0.785714 0.071429,0.214286 -0.000000,0.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="-0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.071429" cy="-0.214286" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.214286" cy="-0.071429" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M -1.3877787807814457e-17 0.0 L -0.07142857142857144 -0.21428571428571427" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.21428571428571427 -0.07142857142857142 L -4.163336342344337e-17 -6.938893903907228e-18" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="-0" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.214286" cy="0.071429" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.785714" cy="0.071429" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M -4.163336342344337e-17 -6.938893903907228e-18 L 0.2142857142857142 0.07142857142857141" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.7857142857142855 0.0714285714285714 L 0.9999999999999998 -2.0816681711721685e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.214286" cy="-0.071429" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.071429" cy="-0.214286" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999998 -2.0816681711721685e-17 L 1.214285714285714 -0.07142857142857144" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0714285714285712 -0.21428571428571427 L 0.9999999999999998 -4.163336342344337e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.928571" cy="0.214286" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.928571" cy="0.785714" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999998 -4.163336342344337e-17 L 0.9285714285714285 0.2142857142857142" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.9285714285714285 0.7857142857142855 L 1.0 0.9999999999999998" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.071429" cy="1.214286" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.214286" cy="1.071429" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.9999999999999998 L 1.0714285714285714 1.214285714285714" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.2142857142857142 1.0714285714285712 L 0.9999999999999999 0.9999999999999998" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.785714" cy="0.928571" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.214286" cy="0.928571" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999999 0.9999999999999998 L 0.7857142857142856 0.9285714285714284" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.21428571428571427 0.9285714285714284 L 0.0 0.9999999999999998" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.214286" cy="1.071429" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.071429" cy="1.214286" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.9999999999999998 L -0.21428571428571427 1.0714285714285712" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.07142857142857141 1.2142857142857142 L 0.0 0.9999999999999999" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.071429" cy="0.785714" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.071429" cy="0.214286" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.9999999999999999 L 0.07142857142857141 0.7857142857142856" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.07142857142857141 0.21428571428571427 L -1.3877787807814457e-17 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(2.8, 0.0)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">triple control points, open approx spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (1, 1), (1, 1), ...]</text>
+    <path d="M 0.000000,0.000000 C 0.000000,0.000000 0.000000,0.000000 0.000000,0.000000 C 0.000000,0.000000 0.000000,0.000000 0.166667,0.000000 C 0.333333,0.000000 0.666667,0.000000 0.833333,0.000000 C 1.000000,0.000000 1.000000,0.000000 1.000000,0.000000 C 1.000000,0.000000 1.000000,0.000000 1.000000,0.166667 C 1.000000,0.333333 1.000000,0.666667 1.000000,0.833333 C 1.000000,1.000000 1.000000,1.000000 1.000000,1.000000 C 1.000000,1.000000 1.000000,1.000000 0.833333,1.000000 C 0.666667,1.000000 0.333333,1.000000 0.166667,1.000000 C 0.000000,1.000000 0.000000,1.000000 0.000000,1.000000 C 0.000000,1.000000 0.000000,1.000000 0.000000,1.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.16666666666666666 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 0.0 L 0.3333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.6666666666666666 0.0 L 0.8333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 0.0 L 1.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.0 L 1.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.0 L 1.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.0 L 1.0 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.16666666666666666 L 1.0 0.3333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.6666666666666666 L 1.0 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.8333333333333333 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 0.8333333333333333 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 1.0 L 0.6666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.3333333333333333 1.0 L 0.16666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(2.8, 1.7999999999999998)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">triple control points, closed approx spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (1, 1), (1, 1), ...]</text>
+    <path d="M 0.000000,0.166667 C 0.000000,0.000000 0.000000,0.000000 0.000000,0.000000 C 0.000000,0.000000 0.000000,0.000000 0.166667,0.000000 C 0.333333,0.000000 0.666667,0.000000 0.833333,0.000000 C 1.000000,0.000000 1.000000,0.000000 1.000000,0.000000 C 1.000000,0.000000 1.000000,0.000000 1.000000,0.166667 C 1.000000,0.333333 1.000000,0.666667 1.000000,0.833333 C 1.000000,1.000000 1.000000,1.000000 1.000000,1.000000 C 1.000000,1.000000 1.000000,1.000000 0.833333,1.000000 C 0.666667,1.000000 0.333333,1.000000 0.166667,1.000000 C 0.000000,1.000000 0.000000,1.000000 0.000000,1.000000 C 0.000000,1.000000 0.000000,1.000000 0.000000,0.833333 C 0.000000,0.666667 0.000000,0.333333 0.000000,0.166667" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.16666666666666666 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.16666666666666666 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 0.0 L 0.3333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.6666666666666666 0.0 L 0.8333333333333333 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 0.0 L 1.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.0 L 1.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.0 L 1.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.0 L 1.0 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.16666666666666666 L 1.0 0.3333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 0.6666666666666666 L 1.0 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.8333333333333333 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.833333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 1.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0 1.0 L 0.8333333333333333 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.833333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.666667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.333333" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.166667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.8333333333333333 1.0 L 0.6666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.3333333333333333 1.0 L 0.16666666666666666 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0.166667" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.16666666666666666 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.0 0.8333333333333333" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="0.833333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.666667" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.333333" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0.166667" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.8333333333333333 L 0.0 0.6666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.0 0.3333333333333333 L 0.0 0.16666666666666666" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(2.8, 3.5999999999999996)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">triple control points, open interp spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (1, 1), (1, 1), ...]</text>
+    <path d="M 0.000000,0.000000 C 0.030334,-0.000584 0.060667,-0.001168 0.000000,0.000000 C -0.060667,0.001168 -0.212336,0.004086 0.000000,0.000000 C 0.212336,-0.004086 0.788675,-0.015178 1.000000,-0.000000 C 1.211325,0.015178 1.057634,0.056626 1.000000,0.000000 C 0.942366,-0.056626 0.980789,-0.211325 1.000000,-0.000000 C 1.019211,0.211325 1.019211,0.788675 1.000000,1.000000 C 0.980789,1.211325 0.942366,1.056626 1.000000,1.000000 C 1.057634,0.943374 1.211325,0.984822 1.000000,1.000000 C 0.788675,1.015178 0.212336,1.004086 0.000000,1.000000 C -0.212336,0.995914 -0.060667,0.998832 0.000000,1.000000 C 0.060667,1.001168 0.030334,1.000584 0.000000,1.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.030334" cy="-0.000584" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.060667" cy="-0.001168" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L 0.030333670374115263 -0.0005837711617046119" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.060667340748230526 -0.0011675423234092238 L 0.0 0.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.060667" cy="0.001168" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.212336" cy="0.004086" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 0.0 L -0.060667340748230526 0.0011675423234092238" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.21233569261880683 0.0040863981319322834 L 4.163336342344337e-17 8.673617379884035e-19" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.212336" cy="-0.004086" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.788675" cy="-0.015178" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 4.163336342344337e-17 8.673617379884035e-19 L 0.21233569261880691 -0.004086398131932282" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.788675429726997 -0.015178050204319907 L 1.0 -2.6020852139652106e-18" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.211325" cy="0.015178" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.057634" cy="0.056626" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 -2.6020852139652106e-18 L 1.211324570273003 0.015178050204319901" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.057633973710819 0.05662580268534734 L 0.9999999999999999 3.469446951953614e-18" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.942366" cy="-0.056626" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.980789" cy="-0.211325" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999999 3.469446951953614e-18 L 0.9423660262891809 -0.05662580268534733" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.9807886754297269 -0.21132516053706943 L 1.0 -2.7755575615628914e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.019211" cy="0.211325" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.019211" cy="0.788675" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 -2.7755575615628914e-17 L 1.019211324570273 0.21132516053706937" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.019211324570273 0.7886748394629303 L 1.0 0.9999999999999998" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.980789" cy="1.211325" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.942366" cy="1.056626" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 0.9999999999999998 L 0.9807886754297269 1.2113251605370692" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.9423660262891809 1.056625802685347 L 0.9999999999999999 0.9999999999999998" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.057634" cy="0.943374" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.211325" cy="0.984822" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999999 0.9999999999999998 L 1.057633973710819 0.9433741973146526" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.2113245702730029 0.98482194979568 L 0.9999999999999998 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.788675" cy="1.015178" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.212336" cy="1.004086" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999998 1.0 L 0.7886754297269968 1.01517805020432" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.21233569261880683 1.0040863981319326 L 0.0 1.0000000000000002" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.212336" cy="0.995914" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.060667" cy="0.998832" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 1.0000000000000002 L -0.21233569261880683 0.9959136018680678" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.060667340748230526 0.9988324576765907 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.060667" cy="1.001168" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.030334" cy="1.000584" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 1.0 L 0.060667340748230526 1.0011675423234092" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.030333670374115263 1.0005837711617047 L 0.0 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+  <g transform="translate(2.8, 5.3999999999999995)">
+    <text x="0" y="-0.32" font-size="0.05" fill="#000000">triple control points, closed interp spline</text>
+    <text x="0" y="-0.24" font-size="0.03" fill="#000000">[(0, 0), (0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (1, 1), (1, 1), ...]</text>
+    <path d="M 0.000000,0.000000 C 0.019231,-0.211538 0.057692,-0.057692 -0.000000,0.000000 C -0.057692,0.057692 -0.211538,0.019231 -0.000000,-0.000000 C 0.211538,-0.019231 0.788462,-0.019231 1.000000,0.000000 C 1.211538,0.019231 1.057692,0.057692 1.000000,0.000000 C 0.942308,-0.057692 0.980769,-0.211538 1.000000,-0.000000 C 1.019231,0.211538 1.019231,0.788462 1.000000,1.000000 C 0.980769,1.211538 0.942308,1.057692 1.000000,1.000000 C 1.057692,0.942308 1.211538,0.980769 1.000000,1.000000 C 0.788462,1.019231 0.211538,1.019231 0.000000,1.000000 C -0.211538,0.980769 -0.057692,0.942308 0.000000,1.000000 C 0.057692,1.057692 0.019231,1.211538 0.000000,1.000000 C -0.019231,0.788462 -0.019231,0.211538 0.000000,0.000000" stroke-width="0.01" stroke="#444444" fill="none"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.03" fill="red" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.019231" cy="-0.211538" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.057692" cy="-0.057692" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.0 5.551115123125783e-17 L 0.019230769230769235 -0.21153846153846148" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.05769230769230771 -0.057692307692307675 L -3.469446951953614e-18 6.938893903907228e-18" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="-0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.057692" cy="0.057692" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.211538" cy="0.019231" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M -3.469446951953614e-18 6.938893903907228e-18 L -0.057692307692307716 0.05769230769230769" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.21153846153846165 0.01923076923076923 L -9.71445146547012e-17 -1.734723475976807e-18" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="-0" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.211538" cy="-0.019231" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.788462" cy="-0.019231" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M -9.71445146547012e-17 -1.734723475976807e-18 L 0.21153846153846145 -0.019230769230769232" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.7884615384615384 -0.019230769230769232 L 1.0 1.734723475976807e-18" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.211538" cy="0.019231" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.057692" cy="0.057692" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 1.734723475976807e-18 L 1.2115384615384615 0.019230769230769235" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.0576923076923075 0.0576923076923077 L 0.9999999999999998 6.938893903907228e-18" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.942308" cy="-0.057692" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.980769" cy="-0.211538" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999998 6.938893903907228e-18 L 0.9423076923076922 -0.05769230769230769" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.9807692307692307 -0.21153846153846156 L 1.0 -9.71445146547012e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="-0" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.019231" cy="0.211538" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.019231" cy="0.788462" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 1.0 -9.71445146547012e-17 L 1.0192307692307692 0.21153846153846137" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.019230769230769 0.7884615384615382 L 0.9999999999999998 0.9999999999999996" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.980769" cy="1.211538" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.942308" cy="1.057692" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999998 0.9999999999999996 L 0.9807692307692305 1.211538461538461" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.9423076923076921 1.0576923076923073 L 0.9999999999999998 0.9999999999999997" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.057692" cy="0.942308" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1.211538" cy="0.980769" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999998 0.9999999999999997 L 1.0576923076923075 0.9423076923076921" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 1.2115384615384615 0.9807692307692305 L 0.9999999999999999 0.9999999999999998" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="1" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.788462" cy="1.019231" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.211538" cy="1.019231" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 0.9999999999999999 0.9999999999999998 L 0.7884615384615383 1.0192307692307692" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.21153846153846154 1.019230769230769 L 2.7755575615628914e-17 0.9999999999999998" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.211538" cy="0.980769" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.057692" cy="0.942308" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 2.7755575615628914e-17 0.9999999999999998 L -0.21153846153846148 0.9807692307692305" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.057692307692307675 0.9423076923076921 L 6.938893903907228e-18 0.9999999999999998" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.057692" cy="1.057692" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0.019231" cy="1.211538" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 6.938893903907228e-18 0.9999999999999998 L 0.05769230769230769 1.0576923076923075" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M 0.019230769230769235 1.2115384615384615 L 3.469446951953614e-18 1.0" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <circle cx="0" cy="1" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.019231" cy="0.788462" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="-0.019231" cy="0.211538" r="0.02" fill="blue" opacity="0.5"/>
+    <circle cx="0" cy="0" r="0.02" fill="blue" opacity="0.5"/>
+    <path d="M 3.469446951953614e-18 1.0 L -0.01923076923076923 0.7884615384615384" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+    <path d="M -0.019230769230769235 0.2115384615384616 L 0.0 5.551115123125783e-17" stroke-width="0.01" stroke="blue" fill="none" stroke-dasharray="0.01, 0.01" opacity="0.5"/>
+  </g>
+</svg>
