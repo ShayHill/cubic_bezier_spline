@@ -1,41 +1,34 @@
-[tool.poetry]
-name = "cubic-bezier-spline"
+[project]
+name = "cubic_bezier_spline"
 version = "0.3.1"
-description = "Create C2-continuous, non-rational cubic Bézier splines. In other words, this will approximate or interpolate a sequence of points into a sequence of non-rational cubic Bézier curves."
-authors = ["Shay Hill <shay_public@hotmail.com>"]
-license = "MIT"
+description = "Approximate or interpolate a sequence of points into a sequence of c2-continuous, non-rational cubic Bézier curves."
+authors = [{ name = "Shay Hill", email = "shay_public@hotmail.com" }]
+license = {text = "MIT"}
 readme = "README.md"
-packages = [{include = "cubic_bezier_spline"}]
+requires-python = ">=3.9"
+dependencies = ["numpy", "paragraphs"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-numpy = "^1.24.2"
-paragraphs = "^0.2.0"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.2.1"
-commitizen = "^2.40.0"
-pre-commit = "^3.0.4"
-tox-poetry-installer = {extras = ["poetry"], version = "^0.10.0"}
+[project.optional-dependencies]
+dev = ["pytest", "pre-commit", "commitizen", "tox"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
 version = "0.3.1"
 tag_format = "$version"
+major-version-zero = true
 version_files = [
     "pyproject.toml:^version"
 ]
-
 
 [tool.pyright]
 include = ["src"]
 exclude = ["**/__pycache__.py"]
 
-pythonVersion = "3.10"
+pythonVersion = "3.9"
 pythonPlatform = "Any"
 
 typeCheckingMode = "strict"
@@ -48,5 +41,5 @@ reportUninitializedInstanceVariable = true
 reportUnnecessaryTypeIgnoreComment = true
 reportUnusedCallResult = true
 
-venvPath = "C:\\Users\\shaya\\AppData\\Local\\pypoetry\\Cache\\virtualenvs"
-venv = "C:\\Users\\shaya\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\cubic-bezier-spline-fPljVoIU-py3.11"
+venvPath = "."
+venv = "./venv"
