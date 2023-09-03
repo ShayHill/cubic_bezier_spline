@@ -12,6 +12,7 @@ from svg_ultralight import (
     new_sub_element,
     new_svg_root,
     write_svg,
+    write_png_from_svg,
 )
 
 from cubic_bezier_spline import (
@@ -20,6 +21,12 @@ from cubic_bezier_spline import (
     new_open_approximating_spline,
     new_open_interpolating_spline,
 )
+
+from pathlib import Path
+
+_THIS_DIR = Path(__file__).parent
+_INKSCAPE = Path(r"C:\Program Files\Inkscape\bin\inkscape")
+
 
 pts = [(0, 0), (1, 0), (1, 1), (0, 1)]
 dbl_pts = sum([[p, p] for p in pts], [])
@@ -39,7 +46,7 @@ cpt_labels = ["single", "double", "triple"]
 spl_labels = ["open approx", "closed approx", "open interp", "closed interp"]
 
 
-def draw_examples():
+def draw_examples(infix: str):
     width_per = 1
     height_per = 1.4
     head_room = height_per - width_per
@@ -47,7 +54,9 @@ def draw_examples():
     pad = 0.4
     full_width = width_per * 3 + pad * 2
     full_height = height_per * 4 + pad * 2 + head_room
-    svg = new_svg_root(0, -head_room, full_width, full_height, dpu_=300, pad_=pad)
+    svg = new_svg_root(
+        0, -head_room, full_width, full_height, print_width_=1000, pad_=pad * 250
+    )
     for i, cptp in enumerate((pts, dbl_pts, tri_pts)):
         oa = new_open_approximating_spline(cptp)
         ca = new_closed_approximating_spline(cptp)
@@ -66,6 +75,11 @@ def draw_examples():
             group = new_sub_element(
                 svg, "g", transform=f"translate({x_trans}, {y_trans})"
             )
+            if infix == "light":
+                text_fill = "#000000"
+            else:
+                text_fill = "#ffffff"
+
             # add text label
             new_sub_element(
                 group,
@@ -74,6 +88,7 @@ def draw_examples():
                 y=-head_room + line_height,
                 text=heading,
                 font_size=0.05,
+                fill=text_fill,
             )
             new_sub_element(
                 group,
@@ -82,6 +97,7 @@ def draw_examples():
                 y=-head_room + line_height * 2,
                 text=label,
                 font_size=0.03,
+                fill=text_fill,
             )
 
             group.append(
@@ -116,8 +132,11 @@ def draw_examples():
                 new_sub_element(group, "path", d=a_to_b, **cp_stroke)
                 new_sub_element(group, "path", d=c_to_d, **cp_stroke)
 
-            write_svg("test_knot_examples.svg", svg)
+            svg_filename = _THIS_DIR / f"test_knot_{infix}.svg"
+            write_svg(svg_filename, svg)
+            write_png_from_svg(_INKSCAPE, svg_filename)
+
 
 if __name__ == "__main__":
-    draw_examples()
-
+    draw_examples("light")
+    draw_examples("dark")
