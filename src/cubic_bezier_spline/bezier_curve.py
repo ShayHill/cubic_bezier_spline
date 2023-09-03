@@ -108,7 +108,7 @@ class BezierCurve:
         """
         return np.array([time**x for x in range(self.degree + 1)])
 
-    def _get_zmat(self, time: float) -> Annotated[FArray, "(p, p)"]:
+    def get_zmat(self, time: float) -> Annotated[FArray, "(p, p)"]:
         """Get a 2D zero matrix with tmat on the diagonal.
 
         :param time: time on curve (typically 0 - 1)
@@ -123,7 +123,7 @@ class BezierCurve:
         return np.diagflat(self._get_tmat(time))
 
     @cached_property
-    def _mmat(self) -> Annotated[FArray, "(p, p)"]:
+    def mmat(self) -> Annotated[FArray, "(p, p)"]:
         """Get the mix matrix for this curve.
 
         :return: mix matrix for this curve
@@ -138,7 +138,7 @@ class BezierCurve:
 
         Scale this by time matrix to evaluate curve at time.
         """
-        return self._mmat @ self.as_array
+        return self.mmat @ self.as_array
 
     def split(self: _BezierCurveT, *time_args: float) -> list[_BezierCurveT]:
         """Split a BezierCurve into two Bezier curves of the same degree.
@@ -152,9 +152,9 @@ class BezierCurve:
         for time in time_args:
             time_prime = _interp_floats(time_at, 1, time)
             qmat = (
-                np.linalg.inv(curves[-1]._mmat)
-                @ curves[-1]._get_zmat(time_prime)
-                @ curves[-1]._mmat
+                np.linalg.inv(curves[-1].mmat)
+                @ curves[-1].get_zmat(time_prime)
+                @ curves[-1].mmat
             )
 
             qmat_prime = np.zeros_like(qmat)

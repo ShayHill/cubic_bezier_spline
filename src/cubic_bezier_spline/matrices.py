@@ -57,7 +57,7 @@ def _get_boolean_checkerboard(shape: tuple[int, int]) -> npt.NDArray[np.bool_]:
     :param shape: (rows, cols)
     :return: (rows, cols) array of True/False values
     """
-    checkerboard = np.sum(np.indices(shape), axis=0) % 2 == 1  # type: ignore
+    checkerboard = np.sum(np.indices(shape), axis=0) % 2 == 1
     return np.array(checkerboard).astype(np.bool_)
 
 
@@ -72,5 +72,6 @@ def get_mix_matrix(num: int) -> FArray:
     for i in range(1, num + 1):
         mix[i - 1, :i] = get_pascals(i)
     mix = get_pascals(num).reshape([-1, 1]) * mix
-    check = _get_boolean_checkerboard(mix.shape)
+    rows, cols = mix.shape
+    check = _get_boolean_checkerboard((rows, cols))
     return np.negative(mix, out=mix, where=check)
