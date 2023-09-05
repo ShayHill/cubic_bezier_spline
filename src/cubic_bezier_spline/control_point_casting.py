@@ -11,7 +11,14 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
-    from .type_hints import APoints, Points, TPoints
+    from collections.abc import Sequence
+    from typing import Annotated, Union
+
+    import numpy.typing as npt
+
+    Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
+    APoints = Annotated[npt.NDArray[np.float_], "(-1, -1)"]
+    TPoints = tuple[tuple[float, ...], ...]
 
 _TWO = 2
 

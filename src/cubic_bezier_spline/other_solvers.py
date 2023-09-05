@@ -8,20 +8,19 @@ De Casteljau is Bezier at it's most basic. Here for testing / illustration.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import Iterator, Sequence
+from typing import Union
 
 import numpy as np
+import numpy.typing as npt
 
 from .control_point_casting import as_points_array
 from .matrices import binom
 
-if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
-
-    from .type_hints import FArray, Points
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
 
 
-def get_bezier_basis(points: Points, time: float) -> FArray:
+def get_bezier_basis(points: Points, time: float) -> npt.NDArray[np.float_]:
     """Bezier basis function for testing.
 
     :param points: Bezier control points (takes an iterable so a BezierCurve instance
@@ -42,7 +41,9 @@ def get_bezier_basis(points: Points, time: float) -> FArray:
     return result
 
 
-def iter_decasteljau_steps(points: Points, time: float) -> Iterator[list[FArray]]:
+def iter_decasteljau_steps(
+    points: Points, time: float
+) -> Iterator[list[npt.NDArray[np.float_]]]:
     """Yield De Casteljau iterations.
 
     :param points: Bezier control points (takes an iterable so a BezierCurve instance
@@ -70,7 +71,7 @@ def iter_decasteljau_steps(points: Points, time: float) -> Iterator[list[FArray]
         yield points_
 
 
-def get_decasteljau(points: Points, time: float) -> FArray:
+def get_decasteljau(points: Points, time: float) -> npt.NDArray[np.float_]:
     """Value of a non-rational Bezier curve at time.
 
     :param points: curve points
@@ -82,7 +83,7 @@ def get_decasteljau(points: Points, time: float) -> FArray:
 
 def get_split_decasteljau(
     points: Sequence[Sequence[float]], time: float
-) -> tuple[list[FArray], list[FArray]]:
+) -> tuple[list[npt.NDArray[np.float_]], list[npt.NDArray[np.float_]]]:
     """Split bezier at time using De Casteljau's algorithm.
 
     :param points: points in curve

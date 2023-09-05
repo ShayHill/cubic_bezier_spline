@@ -10,18 +10,20 @@ the curve object is immutable.
 from __future__ import annotations
 
 import dataclasses
+from collections.abc import Sequence
 from functools import cached_property
-from typing import TYPE_CHECKING, Annotated, TypeVar
+from typing import Annotated, TypeVar, Union
 
 import numpy as np
+import numpy.typing as npt
 from paragraphs import par
 
 from .control_point_casting import as_nested_tuple, as_points_array
 from .matrices import get_mix_matrix
 
-if TYPE_CHECKING:
-    from .type_hints import APoints, FArray, Points, TPoints
-
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
+APoints = Annotated[npt.NDArray[np.float_], "(-1, -1)"]
+TPoints = tuple[tuple[float, ...], ...]
 
 _BezierCurveT = TypeVar("_BezierCurveT", bound="BezierCurve")
 
@@ -75,7 +77,7 @@ class BezierCurve:
         """
         return len(self.control_points) - 1
 
-    def __getitem__(self, item: int) -> FArray:
+    def __getitem__(self, item: int) -> npt.NDArray[np.float_]:
         """Return item-th point.
 
         :param item: index of [p0, p1, p2, p3]
@@ -90,7 +92,7 @@ class BezierCurve:
         """
         return self.as_array
 
-    def __call__(self, time: float, derivative: int = 0) -> FArray:
+    def __call__(self, time: float, derivative: int = 0) -> npt.NDArray[np.float_]:
         """Cubic Bezier calculation at time.
 
         :param time: time on curve (typically 0 - 1)
@@ -100,7 +102,7 @@ class BezierCurve:
             return self._get_tmat(time) @ self._mixed_points
         return self.derivative(derivative)(time)
 
-    def _get_tmat(self, time: float) -> Annotated[FArray, "(p,)"]:
+    def _get_tmat(self, time: float) -> Annotated[npt.NDArray[np.float_], "(p,)"]:
         """Get the t matrix for time.
 
         :param time: time on curve (typically 0 - 1)
@@ -108,7 +110,7 @@ class BezierCurve:
         """
         return np.array([time**x for x in range(self.degree + 1)])
 
-    def get_zmat(self, time: float) -> Annotated[FArray, "(p, p)"]:
+    def get_zmat(self, time: float) -> Annotated[npt.NDArray[np.float_], "(p, p)"]:
         """Get a 2D zero matrix with tmat on the diagonal.
 
         :param time: time on curve (typically 0 - 1)
@@ -123,7 +125,7 @@ class BezierCurve:
         return np.diagflat(self._get_tmat(time))
 
     @cached_property
-    def mmat(self) -> Annotated[FArray, "(p, p)"]:
+    def mmat(self) -> Annotated[npt.NDArray[np.float_], "(p, p)"]:
         """Get the mix matrix for this curve.
 
         :return: mix matrix for this curve
@@ -131,7 +133,7 @@ class BezierCurve:
         return get_mix_matrix(self.degree + 1)
 
     @cached_property
-    def _mixed_points(self) -> Annotated[FArray, "(p,v)"]:
+    def _mixed_points(self) -> Annotated[npt.NDArray[np.float_], "(p,v)"]:
         """Points scaled by binomial coefficients.
 
         :return: Points scaled by binomial coefficients

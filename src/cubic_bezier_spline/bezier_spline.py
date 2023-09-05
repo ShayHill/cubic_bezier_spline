@@ -8,21 +8,23 @@ A dead-simple container for lists of Bezier curves.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from math import floor
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, Union
 
 import numpy as np
+import numpy.typing as npt
 
 from .bezier_curve import BezierCurve
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Sequence
+    from collections.abc import Iterable, Iterator
 
-    import numpy.typing as npt
 
-    from .type_hints import Point
+Point = Union[Sequence[float], npt.NDArray[np.float_]]
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
 
 
 class TimeIntervalError(Exception):

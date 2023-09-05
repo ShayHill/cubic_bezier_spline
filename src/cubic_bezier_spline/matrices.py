@@ -14,8 +14,6 @@ import numpy as np
 if TYPE_CHECKING:
     import numpy.typing as npt
 
-    from .type_hints import FArray
-
 
 @lru_cache(maxsize=128)
 def binom(n: int, k: int) -> int:
@@ -35,7 +33,7 @@ def binom(n: int, k: int) -> int:
 
 
 @lru_cache
-def get_pascals(num: int) -> FArray:
+def get_pascals(num: int) -> npt.NDArray[np.float_]:
     """One line of Pascal's triangle.
 
     :param num: number of terms
@@ -62,7 +60,7 @@ def _get_boolean_checkerboard(shape: tuple[int, int]) -> npt.NDArray[np.bool_]:
 
 
 @lru_cache
-def get_mix_matrix(num: int) -> FArray:
+def get_mix_matrix(num: int) -> npt.NDArray[np.float_]:
     """Matrix of binomial coefficients for Bezier calculation.
 
     :param num: how many points in the Bezier curve
