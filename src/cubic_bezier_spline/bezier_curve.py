@@ -18,8 +18,8 @@ import numpy as np
 import numpy.typing as npt
 from paragraphs import par
 
-from .control_point_casting import as_nested_tuple, as_points_array
-from .matrices import get_mix_matrix
+from cubic_bezier_spline.control_point_casting import as_nested_tuple, as_points_array
+from cubic_bezier_spline.matrices import get_mix_matrix
 
 Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
 APoints = Annotated[npt.NDArray[np.float_], "(-1, -1)"]

@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Annotated, Union
 import numpy as np
 import numpy.typing as npt
 
-from .bezier_curve import BezierCurve
+from cubic_bezier_spline.bezier_curve import BezierCurve
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator

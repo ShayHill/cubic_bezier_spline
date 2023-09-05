@@ -14,8 +14,8 @@ from typing import Union
 import numpy as np
 import numpy.typing as npt
 
-from .control_point_casting import as_points_array
-from .matrices import binom
+from cubic_bezier_spline.control_point_casting import as_points_array
+from cubic_bezier_spline.matrices import binom
 
 Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
 

@@ -13,8 +13,11 @@ from typing import Annotated, Union
 import numpy as np
 import numpy.typing as npt
 
-from .bezier_spline import BezierSpline
-from .control_point_casting import as_closed_points_array, as_open_points_array
+from cubic_bezier_spline.bezier_spline import BezierSpline
+from cubic_bezier_spline.control_point_casting import (
+    as_closed_points_array,
+    as_open_points_array,
+)
 
 Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
 APoints = Annotated[npt.NDArray[np.float_], "(-1, -1)"]
