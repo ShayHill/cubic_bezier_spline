@@ -32,7 +32,7 @@ from .conftest import (
 def test_arrayable(points) -> None:
     """Convert to array when passed to np.array()"""
     curve = BezierCurve(points)
-    assert np.array(curve).shape == (len(points), len(points[0]))
+    assert curve.as_array.shape == (len(points), len(points[0]))
 
 
 class TestCall:

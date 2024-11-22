@@ -81,7 +81,7 @@ class BezierSpline:
 
         :return: numpy array of curves
         """
-        return np.array([np.array(x) for x in self._curves])
+        return np.array([x.as_array for x in self._curves])
 
     def _yield_svg_commands(self) -> Iterator[str]:
         """Get the SVG data for the spline.
@@ -95,6 +95,14 @@ class BezierSpline:
                 yield f"M {pnt_0}"
             yield f"C {pnt_1} {pnt_2} {pnt_3}"
             prev_pnt = pnt_3
+
+    @property
+    def as_array(self) -> Annotated[npt.NDArray[np.float64], (-1, -1, -1)]:
+        """Get the spline as a numpy array.
+
+        :return: numpy array of curves
+        """
+        return self.__array__()
 
     @cached_property
     def svg_data(self) -> str:

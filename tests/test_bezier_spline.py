@@ -22,7 +22,7 @@ class TestBezierSpline:
     def test_arrayable(self) -> None:
         """Convert to array when passed to np.array()"""
         spline = BezierSpline([[[0, 1], [1, 1]], [[1, 1], [2, 2]], [[2, 2], [3, 3]]])
-        assert np.array(spline).shape == (3, 2, 2)
+        assert spline.as_array.shape == (3, 2, 2)
 
     @pytest.mark.parametrize("points", random_bezier_curves())
     def test_iter(self, points) -> None:
