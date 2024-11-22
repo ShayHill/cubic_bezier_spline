@@ -12,7 +12,7 @@ from cubic_bezier_spline.bezier_curve import BezierCurve
 sys.path.append(os.path.join(__file__, "../.."))
 
 
-FArray = npt.NDArray[np.float_]
+FArray = npt.NDArray[np.float64]
 Point = Sequence[float]
 
 
