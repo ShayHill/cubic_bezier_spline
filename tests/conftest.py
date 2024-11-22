@@ -2,15 +2,13 @@ import os
 import random
 import sys
 from itertools import count
-from typing import Annotated, Any, Iterator, Sequence, Tuple, Union
+from typing import Annotated, Iterator, Sequence, Tuple, Union
 
 import numpy as np
-import numpy.typing as npt
+from numpy import typing as npt
 
-from cubic_bezier_spline.bezier_curve import BezierCurve
 
 sys.path.append(os.path.join(__file__, "../.."))
-
 
 FArray = npt.NDArray[np.float64]
 Point = Sequence[float]
@@ -67,10 +65,10 @@ def random_bezier_curves(
         yield np.array(
             [
                 [
-                    [random.random() * 100 for x in range(dimensions)]
-                    for y in range(degree + 1)
+                    [random.random() * 100 for _ in range(dimensions)]
+                    for _ in range(degree + 1)
                 ]
-                for z in range(splines)
+                for _ in range(splines)
             ]
         )
 
