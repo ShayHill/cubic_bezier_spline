@@ -28,7 +28,7 @@ version_files = [
 include = ["src"]
 exclude = ["**/__pycache__.py"]
 
-pythonVersion = "3.9"
+pythonVersion = "3.10"
 pythonPlatform = "Any"
 
 typeCheckingMode = "strict"
