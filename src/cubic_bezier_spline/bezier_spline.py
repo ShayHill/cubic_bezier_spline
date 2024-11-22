@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
 
-Point = Union[Sequence[float], npt.NDArray[np.float_]]
-Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
+Point = Union[Sequence[float], npt.NDArray[np.float64]]
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float64]]
 
 
 class TimeIntervalError(Exception):
@@ -76,7 +76,7 @@ class BezierSpline:
         """
         return len(self._curves)
 
-    def __array__(self) -> Annotated[npt.NDArray[np.float_], (-1, -1, -1)]:
+    def __array__(self) -> Annotated[npt.NDArray[np.float64], (-1, -1, -1)]:
         """Get the spline as a numpy array.
 
         :return: numpy array of curves

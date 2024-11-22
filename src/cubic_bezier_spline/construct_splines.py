@@ -19,8 +19,8 @@ from cubic_bezier_spline.control_point_casting import (
     as_open_points_array,
 )
 
-Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
-APoints = Annotated[npt.NDArray[np.float_], "(-1, -1)"]
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float64]]
+APoints = Annotated[npt.NDArray[np.float64], "(-1, -1)"]
 
 _LINEAR = 2
 _QUADRATIC = 3
@@ -112,7 +112,7 @@ def new_closed_interpolating_spline(cpts: Points) -> BezierSpline:
     return new_closed_approximating_spline(cpts_)
 
 
-def _get_b_matrix(cpts: APoints) -> Annotated[npt.NDArray[np.float_], "(p-2,v)"]:
+def _get_b_matrix(cpts: APoints) -> Annotated[npt.NDArray[np.float64], "(p-2,v)"]:
     """Get the B matrix for a set of points.
 
     :param cpts: points to interpolate

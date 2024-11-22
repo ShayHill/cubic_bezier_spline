@@ -23,8 +23,7 @@ def binom(n: int, k: int) -> int:
     :param k: number of candidates in selection
     :return: n!/(k!(n-k)!)
     """
-    if k > n - k:
-        k = n - k
+    k = min(k, n - k)
     result = 1
     for i in range(1, k + 1):
         result *= n - (k - i)
@@ -33,7 +32,7 @@ def binom(n: int, k: int) -> int:
 
 
 @lru_cache
-def get_pascals(num: int) -> npt.NDArray[np.float_]:
+def get_pascals(num: int) -> npt.NDArray[np.float64]:
     """One line of Pascal's triangle.
 
     :param num: number of terms
@@ -60,7 +59,7 @@ def _get_boolean_checkerboard(shape: tuple[int, int]) -> npt.NDArray[np.bool_]:
 
 
 @lru_cache
-def get_mix_matrix(num: int) -> npt.NDArray[np.float_]:
+def get_mix_matrix(num: int) -> npt.NDArray[np.float64]:
     """Matrix of binomial coefficients for Bezier calculation.
 
     :param num: how many points in the Bezier curve

@@ -3,6 +3,7 @@
 :author: Shay Hill
 :created: 2023-02-08
 """
+
 from .bezier_curve import BezierCurve
 from .bezier_spline import BezierSpline
 from .construct_splines import (
@@ -13,10 +14,10 @@ from .construct_splines import (
 )
 
 __all__ = [
-    "new_open_approximating_spline",
-    "new_closed_approximating_spline",
-    "new_open_interpolating_spline",
-    "new_closed_interpolating_spline",
     "BezierCurve",
     "BezierSpline",
+    "new_closed_approximating_spline",
+    "new_closed_interpolating_spline",
+    "new_open_approximating_spline",
+    "new_open_interpolating_spline",
 ]

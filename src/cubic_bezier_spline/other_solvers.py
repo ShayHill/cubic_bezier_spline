@@ -6,6 +6,7 @@
 De Casteljau is Bezier at it's most basic. Here for testing / illustration.
 
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator, Sequence
@@ -17,10 +18,10 @@ import numpy.typing as npt
 from cubic_bezier_spline.control_point_casting import as_points_array
 from cubic_bezier_spline.matrices import binom
 
-Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float_]]
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float64]]
 
 
-def get_bezier_basis(points: Points, time: float) -> npt.NDArray[np.float_]:
+def get_bezier_basis(points: Points, time: float) -> npt.NDArray[np.float64]:
     """Bezier basis function for testing.
 
     :param points: Bezier control points (takes an iterable so a BezierCurve instance
@@ -43,7 +44,7 @@ def get_bezier_basis(points: Points, time: float) -> npt.NDArray[np.float_]:
 
 def iter_decasteljau_steps(
     points: Points, time: float
-) -> Iterator[list[npt.NDArray[np.float_]]]:
+) -> Iterator[list[npt.NDArray[np.float64]]]:
     """Yield De Casteljau iterations.
 
     :param points: Bezier control points (takes an iterable so a BezierCurve instance
@@ -64,14 +65,14 @@ def iter_decasteljau_steps(
     In this case, the function would yield [1, 5, 9] then [3, 8] then [5.5]
     """
     points_ = as_points_array(points)
-    points_list = [np.asarray(x).astype(np.float_) for x in points_]
+    points_list = [np.asarray(x).astype(np.float64) for x in points_]
     yield points_list
     while len(points_) > 1:
         points_ = [x * (1 - time) + y * time for x, y in zip(points_, points_[1:])]
         yield points_
 
 
-def get_decasteljau(points: Points, time: float) -> npt.NDArray[np.float_]:
+def get_decasteljau(points: Points, time: float) -> npt.NDArray[np.float64]:
     """Value of a non-rational Bezier curve at time.
 
     :param points: curve points
@@ -83,7 +84,7 @@ def get_decasteljau(points: Points, time: float) -> npt.NDArray[np.float_]:
 
 def get_split_decasteljau(
     points: Sequence[Sequence[float]], time: float
-) -> tuple[list[npt.NDArray[np.float_]], list[npt.NDArray[np.float_]]]:
+) -> tuple[list[npt.NDArray[np.float64]], list[npt.NDArray[np.float64]]]:
     """Split bezier at time using De Casteljau's algorithm.
 
     :param points: points in curve
