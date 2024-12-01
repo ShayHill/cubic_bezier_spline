@@ -8,12 +8,15 @@ readme = "README.md"
 requires-python = ">=3.9"
 dependencies = ["numpy", "paragraphs"]
 
+
 [project.optional-dependencies]
 dev = ["pytest", "pre-commit", "commitizen", "tox"]
+
 
 [build-system]
 requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
+
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -25,6 +28,10 @@ version_files = [
 ]
 
 
+[tool.isort]
+profile = "black"
+
+
 [tool.tox]
 legacy_tox_ini = """
 [tox]
@@ -34,6 +41,13 @@ envlist = py{313,312,311,310,39}
 deps = pytest
 commands = pytest
 """
+
+
+[tool.pytest.ini_options]
+pythonpath = ["tests"]
+log_cli = 1
+
+
 [tool.pyright]
 include = ["src"]
 exclude = ["**/__pycache__.py"]
