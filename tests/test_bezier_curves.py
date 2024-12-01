@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Test functions in ttf_extractor.curve_type.py
+"""Test BezierCurve class.
 
 :author: Shay Hill
 :created: 1/18/2020
@@ -124,6 +123,46 @@ class TestSplit:
         beg, end = curve.split(time)
         np.testing.assert_array_equal(beg.control_points[-1], end.control_points[0])
 
+    @pytest.mark.parametrize("points", random_bezier_points())
+    def test_split_0(self, points: FArray) -> None:
+        """Split at 0 returns two curves.
+
+        First is repeated point[0], second is original"""
+        curve = BezierCurve(points)
+        point, curve_ = curve.split(0)
+        assert len(set(point.control_points)) == 1
+        assert curve_ is curve
+
+    @pytest.mark.parametrize("points", random_bezier_points())
+    def test_split_1(self, points: FArray) -> None:
+        """Split at 1 returns two curves.
+
+        First is original, second is repeated point[-1]"""
+        curve = BezierCurve(points)
+        curve_, point = curve.split(1)
+        assert len(set(point.control_points)) == 1
+        assert curve_ is curve
+
+    @pytest.mark.parametrize("points", random_bezier_points())
+    def test_split_0_1(self, points: FArray) -> None:
+        """Split at 0 and 1 returns three curves.
+
+        First is repeated point[0], second is self, third is repeated point[-1]
+        """
+        curve = BezierCurve(points)
+        beg, curve_, end = curve.split(0, 1)
+        assert len(set(beg.control_points)) == 1
+        assert beg.control_points[0] == curve_.control_points[0]
+        assert len(set(end.control_points)) == 1
+        assert end.control_points[0] == curve_.control_points[-1]
+        assert curve_ is curve
+
+    @pytest.mark.parametrize("points", random_bezier_points())
+    def test_split_out_of_range(self, points: FArray) -> None:
+        """Clip time values to [0, 1]"""
+        curve = BezierCurve(points)
+        assert curve.split(-1) == curve.split(0)
+        assert curve.split(2) == curve.split(1)
 
 class TestElevated:
     @pytest.mark.parametrize(

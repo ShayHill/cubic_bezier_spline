@@ -5,6 +5,10 @@
 
 This uses matrix math to evaluate the Bezier curve. The math benefits from cacheing, so
 the curve object is immutable.
+
+You can evaluate the curve at time values outside of [0, 1], because the math allows
+it. You might intentionally do that (I don't know why), but it's more likely a
+mistake on your part. This package does not guard against that for you.
 """
 
 from __future__ import annotations
@@ -34,9 +38,10 @@ def _interp_floats(at_0: float, at_1: float, time: float) -> float:
     :param at_0: value at time 0
     :param at_1: value at time 1
     :param time: time in [0, 1]
-    :return: interpolated value
+    :return: interpolated value, clipped to [at_0, at_1]
     """
-    return at_0 + (at_1 - at_0) * time
+    interpolated = at_0 + (at_1 - at_0) * time
+    return max(at_0, min(at_1, interpolated))
 
 
 @dataclasses.dataclass(frozen=True)
@@ -97,8 +102,15 @@ class BezierCurve:
 
         :param time: time on curve (typically 0 - 1)
         :return: Non-rational Bezier at time
+
+        Include shortcuts for time in {0, 1} to make testing easier and avoid *some*
+        floating-point errors.
         """
         if derivative == 0:
+            if time == 0:
+                return self.as_array[0]
+            if time == 1:
+                return self.as_array[-1]
             return self._get_tmat(time) @ self._mixed_points
         return self.derivative(derivative)(time)
 
@@ -145,14 +157,24 @@ class BezierCurve:
     def split(self: _BezierCurveT, *time_args: float) -> list[_BezierCurveT]:
         """Split a BezierCurve into two Bezier curves of the same degree.
 
-        :param time_args: time at which to split the curve. Multiple args accepted
+        :param time_args: time at which to split the curve. Multiple args accepted.
+            Should must in [0, 1] and monotonically increasing. Out of range values
+            will be clipped to [0, 1].
         :return: two new BezierCurve instances
-        :raises: ValueError if not 0 <= time <= 1
         """
         curves = [self]
         time_at = 0.0
         for time in time_args:
             time_prime = _interp_floats(time_at, 1, time)
+            if time_prime == time_at:
+                point = np.array([self(time_at)] * (self.degree + 1))
+                curves[-1:] = [type(self)(point), curves[-1]]
+                continue
+            if time_prime == 1:
+                point = np.array(self.control_points[-1:] * (self.degree + 1))
+                curves[-1:] = [curves[-1], type(self)(point)]
+                time_at = 1
+                continue
             qmat = (
                 np.linalg.inv(curves[-1].mmat)
                 @ curves[-1].get_zmat(time_prime)
