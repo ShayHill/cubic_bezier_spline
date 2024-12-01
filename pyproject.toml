@@ -24,6 +24,16 @@ version_files = [
     "pyproject.toml:^version"
 ]
 
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py{313,312,311,310,39}
+
+[testenv]
+deps = pytest
+commands = pytest
+"""
 [tool.pyright]
 include = ["src"]
 exclude = ["**/__pycache__.py"]
