@@ -89,7 +89,7 @@ def random_indices() -> Iterator[int]:
     return (random.randint(0, 3) for _ in count())
 
 
-def _cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
+def cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     """
     Cubic Bezier curve.
 
@@ -100,17 +100,20 @@ def _cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     :param time: time value on curve, typically 0 to 1
     :return: cubic Bezier curve value at time
     """
-    return sum(
+    a0, a1, a2, a3 = map(np.asarray, [p0, p1, p2, p3])
+    pt_array = np.sum(
         (
-            (1 - time) ** 3 * p0,
-            3 * (1 - time) ** 2 * time * p1,
-            3 * (1 - time) * time**2 * p2,
-            time**3 * p3,
-        )
+            (1 - time) ** 3 * a0,
+            3 * (1 - time) ** 2 * time * a1,
+            3 * (1 - time) * time**2 * a2,
+            time**3 * a3,
+        ),
+        axis=0,
     )
+    return tuple(map(float, pt_array))
 
 
-def _cbez_d1(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
+def cbez_d1(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     """
     First derivative of cubic Bezier at time.
 
@@ -121,16 +124,19 @@ def _cbez_d1(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     :param time: time value on curve, typically 0 to 1
     :return: first derivative of cubic Bezier curve at time
     """
-    return sum(
+    a0, a1, a2, a3 = map(np.asarray, [p0, p1, p2, p3])
+    pt_array = np.sum(
         (
-            3 * (1 - time) ** 2 * (p1 - p0),
-            6 * (1 - time) * time * (p2 - p1),
-            3 * time**2 * (p3 - p2),
-        )
+            3 * (1 - time) ** 2 * (a1 - a0),
+            6 * (1 - time) * time * (a2 - a1),
+            3 * time**2 * (a3 - a2),
+        ),
+        axis=0,
     )
+    return tuple(map(float, pt_array))
 
 
-def _cbez_d2(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
+def cbez_d2(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     """
     Second derivative of cubic Bezier at time.
 
@@ -141,4 +147,8 @@ def _cbez_d2(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
     :param time: time value on curve, typically 0 to 1
     :return: second derivative of cubic Bezier curve at time
     """
-    return sum((6 * (1 - time) * (p2 - 2 * p1 + p0), 6 * time * (p3 - 2 * p2 + p1)))
+    a0, a1, a2, a3 = map(np.asarray, [p0, p1, p2, p3])
+    pt_array = np.sum(
+        (6 * (1 - time) * (a2 - 2 * a1 + a0), 6 * time * (a3 - 2 * a2 + a1)), axis=0
+    )
+    return tuple(map(float, pt_array))
