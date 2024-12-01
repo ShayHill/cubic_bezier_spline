@@ -112,7 +112,7 @@ repos:
   # PGH003 Use specific rule codes when ignoring type issues
   # PLR0913 Too many arguments to function call
   # PTH108 os.unlink should be replaced by .unlink()
-  rev: 'v0.8.0'
+  rev: 'v0.8.1'
   hooks:
     - id: ruff
       exclude: "tests"
