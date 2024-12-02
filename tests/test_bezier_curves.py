@@ -4,8 +4,8 @@
 :created: 1/18/2020
 """
 
-
 import random
+import sys
 from itertools import count
 
 import numpy as np
@@ -20,7 +20,12 @@ from cubic_bezier_spline.other_solvers import (
     get_split_decasteljau,
 )
 
-FArray = npt.NDArray[np.float64]
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
+FArray: TypeAlias = npt.NDArray[np.float64]
 
 
 @pytest.mark.parametrize("points", random_bezier_points())
@@ -83,7 +88,7 @@ class TestCubicBezierDerivatives:
     def test_d3(self, points: FArray, time: float) -> None:
         """Test against formula"""
         curve = BezierCurve(points)
-        p0, p1, p2, p3 = curve
+        p0, p1, p2, p3 = curve.as_array
         np.testing.assert_allclose(curve(time, 3), 6 * (p3 - 3 * p2 + 3 * p1 - p0))
 
     @pytest.mark.parametrize(
@@ -163,6 +168,7 @@ class TestSplit:
         curve = BezierCurve(points)
         assert curve.split(-1) == curve.split(0)
         assert curve.split(2) == curve.split(1)
+
 
 class TestElevated:
     @pytest.mark.parametrize(

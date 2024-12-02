@@ -3,7 +3,7 @@ ci:
   autofix_commit_msg: 'style: pre-commit fixes'
   autoupdate_commit_msg: 'chore: update pre-commit hooks'
 
-exclude: tests|resources|doc
+exclude: resources|doc
 
 repos:
 
@@ -38,6 +38,7 @@ repos:
     name: mypy
     language: python
     language_version: python 3.11
+    python_version: python3.9
     types: [python]
     require_serial: true
     verbose: true

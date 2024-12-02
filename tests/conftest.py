@@ -1,22 +1,31 @@
-import os
+"""Configure tests for pytest.
+
+:author: Shay Hill
+:created: 2024-12-02
+"""
+
 import random
 import sys
+from collections.abc import Iterator, Sequence
 from itertools import count
-from typing import Annotated, Iterator, Sequence, Tuple, Union
+from typing import Annotated, Union
 
 import numpy as np
 from numpy import typing as npt
 
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
-sys.path.append(os.path.join(__file__, "../.."))
 
-FArray = npt.NDArray[np.float64]
+FArray: TypeAlias = npt.NDArray[np.float64]
 Point = Sequence[float]
 
 
 def random_bezier_points(
-    degree_limits: Union[int, Tuple[int, int]] = (0, 10),
-    dimension_limits: Union[int, Tuple[int, int]] = (1, 10),
+    degree_limits: Union[int, tuple[int, int]] = (0, 10),
+    dimension_limits: Union[int, tuple[int, int]] = (1, 10),
 ) -> Iterator[Annotated[FArray, (-1, -1)]]:
     """
     Iter sets of Bezier control points
@@ -39,9 +48,9 @@ def random_bezier_points(
 
 
 def random_bezier_curves(
-    degree_limits: Union[int, Tuple[int, int]] = (0, 10),
-    dimension_limits: Union[int, Tuple[int, int]] = (1, 10),
-    splines_limits: Union[int, Tuple[int, int]] = (1, 10),
+    degree_limits: Union[int, tuple[int, int]] = (0, 10),
+    dimension_limits: Union[int, tuple[int, int]] = (1, 10),
+    splines_limits: Union[int, tuple[int, int]] = (1, 10),
 ) -> Iterator[Annotated[FArray, (-1, -1)]]:
     """
     A 3-D vector of spline curve points.

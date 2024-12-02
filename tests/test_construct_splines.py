@@ -1,32 +1,38 @@
-#!/usr/bin/env python3
 """ Test cubic spline construction
 
 :author: Shay Hill
 :created: 10/14/2020
 """
+
+import sys
 from math import isclose
 
 import numpy as np
 import pytest
+from conftest import random_bezier_points
+from numpy import typing as npt
 
 from cubic_bezier_spline.construct_splines import (
-    new_open_approximating_spline,
     new_closed_approximating_spline,
-    new_open_interpolating_spline,
     new_closed_interpolating_spline,
+    new_open_approximating_spline,
+    new_open_interpolating_spline,
 )
 
-from .conftest import random_bezier_points
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
+FArray: TypeAlias = npt.NDArray[np.float64]
 
 
 class TestClosedControlPoints:
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(2, 10)))
-    def test_approximating_open(self, points) -> None:
+    def test_approximating_open(self, points: FArray) -> None:
         """Returns same value for closed or open control points"""
         open_pts = new_open_approximating_spline(points)
-        closed_pts = new_open_approximating_spline(
-            np.concatenate([points, points[:1]])
-        )
+        closed_pts = new_open_approximating_spline(np.concatenate([points, points[:1]]))
         np.testing.assert_allclose(open_pts, closed_pts)
 
 
@@ -39,7 +45,7 @@ class TestApproximatingOpen:
         np.testing.assert_allclose(spline(1), [1, 1])
 
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(2, 10)))
-    def test_continuity(self, points) -> None:
+    def test_continuity(self, points: FArray) -> None:
         """degree 0, 1, and 2 continuous at ends"""
         spline = new_open_approximating_spline(points)
         for i in range(1, len(spline) - 1):
@@ -57,7 +63,7 @@ class TestApproximatingClosed:
         np.testing.assert_allclose(spline(2), [1 / 3, 1 / 3])
 
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
-    def test_continuity(self, points) -> None:
+    def test_continuity(self, points: FArray) -> None:
         """degree 0, 1, and 2 continuous at ends"""
         spline = new_closed_approximating_spline(points)
         for i in range(0, len(spline)):
@@ -68,9 +74,7 @@ class TestApproximatingClosed:
 
     def test_symmetrical(self) -> None:
         """Closed square of control points creates symmetrical spline"""
-        spline = new_closed_approximating_spline(
-            [[-1, -1], [1, -1], [1, 1], [-1, 1]]
-        )
+        spline = new_closed_approximating_spline([[-1, -1], [1, -1], [1, 1], [-1, 1]])
         for i in range(5):
             assert isclose(abs(spline(i)[0]), abs(spline(i)[1]))
 
@@ -84,7 +88,7 @@ class TestInterpolatingOpen:
         np.testing.assert_allclose(spline(1), [1, 1])
 
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
-    def test_continuity(self, points) -> None:
+    def test_continuity(self, points: FArray) -> None:
         """degree 0, 1, and 2 continuous at ends"""
         spline = new_open_interpolating_spline(points)
         for i in range(0, len(spline) - 1):
@@ -94,7 +98,7 @@ class TestInterpolatingOpen:
                 )
 
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
-    def test_interpolation(self, points) -> None:
+    def test_interpolation(self, points: FArray) -> None:
         """spline hits control points at knots"""
         spline = new_open_interpolating_spline(points)
         for i in range(0, len(spline)):
@@ -111,7 +115,7 @@ class TestInterpolatingClosed:
         np.testing.assert_allclose(spline(2), [0, 0])
 
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
-    def test_continuity(self, points) -> None:
+    def test_continuity(self, points: FArray) -> None:
         """degree 0, 1, and 2 continuous at ends"""
         spline = new_closed_interpolating_spline(points)
         for i in range(0, len(spline)):
@@ -121,7 +125,7 @@ class TestInterpolatingClosed:
                 )
 
     @pytest.mark.parametrize("points", random_bezier_points(degree_limits=(1, 10)))
-    def test_interpolation(self, points) -> None:
+    def test_interpolation(self, points: FArray) -> None:
         """degree 0, 1, and 2 continuous at ends"""
         spline = new_closed_interpolating_spline(points)
         for i in range(0, len(spline)):
