@@ -113,7 +113,7 @@ repos:
   # PGH003 Use specific rule codes when ignoring type issues
   # PLR0913 Too many arguments to function call
   # PTH108 os.unlink should be replaced by .unlink()
-  rev: 'v0.8.1'
+  rev: 'v0.8.2'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -124,6 +124,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.389
+  rev: v1.1.390
   hooks:
     - id: pyright
