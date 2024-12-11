@@ -99,17 +99,9 @@ def new_closed_approximating_spline(cpts: Points) -> BezierSpline:
     return _new_approximating_spline(cpts, _OpenOrClosed.CLOSED)
 
 
-def new_closed_interpolating_spline(cpts: Points) -> BezierSpline:
-    """Get a closed cubic interpolating spline.
-
-    :param cpts: points to interpolate
-    :return: A spline passing through all control points, beginning and ending at
-        cpts[0]
-    """
-    cpts_ = as_open_points_array(cpts)
-    mat_141 = _get_141_matrix(len(cpts_), open_or_closed=_OpenOrClosed.CLOSED)
-    cpts_ = np.linalg.inv(mat_141) @ cpts_ * 6
-    return new_closed_approximating_spline(cpts_)
+# ===================================================================================
+#   Interpolating splines
+# ===================================================================================
 
 
 def _get_b_matrix(cpts: APoints) -> Annotated[npt.NDArray[np.float64], "(p-2,v)"]:
@@ -120,12 +112,58 @@ def _get_b_matrix(cpts: APoints) -> Annotated[npt.NDArray[np.float64], "(p-2,v)"
 
     For a set of points (p, v), the B matrix is a (p-2, v) matrix of scaled control
     points needed to compute interpolating control points.
+
+    This is part of solving for B control points that, when approximated, will
+    effectively be S control points interpolated.
+
+    [4, 1, 0, 0] [P1]   [6 * (S[1] - S[0])]
+    [1, 4, 1, 0] [P2] = [6 *  S[2]        ]
+    [0, 1, 4, 1] [P3]   [6 *  S[3]        ]
+    [0, 0, 1, 4] [P4]   [6 * (S[4] - S[5])]
     """
-    beg = [6 * cpts[1] - cpts[0]]
-    mid = 6 * cpts[2:-2]
-    end = [6 * cpts[-2] - cpts[-1]]
-    mat_b = np.insert(mid, 0, beg, axis=0)
-    return np.append(mat_b, end, axis=0)
+    return np.concatenate(
+        [[6 * cpts[1] - cpts[0]], 6 * cpts[2:-2], [6 * cpts[-2] - cpts[-1]]]
+    )
+
+
+def get_closed_b_points(cpts: Points) -> APoints:
+    """Get points B that, when approximated, will interpolate the control points.
+
+    :param cpts: points to be interpolated
+    :return: B points that, when approximated, will interpolate cpts
+    """
+    cpts_ = as_open_points_array(cpts)
+    mat_141 = _get_141_matrix(len(cpts_), open_or_closed=_OpenOrClosed.CLOSED)
+    return np.linalg.inv(mat_141) @ cpts_ * 6
+
+
+def get_open_b_points(cpts: Points) -> APoints:
+    """Get points B that, when approximated, will interpolate the control points.
+
+    :param cpts: points to be interpolated
+    :return: B points that, when approximated, will interpolate cpts
+    """
+    cpts_ = as_open_points_array(cpts)
+    if len(cpts_) == _LINEAR:
+        return cpts_
+    if len(cpts_) == _QUADRATIC:
+        midpt = (-cpts_[0] + 6 * cpts_[1] - cpts_[2]) / 4
+        return np.asarray([cpts_[0], midpt, cpts_[2]])
+    mat_141 = _get_141_matrix(len(cpts_) - 2, _OpenOrClosed.OPEN)
+    mat_b = _get_b_matrix(cpts_)
+    interior_pts = np.linalg.inv(mat_141) @ mat_b
+    return np.concatenate([cpts_[:1], interior_pts, cpts_[-1:]])
+
+
+def new_closed_interpolating_spline(cpts: Points) -> BezierSpline:
+    """Get a closed cubic interpolating spline.
+
+    :param cpts: points to interpolate
+    :return: A spline passing through all control points, beginning and ending at
+        cpts[0]
+    """
+    b_points = get_closed_b_points(cpts)
+    return new_closed_approximating_spline(b_points)
 
 
 def new_open_interpolating_spline(cpts: Points) -> BezierSpline:
@@ -134,15 +172,5 @@ def new_open_interpolating_spline(cpts: Points) -> BezierSpline:
     :param cpts: points to interpolate
     :return: A spline passing through all control points.
     """
-    cpts_ = as_open_points_array(cpts)
-    if len(cpts_) == _LINEAR:
-        return new_open_approximating_spline(cpts_)
-    if len(cpts_) == _QUADRATIC:
-        midpt = (-cpts_[0] + 6 * cpts_[1] - cpts_[2]) / 4
-        return new_open_approximating_spline(np.asarray([cpts_[0], midpt, cpts_[2]]))
-    mat_141 = _get_141_matrix(len(cpts_) - 2, _OpenOrClosed.OPEN)
-    mat_b = _get_b_matrix(cpts_)
-    interior_pts = np.linalg.inv(mat_141) @ mat_b
-    return new_open_approximating_spline(
-        np.concatenate([cpts_[:1], interior_pts, cpts_[-1:]])
-    )
+    b_points = get_open_b_points(cpts)
+    return new_open_approximating_spline(b_points)
