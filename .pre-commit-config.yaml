@@ -85,7 +85,7 @@ repos:
     exclude: "tests"
     name: pylint
     args:
-    - --good-names=i,j,_,f,x,y,n,nn,ps,k
+    - --good-names=i,j,_,f,x,y,n,nn,ps,k,xy
     - --disable=protected-access
     - --disable=no-member
     - --disable=import-error
@@ -98,8 +98,6 @@ repos:
 
 - repo: https://github.com/charliermarsh/ruff-pre-commit
   # ignores
-  # ANN101 Missing type annotation for self in method
-  # ANN102 Missing type annotation for cls in classmethod
   # ANN201 Missing return type annotation for public function
   # ANN202 Missing return type annotation for private function (wants -> None everywhere)
   # B905 zip() without an explicit strict= parameter
@@ -113,13 +111,15 @@ repos:
   # PGH003 Use specific rule codes when ignoring type issues
   # PLR0913 Too many arguments to function call
   # PTH108 os.unlink should be replaced by .unlink()
+  # SIM108 Use ternary operator instead of multi-line if statement
+  # PLR2004 Magic value used in comparison
   rev: 'v0.8.2'
   hooks:
     - id: ruff
       exclude: "tests"
       args:
       - --select=ALL
-      - --ignore=ANN101,ANN102,ANN201,ANN202,B905,COM812,D203,D213,I001,ISC003,N802,N806,PGH003,PLR0913,PTH108
+      - --ignore=ANN201,ANN202,B905,COM812,D203,D213,I001,ISC003,N802,N806,PGH003,PLR0913,PTH108,SIM108,PLR2004
       - --fix
 
 # reads pyproject.toml for additional config

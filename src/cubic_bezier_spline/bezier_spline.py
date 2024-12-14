@@ -8,11 +8,12 @@ A dead-simple container for lists of Bezier curves.
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from math import floor
-from typing import TYPE_CHECKING, Annotated, Union
+from typing import TYPE_CHECKING, Annotated, Callable, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -31,17 +32,71 @@ class TimeIntervalError(Exception):
     """Time value out of range in BezierSpline.__call__."""
 
 
-def _get_tuple_strings(tuples: Iterable[Sequence[float]]) -> list[str]:
-    """Get a list of strings for a list of tuples.
+def _format_number(num: float | str) -> str:
+    """Format strings at limited precision.
 
-    :param tuples: list of tuples
-    :param precision: number of digits after decimal point
-    :return: list of strings
+    :param num: anything that can print as a float.
+    :return: str
 
-    This limits the precision of float strings to 6 digits, which is appropriate for
-    svg.
+    I've read articles that recommend no more than four digits before and two digits
+    after the decimal point to ensure good svg rendering. I'm being generous and
+    giving six. Mostly to eliminate exponential notation, but I'm "rstripping" the
+    strings to reduce filesize and increase readability
+
+    * reduce fp precision to 6 digits
+    * remove trailing zeros
+    * remove trailing decimal point
+    * convert "-0" to "0"
     """
-    return [f"{','.join(f'{x:.6f}' for x in t)}" for t in tuples]
+    as_str = f"{float(num):0.6f}".rstrip("0").rstrip(".")
+    if as_str == "-0":
+        as_str = "0"
+    return as_str
+
+
+@dataclasses.dataclass
+class _StrPoint:
+    """A point with string representation."""
+
+    x: str
+    y: str
+
+    def __init__(self, point: Sequence[float]) -> None:
+        """Create a point with string representation."""
+        self.x, self.y = map(_format_number, point)
+
+    @property
+    def xy(self) -> str:
+        """Get the svg representation of the point.
+
+        :return: x,y as a string
+        """
+        return f"{self.x},{self.y}"
+
+
+def _new_svg_command_issuer() -> Callable[..., str]:
+    """Format an SVG command without unnecessary repetition.
+
+    :return: function that formats SVG commands
+    """
+    prev_cmd: str | None = None
+
+    def issue_cmd(cmd: str, *pnts: str) -> str:
+        """Format a command with points.
+
+        :param cmd: command, e.g. "M", "L", "C"
+        :param pnts: points for the command
+        :return: formatted command
+        """
+        nonlocal prev_cmd
+        if prev_cmd is None or prev_cmd != cmd:
+            parts = [cmd, *pnts]
+        else:
+            parts = ["", *pnts]
+        prev_cmd = cmd
+        return " ".join(parts)
+
+    return issue_cmd
 
 
 @dataclass
@@ -87,14 +142,34 @@ class BezierSpline:
         """Get the SVG data for the spline.
 
         :return: SVG data
+        :raise NotImplementedError: if the number of control points is not 1 or 3
         """
-        prev_pnt = ""
+        beg_path: _StrPoint | None = None
+        prev_pnt: _StrPoint | None = None
+
+        issue_cmd = _new_svg_command_issuer()
+
         for curve in self._curves:
-            pnt_0, pnt_1, pnt_2, pnt_3 = _get_tuple_strings(curve.control_points)
-            if prev_pnt != pnt_0:
-                yield f"M {pnt_0}"
-            yield f"C {pnt_1} {pnt_2} {pnt_3}"
-            prev_pnt = pnt_3
+            pnt, *pnts = map(_StrPoint, curve.control_points)
+            if prev_pnt != pnt:
+                if pnt == beg_path:
+                    yield issue_cmd("Z")
+                yield issue_cmd("M", pnt.xy)
+                beg_path = pnt
+            if len(pnts) == 1 and pnts[0].x == pnt.x:
+                yield issue_cmd("V", pnts[0].y)
+            elif len(pnts) == 1 and pnts[0].y == pnt.y:
+                yield issue_cmd("H", pnts[0].x)
+            elif len(pnts) == 1:
+                yield issue_cmd("L", pnts[0].xy)
+            elif len(pnts) == 3:
+                yield issue_cmd("C", *(p.xy for p in pnts))
+            else:
+                msg = f"Unexpected number of control points: {len(pnts)}"
+                raise NotImplementedError(msg)
+            prev_pnt = pnts[-1]
+        if prev_pnt == beg_path:
+            yield issue_cmd("Z")
 
     @property
     def as_array(self) -> Annotated[npt.NDArray[np.float64], (-1, -1, -1)]:
@@ -110,7 +185,7 @@ class BezierSpline:
 
         :return: SVG data string (the d="" attribute of an svg "path" element)
         """
-        return " ".join(self._yield_svg_commands())
+        return "".join(self._yield_svg_commands())
 
     def __call__(self, time: float, derivative: int = 0) -> Point:
         """Given x.y, call curve x at time y.
