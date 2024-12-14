@@ -108,6 +108,7 @@ class BezierSpline:
     def __init__(self, curves: Iterable[Sequence[Sequence[float]]]) -> None:
         """Create a spline from a list of Bezier curves."""
         self._curves = [BezierCurve(x) for x in curves]
+        self.control_points = tuple(x.control_points for x in self._curves)
 
     def __iter__(self) -> Iterator[BezierCurve]:
         """Iterate over the curves in the spline.
