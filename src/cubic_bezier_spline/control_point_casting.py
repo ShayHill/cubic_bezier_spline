@@ -30,7 +30,7 @@ def as_points_array(points: Points) -> APoints:
     :return: True if x is a 2D shape
     :raises ValueError: if x is not a 2D shape
     """
-    apoints = np.asarray(points).astype(np.floating[Any])
+    apoints = np.asarray(points).astype(float)
     if apoints.ndim != _TWO:
         msg = f"Expected 2D array or nested sequence, got {apoints.ndim}"
         raise ValueError(msg)

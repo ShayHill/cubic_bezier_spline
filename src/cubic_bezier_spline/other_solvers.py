@@ -65,7 +65,7 @@ def iter_decasteljau_steps(
     In this case, the function would yield [1, 5, 9] then [3, 8] then [5.5]
     """
     points_ = as_points_array(points)
-    points_list = [np.asarray(x).astype(np.floating[Any]) for x in points_]
+    points_list = [np.asarray(x).astype(float) for x in points_]
     yield points_list
     while len(points_) > 1:
         points_ = [x * (1 - time) + y * time for x, y in zip(points_, points_[1:])]
