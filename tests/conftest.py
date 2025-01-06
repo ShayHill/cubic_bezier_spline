@@ -8,7 +8,7 @@ import random
 import sys
 from collections.abc import Iterator, Sequence
 from itertools import count
-from typing import Annotated, Union
+from typing import Annotated, Any, Union
 
 import numpy as np
 from numpy import typing as npt
@@ -19,7 +19,7 @@ else:
     from typing_extensions import TypeAlias
 
 
-FArray: TypeAlias = npt.NDArray[np.float64]
+FArray: TypeAlias = npt.NDArray[np.floating[Any]]
 Point = Sequence[float]
 
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import enum
 from collections.abc import Sequence
-from typing import Annotated, Union
+from typing import Annotated, Any, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -19,8 +19,8 @@ from cubic_bezier_spline.control_point_casting import (
     as_open_points_array,
 )
 
-Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float64]]
-APoints = Annotated[npt.NDArray[np.float64], "(-1, -1)"]
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.floating[Any]]]
+APoints = Annotated[npt.NDArray[np.floating[Any]], "(-1, -1)"]
 
 _LINEAR = 2
 _QUADRATIC = 3
@@ -104,7 +104,7 @@ def new_closed_approximating_spline(cpts: Points) -> BezierSpline:
 # ===================================================================================
 
 
-def _get_b_matrix(cpts: APoints) -> Annotated[npt.NDArray[np.float64], "(p-2,v)"]:
+def _get_b_matrix(cpts: APoints) -> Annotated[npt.NDArray[np.floating[Any]], "(p-2,v)"]:
     """Get the B matrix for a set of points.
 
     :param cpts: points to interpolate

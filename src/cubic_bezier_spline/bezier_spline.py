@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from math import floor
-from typing import TYPE_CHECKING, Annotated, Callable, Union
+from typing import TYPE_CHECKING, Annotated, Any, Callable, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -24,8 +24,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
 
-Point = Union[Sequence[float], npt.NDArray[np.float64]]
-Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float64]]
+Point = Union[Sequence[float], npt.NDArray[np.floating[Any]]]
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.floating[Any]]]
 
 
 class TimeIntervalError(Exception):
@@ -132,7 +132,7 @@ class BezierSpline:
         """
         return len(self._curves)
 
-    def __array__(self) -> Annotated[npt.NDArray[np.float64], (-1, -1, -1)]:
+    def __array__(self) -> Annotated[npt.NDArray[np.floating[Any]], (-1, -1, -1)]:
         """Get the spline as a numpy array.
 
         :return: numpy array of curves
@@ -173,7 +173,7 @@ class BezierSpline:
             yield issue_cmd("Z")
 
     @property
-    def as_array(self) -> Annotated[npt.NDArray[np.float64], (-1, -1, -1)]:
+    def as_array(self) -> Annotated[npt.NDArray[np.floating[Any]], (-1, -1, -1)]:
         """Get the spline as a numpy array.
 
         :return: numpy array of curves

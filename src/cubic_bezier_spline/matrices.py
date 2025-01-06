@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -32,7 +32,7 @@ def binom(n: int, k: int) -> int:
 
 
 @lru_cache
-def get_pascals(num: int) -> npt.NDArray[np.float64]:
+def get_pascals(num: int) -> npt.NDArray[np.floating[Any]]:
     """One line of Pascal's triangle.
 
     :param num: number of terms
@@ -59,7 +59,7 @@ def _get_boolean_checkerboard(shape: tuple[int, int]) -> npt.NDArray[np.bool_]:
 
 
 @lru_cache
-def get_mix_matrix(num: int) -> npt.NDArray[np.float64]:
+def get_mix_matrix(num: int) -> npt.NDArray[np.floating[Any]]:
     """Matrix of binomial coefficients for Bezier calculation.
 
     :param num: how many points in the Bezier curve

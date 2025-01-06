@@ -18,11 +18,11 @@ from numpy import typing as npt
 from cubic_bezier_spline.bezier_spline import BezierSpline, TimeIntervalError
 
 if sys.version_info >= (3, 10):
-    from typing import TypeAlias
+    from typing import Any, TypeAlias
 else:
     from typing_extensions import TypeAlias
 
-FArray: TypeAlias = npt.NDArray[np.float64]
+FArray: TypeAlias = npt.NDArray[np.floating[Any]]
 SHORT_SPLINE = BezierSpline([[[0], [1]], [[1], [2]]])
 
 

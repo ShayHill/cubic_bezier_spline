@@ -16,7 +16,7 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Sequence
 from functools import cached_property
-from typing import Annotated, TypeVar, Union
+from typing import Annotated, Any, TypeVar, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -25,8 +25,8 @@ from paragraphs import par
 from cubic_bezier_spline.control_point_casting import as_nested_tuple, as_points_array
 from cubic_bezier_spline.matrices import get_mix_matrix
 
-Points = Union[Sequence[Sequence[float]], npt.NDArray[np.float64]]
-APoints = Annotated[npt.NDArray[np.float64], "(-1, -1)"]
+Points = Union[Sequence[Sequence[float]], npt.NDArray[np.floating[Any]]]
+APoints = Annotated[npt.NDArray[np.floating[Any]], "(-1, -1)"]
 TPoints = tuple[tuple[float, ...], ...]
 
 _BezierCurveT = TypeVar("_BezierCurveT", bound="BezierCurve")
@@ -82,7 +82,7 @@ class BezierCurve:
         """
         return len(self.control_points) - 1
 
-    def __getitem__(self, item: int) -> npt.NDArray[np.float64]:
+    def __getitem__(self, item: int) -> npt.NDArray[np.floating[Any]]:
         """Return item-th point.
 
         :param item: index of [p0, p1, p2, p3]
@@ -97,7 +97,9 @@ class BezierCurve:
         """
         return self.as_array
 
-    def __call__(self, time: float, derivative: int = 0) -> npt.NDArray[np.float64]:
+    def __call__(
+        self, time: float, derivative: int = 0
+    ) -> npt.NDArray[np.floating[Any]]:
         """Cubic Bezier calculation at time.
 
         :param time: time on curve (typically 0 - 1)
@@ -114,7 +116,9 @@ class BezierCurve:
             return self._get_tmat(time) @ self._mixed_points
         return self.derivative(derivative)(time)
 
-    def _get_tmat(self, time: float) -> Annotated[npt.NDArray[np.float64], "(p,)"]:
+    def _get_tmat(
+        self, time: float
+    ) -> Annotated[npt.NDArray[np.floating[Any]], "(p,)"]:
         """Get the t matrix for time.
 
         :param time: time on curve (typically 0 - 1)
@@ -122,7 +126,9 @@ class BezierCurve:
         """
         return np.array([time**x for x in range(self.degree + 1)])
 
-    def get_zmat(self, time: float) -> Annotated[npt.NDArray[np.float64], "(p, p)"]:
+    def get_zmat(
+        self, time: float
+    ) -> Annotated[npt.NDArray[np.floating[Any]], "(p, p)"]:
         """Get a 2D zero matrix with tmat on the diagonal.
 
         :param time: time on curve (typically 0 - 1)
@@ -137,7 +143,7 @@ class BezierCurve:
         return np.diagflat(self._get_tmat(time))
 
     @cached_property
-    def mmat(self) -> Annotated[npt.NDArray[np.float64], "(p, p)"]:
+    def mmat(self) -> Annotated[npt.NDArray[np.floating[Any]], "(p, p)"]:
         """Get the mix matrix for this curve.
 
         :return: mix matrix for this curve
@@ -145,7 +151,7 @@ class BezierCurve:
         return get_mix_matrix(self.degree + 1)
 
     @cached_property
-    def _mixed_points(self) -> Annotated[npt.NDArray[np.float64], "(p,v)"]:
+    def _mixed_points(self) -> Annotated[npt.NDArray[np.floating[Any]], "(p,v)"]:
         """Points scaled by binomial coefficients.
 
         :return: Points scaled by binomial coefficients

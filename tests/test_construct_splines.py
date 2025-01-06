@@ -20,11 +20,11 @@ from cubic_bezier_spline.construct_splines import (
 )
 
 if sys.version_info >= (3, 10):
-    from typing import TypeAlias
+    from typing import Any, TypeAlias
 else:
     from typing_extensions import TypeAlias
 
-FArray: TypeAlias = npt.NDArray[np.float64]
+FArray: TypeAlias = npt.NDArray[np.floating[Any]]
 
 
 class TestClosedControlPoints:

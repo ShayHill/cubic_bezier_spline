@@ -21,11 +21,11 @@ from cubic_bezier_spline.other_solvers import (
 )
 
 if sys.version_info >= (3, 10):
-    from typing import TypeAlias
+    from typing import Any, TypeAlias
 else:
     from typing_extensions import TypeAlias
 
-FArray: TypeAlias = npt.NDArray[np.float64]
+FArray: TypeAlias = npt.NDArray[np.floating[Any]]
 
 
 @pytest.mark.parametrize("points", random_bezier_points())
