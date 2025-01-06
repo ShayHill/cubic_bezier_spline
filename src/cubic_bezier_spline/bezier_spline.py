@@ -9,6 +9,7 @@ A dead-simple container for lists of Bezier curves.
 from __future__ import annotations
 
 import dataclasses
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
@@ -26,6 +27,20 @@ if TYPE_CHECKING:
 
 Point = Union[Sequence[float], npt.NDArray[np.floating[Any]]]
 Points = Union[Sequence[Sequence[float]], npt.NDArray[np.floating[Any]]]
+
+
+def _svg_d_join(*parts: str) -> str:
+    """Join SVG path data parts.
+
+    :param parts: parts of an SVG path data string
+    :return: joined SVG path data string
+
+    Svg datastrings don't need a lot of whitespace.
+    """
+    joined = " ".join(parts)
+    joined = re.sub(r"\s+", " ", joined)
+    joined = re.sub(r" -", "-", joined)
+    return re.sub(r"\s*([A-Za-z])\s*", r"\1", joined)
 
 
 class TimeIntervalError(Exception):
@@ -71,7 +86,7 @@ class _StrPoint:
 
         :return: x,y as a string
         """
-        return f"{self.x},{self.y}"
+        return _svg_d_join(self.x, self.y)
 
 
 def _new_svg_command_issuer() -> Callable[..., str]:
@@ -89,12 +104,9 @@ def _new_svg_command_issuer() -> Callable[..., str]:
         :return: formatted command
         """
         nonlocal prev_cmd
-        if prev_cmd is None or prev_cmd != cmd:
-            parts = [cmd, *pnts]
-        else:
-            parts = ["", *pnts]
+        cmd_ = cmd if cmd != prev_cmd else ""
         prev_cmd = cmd
-        return " ".join(parts)
+        return _svg_d_join(cmd_, *pnts)
 
     return issue_cmd
 
@@ -157,7 +169,10 @@ class BezierSpline:
                     yield issue_cmd("Z")
                 yield issue_cmd("M", pnt.xy)
                 beg_path = pnt
-            if len(pnts) == 1 and pnts[0].x == pnt.x:
+            if len(pnts) == 1 and pnts[0] == beg_path:
+                # linear spline closing the path
+                yield issue_cmd("Z")
+            elif len(pnts) == 1 and pnts[0].x == pnt.x:
                 yield issue_cmd("V", pnts[0].y)
             elif len(pnts) == 1 and pnts[0].y == pnt.y:
                 yield issue_cmd("H", pnts[0].x)
