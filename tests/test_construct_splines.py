@@ -6,6 +6,7 @@
 
 import sys
 from math import isclose
+from typing import Any
 
 import numpy as np
 import pytest
@@ -15,12 +16,14 @@ from numpy import typing as npt
 from cubic_bezier_spline.construct_splines import (
     new_closed_approximating_spline,
     new_closed_interpolating_spline,
+    new_closed_linear_spline,
     new_open_approximating_spline,
     new_open_interpolating_spline,
+    new_open_linear_spline,
 )
 
 if sys.version_info >= (3, 10):
-    from typing import Any, TypeAlias
+    from typing import TypeAlias
 else:
     from typing_extensions import TypeAlias
 
@@ -136,3 +139,15 @@ class TestInterpolatingClosed:
         spline = new_closed_interpolating_spline([[-1, -1], [1, -1], [1, 1], [-1, 1]])
         for i in range(5):
             assert isclose(abs(spline(i)[0]), abs(spline(i)[1]))
+
+
+class TestLiner:
+    def test_linear_open(self) -> None:
+        """Produce a linear spline between each pair of points."""
+        spline = new_open_linear_spline([[0, 0], [1, 0], [1, 1], [0, 1]])
+        assert spline.svg_data == "M0 0H1V1H0"
+
+    def test_linear_closed(self) -> None:
+        """Produce a linear spline between each pair of points."""
+        spline = new_closed_linear_spline([[0, 0], [1, 0], [1, 1], [0, 1]])
+        assert spline.svg_data == "M0 0H1V1H0Z"

@@ -7,8 +7,9 @@
 from __future__ import annotations
 
 import enum
-from collections.abc import Sequence
-from typing import Annotated, Any, Union
+import itertools as it
+from collections.abc import Iterable, Sequence
+from typing import Annotated, Any, TypeVar, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -19,11 +20,26 @@ from cubic_bezier_spline.control_point_casting import (
     as_open_points_array,
 )
 
+_T = TypeVar("_T")
+
 Points = Union[Sequence[Sequence[float]], npt.NDArray[np.floating[Any]]]
 APoints = Annotated[npt.NDArray[np.floating[Any]], "(-1, -1)"]
 
 _LINEAR = 2
 _QUADRATIC = 3
+
+
+def pairwise(iterable: Iterable[_T]) -> Iterable[tuple[_T, _T]]:
+    """Yield pairs of items from an iterable.
+
+    :param iterable: items to pair
+    :return: pairs of items from the iterable
+
+    No it.pairwise in Python 3.9.
+    """
+    items_a, items_b = it.tee(iterable)
+    _ = next(items_b, None)
+    return zip(items_a, items_b)
 
 
 class _OpenOrClosed(enum.Enum):
@@ -37,8 +53,8 @@ def _get_141_matrix(dim: int, open_or_closed: _OpenOrClosed) -> npt.NDArray[np.b
     """Create the 141 matrix necessary to get interpolated points from control points.
 
     :param dim: size of the matrix
-    :param close: if True (default False), wrap the 1 values around for the top and
-        bottom rows. This will produce points for a closed spline.
+    :param open_or_closes: will the spline be open or closed? If closed, the spline
+        will wrap around to connect the first and last points.
     :return: a (dim, dim) matrix with 1, 4, 1 on the diagonal and 0 elsewhere.
     """
     ones = [1] * (dim - 1)
@@ -48,14 +64,47 @@ def _get_141_matrix(dim: int, open_or_closed: _OpenOrClosed) -> npt.NDArray[np.b
     return mat_141
 
 
+def _new_linear_spline(cpts: Points, open_or_closed: _OpenOrClosed) -> BezierSpline:
+    """Create a linear spline from a sequence of points.
+
+    :param cpts: points to connect with line segments
+    :param open_or_closes: will the spline be open or closed? If closed, the spline
+        will wrap around to connect the first and last points.
+    :return: A spline connecting the points with line segments.
+    """
+    if open_or_closed == _OpenOrClosed.CLOSED:
+        cpts_ = as_closed_points_array(cpts)
+    else:
+        cpts_ = as_open_points_array(cpts)
+    return BezierSpline(pairwise(cpts_))
+
+
+def new_open_linear_spline(cpts: Points) -> BezierSpline:
+    """Create a linear spline from a sequence of points.
+
+    :param cpts: points to connect with line segments
+    :return: A spline connecting the points with line segments.
+    """
+    return _new_linear_spline(cpts, _OpenOrClosed.OPEN)
+
+
+def new_closed_linear_spline(cpts: Points) -> BezierSpline:
+    """Create a linear spline from a sequence of points.
+
+    :param cpts: points to connect with line segments
+    :return: A spline connecting the points with line segments.
+    """
+    return _new_linear_spline(cpts, _OpenOrClosed.CLOSED)
+
+
 def _new_approximating_spline(
     cpts: Points, open_or_closed: _OpenOrClosed
 ) -> BezierSpline:
     """Approximate a set of points as a composite Bezier curve (Bezier spline).
 
     :param cpts: points to approximate
-    :param close: if True (default False), wrap the ends of the spline around to form
-        a closed loop.
+    :param open_or_closes: will the spline be open or closed? If closed, the spline
+        will wrap around to connect the first and last points.
     :return: A spline beginning at cpts[0], ending at cpts[-1], and shaped by
         cpts[1:-1] or, if closed, a spline shaped by all control points, beginning
         and ending at the same point.
