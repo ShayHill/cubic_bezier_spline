@@ -4,11 +4,13 @@
 :created: 2024-12-02
 """
 
+from __future__ import annotations
+
 import random
 import sys
 from collections.abc import Iterator, Sequence
 from itertools import count
-from typing import Annotated, Any, Union
+from typing import Annotated, Any
 
 import numpy as np
 from numpy import typing as npt
@@ -24,11 +26,10 @@ Point = Sequence[float]
 
 
 def random_bezier_points(
-    degree_limits: Union[int, tuple[int, int]] = (0, 10),
-    dimension_limits: Union[int, tuple[int, int]] = (1, 10),
+    degree_limits: int | tuple[int, int] = (0, 10),
+    dimension_limits: int | tuple[int, int] = (1, 10),
 ) -> Iterator[Annotated[FArray, (-1, -1)]]:
-    """
-    Iter sets of Bezier control points
+    """Yield sets of Bezier control points.
 
     :yield: (degree + 1, dimensions) array of floats
     """
@@ -48,12 +49,12 @@ def random_bezier_points(
 
 
 def random_bezier_curves(
-    degree_limits: Union[int, tuple[int, int]] = (0, 10),
-    dimension_limits: Union[int, tuple[int, int]] = (1, 10),
-    splines_limits: Union[int, tuple[int, int]] = (1, 10),
+    degree_limits: int | tuple[int, int] = (0, 10),
+    dimension_limits: int | tuple[int, int] = (1, 10),
+    splines_limits: int | tuple[int, int] = (1, 10),
 ) -> Iterator[Annotated[FArray, (-1, -1)]]:
-    """
-    A 3-D vector of spline curve points.
+    """Return a 3-D vector of spline curve points.
+
     [ curve, curve, curve ]
 
     :param degree_limits:
@@ -83,24 +84,23 @@ def random_bezier_curves(
 
 
 def random_times() -> Iterator[float]:
-    """
-    Infinite random values between 0 and 1
-    :return:
+    """Infinite random values between 0 and 1.
+
+    :return: random values
     """
     return (random.random() for _ in count())
 
 
 def random_indices() -> Iterator[int]:
-    """
-    Infinite random integers (point indices) 0, 1, 2, 3
-    :return:
+    """Return infinite random integers (point indices) 0, 1, 2, 3.
+
+    :return: random values
     """
     return (random.randint(0, 3) for _ in count())
 
 
 def cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
-    """
-    Cubic Bezier curve.
+    """Cubic Bezier curve.
 
     :param p0: control point
     :param p1: control point
@@ -123,8 +123,7 @@ def cbez(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
 
 
 def cbez_d1(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
-    """
-    First derivative of cubic Bezier at time.
+    """First derivative of cubic Bezier at time.
 
     :param p0: control point
     :param p1: control point
@@ -146,8 +145,7 @@ def cbez_d1(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
 
 
 def cbez_d2(p0: Point, p1: Point, p2: Point, p3: Point, time: float) -> Point:
-    """
-    Second derivative of cubic Bezier at time.
+    """Second derivative of cubic Bezier at time.
 
     :param p0: control point
     :param p1: control point

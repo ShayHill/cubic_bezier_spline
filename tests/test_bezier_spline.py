@@ -9,6 +9,7 @@
 
 import random
 import sys
+from typing import Any
 
 import numpy as np
 import pytest
@@ -18,7 +19,7 @@ from numpy import typing as npt
 from cubic_bezier_spline.bezier_spline import BezierSpline, TimeIntervalError
 
 if sys.version_info >= (3, 10):
-    from typing import Any, TypeAlias
+    from typing import TypeAlias
 else:
     from typing_extensions import TypeAlias
 

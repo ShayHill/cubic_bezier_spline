@@ -7,6 +7,7 @@
 import random
 import sys
 from itertools import count
+from typing import Any
 
 import numpy as np
 import pytest
@@ -21,7 +22,7 @@ from cubic_bezier_spline.other_solvers import (
 )
 
 if sys.version_info >= (3, 10):
-    from typing import Any, TypeAlias
+    from typing import TypeAlias
 else:
     from typing_extensions import TypeAlias
 
@@ -56,8 +57,7 @@ class TestGetitem:
 
 
 class TestCubicBezierDerivatives:
-    """
-    Test derivative argument in __call__ against explicitly defined cubic Bezier
+    """Test derivative argument in __call__ against explicitly defined cubic Bezier
     derivative formulas
     """
 
@@ -107,9 +107,7 @@ class TestSplit:
         "points,time", zip(random_bezier_points(degree_limits=(0, 5)), random_times())
     )
     def test_against_dc(self, points: FArray, time: float) -> None:
-        """
-        Compare results to decasteljau.
-        """
+        """Compare results to decasteljau."""
         point_sequence = [list(map(float, point)) for point in points]
         aaa = get_split_decasteljau(point_sequence, time)
         curve = BezierCurve(points)
@@ -121,9 +119,7 @@ class TestSplit:
         "points,time", zip(random_bezier_points(degree_limits=(0, 5)), random_times())
     )
     def test_touch(self, points: FArray, time: float) -> None:
-        """
-        Last point of first curve == first point of second
-        """
+        """Last point of first curve == first point of second"""
         curve = BezierCurve(points)
         beg, end = curve.split(time)
         np.testing.assert_array_equal(beg.control_points[-1], end.control_points[0])
@@ -132,7 +128,8 @@ class TestSplit:
     def test_split_0(self, points: FArray) -> None:
         """Split at 0 returns two curves.
 
-        First is repeated point[0], second is original"""
+        First is repeated point[0], second is original
+        """
         curve = BezierCurve(points)
         point, curve_ = curve.split(0)
         assert len(set(point.control_points)) == 1
@@ -142,7 +139,8 @@ class TestSplit:
     def test_split_1(self, points: FArray) -> None:
         """Split at 1 returns two curves.
 
-        First is original, second is repeated point[-1]"""
+        First is original, second is repeated point[-1]
+        """
         curve = BezierCurve(points)
         curve_, point = curve.split(1)
         assert len(set(point.control_points)) == 1
