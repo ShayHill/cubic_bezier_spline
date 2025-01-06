@@ -32,7 +32,7 @@ repos:
       - --pytest-test-first
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.13.0
+  rev: v1.14.1
   hooks:
   - id: mypy
     name: mypy
@@ -62,7 +62,7 @@ repos:
     args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.19.0
+  rev: v3.19.1
   hooks:
   - args:
     - --py39-plus
@@ -113,7 +113,7 @@ repos:
   # PTH108 os.unlink should be replaced by .unlink()
   # SIM108 Use ternary operator instead of multi-line if statement
   # PLR2004 Magic value used in comparison
-  rev: 'v0.8.2'
+  rev: 'v0.8.6'
   hooks:
     - id: ruff
       exclude: "tests"
@@ -124,6 +124,6 @@ repos:
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.390
+  rev: v1.1.391
   hooks:
     - id: pyright
