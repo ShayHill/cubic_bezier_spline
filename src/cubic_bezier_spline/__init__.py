@@ -11,8 +11,10 @@ from .construct_splines import (
     get_open_b_points,
     new_closed_approximating_spline,
     new_closed_interpolating_spline,
+    new_closed_linear_spline,
     new_open_approximating_spline,
     new_open_interpolating_spline,
+    new_open_linear_spline,
 )
 
 __all__ = [
@@ -22,6 +24,8 @@ __all__ = [
     "get_open_b_points",
     "new_closed_approximating_spline",
     "new_closed_interpolating_spline",
+    "new_closed_linear_spline",
     "new_open_approximating_spline",
     "new_open_interpolating_spline",
+    "new_open_linear_spline",
 ]
