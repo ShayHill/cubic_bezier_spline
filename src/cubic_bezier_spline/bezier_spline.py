@@ -203,17 +203,26 @@ class BezierSpline:
         """
         return "".join(self._yield_svg_commands())
 
-    def __call__(self, time: float, derivative: int = 0) -> Point:
+    def __call__(
+        self,
+        time: float,
+        derivative: int = 0,
+        *,
+        normalized_time_interval: bool = False,
+    ) -> Point:
         """Given x.y, call curve x at time y.
 
         :param time: x.y -> curve index x and time on curve y
             between 0 and len(curves)
         :param derivative: optional derivative at time
+        :param normalized_time_interval: if True, time is in [0, 1]
         :return: xth non-rational Bezier at time
         :raise TimeIntervalError: if time is not in [0, len(curves)]
 
         For a spline with 3 curves, spline(3) will return curve 2 at time=1
         """
+        if normalized_time_interval:
+            time = time * len(self)
         if not 0 <= time <= len(self):
             msg = f"{time} not in interval [0, {len(self)}]"
             raise TimeIntervalError(msg)
