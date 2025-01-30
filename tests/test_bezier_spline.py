@@ -8,7 +8,9 @@
 
 
 import random
+
 import sys
+import math
 from typing import Any
 
 import numpy as np
@@ -81,3 +83,77 @@ class TestBezierSpline:
     def test_derivative(self, time: float) -> None:
         """Return value of spline at derivative"""
         assert SHORT_SPLINE(time, 1) == 1
+
+
+class TestSplit:
+    def test_split_whole(self) -> None:
+        """Split at spline endpoints."""
+        spline = SHORT_SPLINE
+        split = spline.split(0, 2)
+        assert split.control_points == spline.control_points
+
+    def test_split_whole_from_0(self) -> None:
+        """Split at spline endpoints."""
+        spline = SHORT_SPLINE
+        split = spline.split(0, 0)
+        assert split.control_points == spline.control_points
+
+    def test_split_whole_from_max(self) -> None:
+        """Split at spline endpoints."""
+        spline = SHORT_SPLINE
+        split = spline.split(2, 2)
+        assert split.control_points == spline.control_points
+    
+    def test_beg_to_mid(self) -> None:
+        """Split at spline endpoints."""
+        spline = SHORT_SPLINE
+        split = spline.split(0, 1)
+        assert split.control_points == (((0.0,), (1.0,)),)
+
+    def test_split_whole_from_middle(self) -> None:
+        """Split at spline endpoints."""
+        spline = SHORT_SPLINE
+        with pytest.raises(ValueError):
+            _ = spline.split(1, 0)
+
+
+    def test_split_whole_loop_from_middle(self) -> None:
+        """Split at spline endpoints."""
+        spline = BezierSpline([[[0.0], [1.0]], [[1.0], [0.0]]])
+        split = spline.split(1, 1)
+        assert math.isclose(split(0)[0], spline(1)[0])
+        assert math.isclose(split(2)[0], spline(1)[0])
+        assert math.isclose(split(1)[0], spline(0)[0])
+
+    def test_same_curve(self) -> None:
+        """Split at the same time."""
+        spline = SHORT_SPLINE
+        split = spline.split(0.4, 0.5)
+        assert math.isclose(split(0)[0], spline(0.4)[0])
+        assert math.isclose(split(1)[0], spline(0.5)[0])
+
+    def test_different_curves(self) -> None:
+        """Split at the same time."""
+        spline = SHORT_SPLINE
+        split = spline.split(0.5, 1.5)
+        assert math.isclose(split(0)[0], spline(0.5)[0])
+        assert math.isclose(split(1, normalized_time_interval=True)[0], spline(1.5)[0])
+
+    def test_split_to_joint(self) -> None:
+        """Don't leave any empty curves when splitting exactly at a joint."""
+        spline = BezierSpline([
+            [[0.0], [1.0]],
+            [[1.0], [2.0]],
+            [[2.0], [3.0]],
+            [[3.0], [4.0]]])
+        split = spline.split(1, 3)
+        assert split.control_points == (((1.0,), (2.0,)), ((2.0,), (3.0,)))
+
+    def test_split_as_loop(self) -> None:
+        """Split through spline(0) when end is less than start."""
+        spline = BezierSpline([[[0.0], [1.0]], [[1.0], [0.0]]])
+        split = spline.split(1.8, .6)
+        assert math.isclose(split(0)[0], spline(1.8)[0])
+        assert math.isclose(split(2)[0], spline(.6)[0])
+        assert math.isclose(split(1)[0], spline(0)[0])
+

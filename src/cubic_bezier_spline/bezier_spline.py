@@ -14,7 +14,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from math import floor
-from typing import TYPE_CHECKING, Annotated, Any, Callable, Union
+from typing import TYPE_CHECKING, Annotated, Any, Callable, Union, TypeVar
 
 import numpy as np
 import numpy.typing as npt
@@ -111,6 +111,9 @@ def _new_svg_command_issuer() -> Callable[..., str]:
     return issue_cmd
 
 
+BezierSplineType = TypeVar("BezierSplineType", bound="BezierSpline")
+
+
 @dataclass
 class BezierSpline:
     """A list of non-rational Bezier curves."""
@@ -202,6 +205,71 @@ class BezierSpline:
         :return: SVG data string (the d="" attribute of an svg "path" element)
         """
         return "".join(self._yield_svg_commands())
+
+    def _divmod_time(self, time: float) -> tuple[int, float]:
+        """Divmod a time value into curve index and time on curve.
+
+        :param time: time value
+        :return: curve index, time on curve
+        """
+        time = min(max(0, time), len(self))
+        floor_, fractional = int(time), time % 1
+        if floor_ == len(self):
+            return floor_ - 1, 1
+        return floor_, fractional
+
+    def _split_to_curves(self, beg_time: float, end_time: float) -> list[BezierCurve]:
+        """Split a BezierSpline into multiple Bezier curves."""
+        beg_time = min(max(0, beg_time), len(self))
+        end_time = min(max(0, end_time), len(self))
+
+        if beg_time in {0, len(self)} and end_time in {0, len(self)}:
+            return self._curves
+
+        beg_idx, beg_val = self._divmod_time(beg_time)
+        end_idx, end_val = self._divmod_time(end_time)
+
+        if beg_time >= end_time:
+            if self.control_points[0][0] != self.control_points[-1][-1]:
+                msg = "Cannot split an open spline from high to low time"
+                raise ValueError(msg)
+            curves: list[BezierCurve] = []
+            if beg_time != len(self):
+                curves.extend(self._split_to_curves(beg_time, len(self)))
+            if end_time != 0:
+                curves.extend(self._split_to_curves(0, end_time))
+            return curves
+
+        if beg_idx == end_idx:
+            return self._curves[beg_idx].split(beg_val, end_val)[1:-1]
+
+        head = [] if beg_val == 1 else self._curves[beg_idx].split(beg_val)[1:]
+        body = self._curves[beg_idx + 1 : end_idx]
+        tail = [] if end_val == 0 else self._curves[end_idx].split(end_val)[:1]
+        return head + body + tail
+
+
+    def split(
+        self: BezierSplineType, beg_time: float, end_time: float
+    ) -> BezierSplineType:
+        """Split a BezierSpline into two Bezier splines.
+
+        :param beg_time: time at which to start the new spline
+        :param end_time: time at which to end the new spline
+        :return: new BezierSpline
+
+        A split BezierSpline will be another spline with some number <, =, or 1
+        greater than the number of curves of the parent spline. The curves at the
+        beginning of the spline may be very short, even 0 dimensional, so a split
+        BezierSpline won't necessarily be useful for plotting or additional
+        splitting, but it may be useful for drawing.
+
+        If the time values are equal, or the end time is less than the begin time,
+        this method will assume the spline is closed, and return a spline from begin
+        to end *through* spline(0).
+        """
+        curves = self._split_to_curves(beg_time, end_time)
+        return type(self)([x.control_points for x in curves])
 
     def __call__(
         self,
