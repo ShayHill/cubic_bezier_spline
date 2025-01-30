@@ -4,6 +4,8 @@
 :created: 1/18/2020
 """
 
+import itertools as it
+import math
 import random
 import sys
 from itertools import count
@@ -103,6 +105,30 @@ class TestCubicBezierDerivatives:
 
 
 class TestSplit:
+    @pytest.mark.parametrize("time", it.islice(random_times(), 100))
+    def test_one_time_value(self, time: float) -> None:
+        """Split with one time value returns two curves"""
+        curve = BezierCurve([(0,), (1,)])
+        curve1, curve2 = curve.split(time)
+        assert math.isclose(time, curve1(1)[0])
+        assert math.isclose(time, curve2(0)[0])
+
+    @pytest.mark.parametrize(
+        "time1, time2", it.islice(zip(random_times(), random_times()), 100)
+    )
+    def test_two_time_values(self, time1: float, time2: float) -> None:
+        """Split with two time values returns three curves"""
+        time1, time2 = sorted([time1, time2])
+        time1, time2 = 0.4, 0.6
+        curve = BezierCurve([(0,), (1,)])
+        curve1, curve2, curve3 = curve.split(time1, time2)
+        assert math.isclose(0, curve1(0)[0])
+        assert math.isclose(time1, curve1(1)[0])
+        assert math.isclose(time1, curve2(0)[0])
+        assert math.isclose(time2, curve2(1)[0])
+        assert math.isclose(time2, curve3(0)[0])
+        assert math.isclose(1, curve3(1)[0])
+
     @pytest.mark.parametrize(
         "points,time", zip(random_bezier_points(degree_limits=(0, 5)), random_times())
     )

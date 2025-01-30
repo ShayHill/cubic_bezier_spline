@@ -168,10 +168,11 @@ class BezierCurve:
             will be clipped to [0, 1].
         :return: two new BezierCurve instances
         """
+        time_args = tuple(max(0, min(1, time)) for time in time_args)
         curves = [self]
         time_at = 0.0
         for time in time_args:
-            time_prime = _interp_floats(time_at, 1, time)
+            time_prime = (time - time_at) / (1 - time_at)
             if time_prime == time_at:
                 point = np.array([self(time_at)] * (self.degree + 1))
                 curves[-1:] = [type(self)(point), curves[-1]]
