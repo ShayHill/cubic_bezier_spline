@@ -252,3 +252,14 @@ class TestElevated:
         elevated = curve.elevated(curve.degree + elevation)
         np.testing.assert_allclose(curve(time), elevated(time))
         np.testing.assert_allclose(curve(time, 2), elevated(time, 2))
+
+
+class TestReversed:
+    @pytest.mark.parametrize("points,time", zip(random_bezier_points(), random_times()))
+    def test_reversed(self, points: FArray, time: float) -> None:
+        """Curve is opposite whe reversed."""
+        curve = BezierCurve(points)
+        reversed_curve = curve.reversed()
+        expect = curve(time)
+        result = reversed_curve(1 - time)
+        np.testing.assert_allclose(expect, result)

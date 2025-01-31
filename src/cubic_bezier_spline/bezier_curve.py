@@ -32,18 +32,6 @@ TPoints = tuple[tuple[float, ...], ...]
 _BezierCurveT = TypeVar("_BezierCurveT", bound="BezierCurve")
 
 
-def _interp_floats(at_0: float, at_1: float, time: float) -> float:
-    """Interpolate between two floats.
-
-    :param at_0: value at time 0
-    :param at_1: value at time 1
-    :param time: time in [0, 1]
-    :return: interpolated value, clipped to [at_0, at_1]
-    """
-    interpolated = at_0 + (at_1 - at_0) * time
-    return max(at_0, min(at_1, interpolated))
-
-
 @dataclasses.dataclass(frozen=True)
 class BezierCurve:
     """A non-rational Bezier curve.
@@ -222,6 +210,13 @@ class BezierCurve:
         return type(self)(
             np.concatenate([ps[:1], ps[:-1] * rats + ps[1:] * (1 - rats), ps[-1:]])
         ).elevated(to_degree)
+
+    def reversed(self) -> BezierCurve:
+        """Create a new curve, reversed.
+
+        :return: Bezier curve of identical shape with control points reversed
+        """
+        return type(self)(self.as_array[::-1])
 
     def derivative(self, derivative: int) -> BezierCurve:
         """Nth derivative of a Bezier curve.
