@@ -67,9 +67,12 @@ def iter_decasteljau_steps(
     points_ = as_points_array(points)
     points_list = [np.asarray(x).astype(float) for x in points_]
     yield points_list
-    while len(points_) > 1:
-        points_ = [x * (1 - time) + y * time for x, y in zip(points_, points_[1:])]
-        yield points_
+    while len(points_list) > 1:
+        points_list = [
+            np.asarray(x * (1 - time) + y * time, dtype=float)
+            for x, y in zip(points_list, points_list[1:])
+        ]
+        yield points_list
 
 
 def get_decasteljau(points: Points, time: float) -> npt.NDArray[np.floating[Any]]:
