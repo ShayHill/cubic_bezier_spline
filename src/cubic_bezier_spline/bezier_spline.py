@@ -14,7 +14,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from math import floor
-from typing import TYPE_CHECKING, Annotated, Any, Callable, Union, TypeVar
+from typing import TYPE_CHECKING, Annotated, Any, Callable, TypeVar, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -111,7 +111,7 @@ def _new_svg_command_issuer() -> Callable[..., str]:
     return issue_cmd
 
 
-BezierSplineType = TypeVar("BezierSplineType", bound="BezierSpline")
+_BezierSplineT = TypeVar("_BezierSplineT", bound="BezierSpline")
 
 
 @dataclass
@@ -218,8 +218,21 @@ class BezierSpline:
             return floor_ - 1, 1
         return floor_, fractional
 
+    def reversed(self: _BezierSplineT) -> _BezierSplineT:
+        """Reverse the spline.
+
+        :return: reversed BezierSpline
+        """
+        return type(self)(x.reversed().control_points for x in reversed(self._curves))
+
     def _split_to_curves(self, beg_time: float, end_time: float) -> list[BezierCurve]:
-        """Split a BezierSpline into multiple Bezier curves."""
+        """Split a BezierSpline into multiple Bezier curves.
+
+        :param beg_time: time at which to start the new spline
+        :param end_time: time at which to end the new spline
+        :return: list of Bezier curves
+        :raises ValueError: if the spline is open and the times are reversed
+        """
         beg_time = min(max(0, beg_time), len(self))
         end_time = min(max(0, end_time), len(self))
 
@@ -248,10 +261,7 @@ class BezierSpline:
         tail = [] if end_val == 0 else self._curves[end_idx].split(end_val)[:1]
         return head + body + tail
 
-
-    def split(
-        self: BezierSplineType, beg_time: float, end_time: float
-    ) -> BezierSplineType:
+    def split(self: _BezierSplineT, beg_time: float, end_time: float) -> _BezierSplineT:
         """Split a BezierSpline into two Bezier splines.
 
         :param beg_time: time at which to start the new spline

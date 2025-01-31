@@ -7,10 +7,9 @@
 # pyright: reportPrivateUsage = false
 
 
-import random
-
-import sys
 import math
+import random
+import sys
 from typing import Any
 
 import numpy as np
@@ -103,7 +102,7 @@ class TestSplit:
         spline = SHORT_SPLINE
         split = spline.split(2, 2)
         assert split.control_points == spline.control_points
-    
+
     def test_beg_to_mid(self) -> None:
         """Split at spline endpoints."""
         spline = SHORT_SPLINE
@@ -115,7 +114,6 @@ class TestSplit:
         spline = SHORT_SPLINE
         with pytest.raises(ValueError):
             _ = spline.split(1, 0)
-
 
     def test_split_whole_loop_from_middle(self) -> None:
         """Split at spline endpoints."""
@@ -141,19 +139,28 @@ class TestSplit:
 
     def test_split_to_joint(self) -> None:
         """Don't leave any empty curves when splitting exactly at a joint."""
-        spline = BezierSpline([
-            [[0.0], [1.0]],
-            [[1.0], [2.0]],
-            [[2.0], [3.0]],
-            [[3.0], [4.0]]])
+        spline = BezierSpline(
+            [[[0.0], [1.0]], [[1.0], [2.0]], [[2.0], [3.0]], [[3.0], [4.0]]]
+        )
         split = spline.split(1, 3)
         assert split.control_points == (((1.0,), (2.0,)), ((2.0,), (3.0,)))
 
     def test_split_as_loop(self) -> None:
         """Split through spline(0) when end is less than start."""
         spline = BezierSpline([[[0.0], [1.0]], [[1.0], [0.0]]])
-        split = spline.split(1.8, .6)
+        split = spline.split(1.8, 0.6)
         assert math.isclose(split(0)[0], spline(1.8)[0])
-        assert math.isclose(split(2)[0], spline(.6)[0])
+        assert math.isclose(split(2)[0], spline(0.6)[0])
         assert math.isclose(split(1)[0], spline(0)[0])
 
+
+class TestReversed:
+    @pytest.mark.parametrize(
+        "points, time", zip(random_bezier_curves(), random_times())
+    )
+    def test_reversed(self, points: FArray, time: float) -> None:
+        """At time n.p, return nth curve at p"""
+        spline = BezierSpline(points)
+        reversed_spline = spline.reversed()
+        time = time * len(spline)
+        np.testing.assert_allclose(spline(time), reversed_spline(len(spline) - time))
