@@ -263,3 +263,23 @@ class TestReversed:
         expect = curve(time)
         result = reversed_curve(1 - time)
         np.testing.assert_allclose(expect, result)
+
+
+class TestLength:
+    def test_degree_0(self):
+        curve = BezierCurve([(0, 0)])
+        assert curve.length == 0
+
+    def test_degree_1(self):
+        curve = BezierCurve([(0, 0), (1, 0)])
+        assert curve.length == math.sqrt(1)
+
+    def test_degree_2(self):
+        curve = BezierCurve([(0, 0), (1, 0), (2, 0)])
+        assert curve.length == 2
+
+    def test_2d(self):
+        """Test a curve length that can be known"""
+        points = [(0,), (1,), (2,), (3,), (2,), (1,), (0,)]
+        curve = BezierCurve(points)
+        assert math.isclose(curve.length, curve(0.5)[0] * 2)

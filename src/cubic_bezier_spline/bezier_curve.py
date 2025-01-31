@@ -14,9 +14,9 @@ mistake on your part. This package does not guard against that for you.
 from __future__ import annotations
 
 import dataclasses
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 from functools import cached_property
-from typing import Annotated, Any, TypeVar, Union
+from typing import Annotated, Any, Literal, TypeVar, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -211,6 +211,14 @@ class BezierCurve:
             np.concatenate([ps[:1], ps[:-1] * rats + ps[1:] * (1 - rats), ps[-1:]])
         ).elevated(to_degree)
 
+    @cached_property
+    def length(self) -> Literal[0] | np.floating[Any]:
+        """Get the approximate length of a Bezier curve.
+
+        :return: approximate length of the Bezier curve
+        """
+        return _get_approximate_curve_length(self)
+
     def reversed(self) -> BezierCurve:
         """Create a new curve, reversed.
 
@@ -238,3 +246,93 @@ class BezierCurve:
             raise ValueError(msg)
         points = (self.as_array[1:] - self.as_array[:-1]) * self.degree
         return type(self)(points).derivative(derivative - 1)
+
+
+# ===================================================================================
+#   Calculate the approximate length of a Bezier curve.
+# ===================================================================================
+
+
+_LENGTH_ABS_TOL = 1e-5
+_LENGTH_REL_TOL = 1e-5
+
+
+def _get_cp_length(
+    control_points: Sequence[Sequence[float]],
+) -> Literal[0] | np.floating[Any]:
+    """Get the combined length of the control-point segments.
+
+    :param control_points: control points
+    :return: combined length of the control-point segments
+    """
+    cp_array = np.asarray(control_points, dtype=float)
+    pairwise = zip(cp_array, cp_array[1:], strict=False)
+    return sum(np.linalg.norm(p1 - p0) for p0, p1 in pairwise)
+
+
+def _get_ep_length(control_points: Sequence[Sequence[float]]) -> np.floating[Any]:
+    """Get the length between the first and last control points.
+
+    :param control_points: control points
+    :return: length between the first and last control points
+    """
+    cp_array = np.asarray(control_points, dtype=float)
+    return np.linalg.norm(cp_array[-1] - cp_array[0])
+
+
+def _get_length_error(
+    curve: BezierCurve,
+) -> tuple[Literal[0] | np.floating[Any], Literal[0] | np.floating[Any]]:
+    """Get length of cp segments and abs delta from length between endpoints.
+
+    :param curve: Bezier curve
+    :return: a tuple: length of cp segments, error
+    """
+    cpts = curve.control_points
+    ep_norm = _get_ep_length(cpts)
+    cp_norm = _get_cp_length(cpts)
+    error = abs(ep_norm - cp_norm)
+    if error < _LENGTH_ABS_TOL:
+        return cp_norm, 0
+    if error < _LENGTH_REL_TOL * cp_norm:
+        return cp_norm, 0
+    return cp_norm, error
+
+
+def _iter_sub_lengths(curve: BezierCurve) -> Iterator[Literal[0] | np.floating[Any]]:
+    """Get the approximate length of a Bezier curve.
+
+    :param curve: Bezier curve
+    :return: approximate length of the Bezier curve
+
+    This is a simple approximation that calculates the length of the control-point
+    segments. It is not very accurate, but it is fast.
+    """
+    if curve.degree == 0:
+        return
+    if curve.degree == 1:
+        yield _get_cp_length(curve.control_points)
+        return
+
+    curves = [curve]
+    errors = [_get_length_error(curve)]
+    while curves:
+        while errors and errors[-1][1] == 0:
+            _ = curves.pop()
+            yield errors.pop()[0]
+        if not curves:
+            break
+        curves.extend(curves.pop().split(0.5))
+        errors[-1:] = [_get_length_error(x) for x in curves[-2:]]
+
+
+def _get_approximate_curve_length(curve: BezierCurve) -> Literal[0] | np.floating[Any]:
+    """Get the approximate length of a Bezier curve.
+
+    :param curve: Bezier curve
+    :return: approximate length of the Bezier curve
+
+    This is a simple approximation that calculates the length of the control-point
+    segments. It is not very accurate, but it is fast.
+    """
+    return sum(_iter_sub_lengths(curve))
