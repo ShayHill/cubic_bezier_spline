@@ -15,6 +15,8 @@ from dataclasses import dataclass
 from functools import cached_property
 from math import floor
 from typing import TYPE_CHECKING, Annotated, Any, Callable, TypeVar, Union
+import operator as op
+import itertools as it
 
 import numpy as np
 import numpy.typing as npt
@@ -154,6 +156,14 @@ class BezierSpline:
         """
         return np.array([x.as_array for x in self._curves])
 
+    @cached_property
+    def is_closed(self) -> bool:
+        """Check if the spline is closed.
+
+        :return: True if the spline is closed, False otherwise
+        """
+        return self.control_points[0][0] == self.control_points[-1][-1]
+
     def _yield_svg_commands(self) -> Iterator[str]:
         """Get the SVG data for the spline.
 
@@ -281,12 +291,29 @@ class BezierSpline:
         curves = self._split_to_curves(beg_time, end_time)
         return type(self)([x.control_points for x in curves])
 
+    @cached_property
+    def lengths(self) -> list[float]:
+        """Get the lengths of the curves in the spline.
+
+        :return: list of curve lengths
+        """
+        return [x.length for x in self._curves]
+
+    @cached_property
+    def seams(self) -> list[float]:
+        """Get the time value at each curve seam.
+
+        :return: list of seam times
+        """
+        return [0, *it.accumulate(self.lengths)]
+
     def __call__(
         self,
         time: float,
         derivative: int = 0,
         *,
-        normalized_time_interval: bool = False,
+        normalized: bool | None = None,
+        uniform: bool | None = None,
     ) -> Point:
         """Given x.y, call curve x at time y.
 
@@ -299,12 +326,58 @@ class BezierSpline:
 
         For a spline with 3 curves, spline(3) will return curve 2 at time=1
         """
-        if normalized_time_interval:
-            time = time * len(self)
-        if not 0 <= time <= len(self):
-            msg = f"{time} not in interval [0, {len(self)}]"
-            raise TimeIntervalError(msg)
-        try:
-            return self._curves[floor(time)](time % 1, derivative)
-        except IndexError:
-            return self._curves[floor(time) - 1](1, derivative)
+        uniform = uniform if uniform in {True, False} else True
+        normalized = normalized if normalized in {True, False} else not uniform
+
+        total_length = len(self) if uniform else self.seams[-1]
+        time = time * total_length if normalized else time
+
+        if self.is_closed:
+            time = time % total_length
+        else:
+            time = min(max(0, time), total_length)
+
+        if uniform:
+            try:
+                curve = self._curves[floor(time)]
+                return curve(time % 1, derivative)
+            except IndexError:
+                if time != total_length:
+                    breakpoint()
+                return self._curves[-1](1, derivative)
+
+        curve_ix = _find_curve_index(self.seams, time)
+        curve = self._curves[curve_ix]
+        interval = self.seams[curve_ix : curve_ix + 2]
+        time = (time - interval[0]) / (interval[1] - interval[0])
+        return curve(time, derivative)
+
+
+def _find_curve_index(seams:Sequence[float], time:float) -> int:
+    """Find the lowest gap where target could be inserted.
+
+    :param seams: a list of sorted numbers representing the time intervals at which
+        curves meet.
+    :param time: the time value for which you are seeking an interval.
+    :return: int, the index of the first curve where time value is on that curve.
+        Time will like on the interval [seams[index], seams[index+1]]
+
+    """
+    if seams[0] > time > seams[-1]:
+        msg = "The time value is out of bounds of the seams."
+        raise ValueError(msg)
+
+    left, right = 0, len(seams) - 1
+    result = 0  # for case where target is exactly sorted_values[0]
+    while left <= right:
+        mid = (left + right) // 2
+        if seams[mid] < time:
+            result = mid
+            left = mid + 1
+        else:
+            right = mid - 1
+    return result
+
+if __name__ == "__main__":
+    for i in range(8):
+        print(i, _find_curve_index([0, 1, 3, 5, 7], i) ) # returns 2
