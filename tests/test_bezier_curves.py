@@ -259,7 +259,7 @@ class TestReversed:
     def test_reversed(self, points: FArray, time: float) -> None:
         """Curve is opposite whe reversed."""
         curve = BezierCurve(points)
-        reversed_curve = curve.reversed()
+        reversed_curve = curve.reversed
         expect = curve(time)
         result = reversed_curve(1 - time)
         np.testing.assert_allclose(expect, result)

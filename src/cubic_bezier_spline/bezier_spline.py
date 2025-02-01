@@ -223,12 +223,13 @@ class BezierSpline:
             return floor_ - 1, 1
         return floor_, fractional
 
+    @cached_property
     def reversed(self: _BezierSplineT) -> _BezierSplineT:
         """Reverse the spline.
 
         :return: reversed BezierSpline
         """
-        return type(self)(x.reversed().control_points for x in reversed(self._curves))
+        return type(self)(x.reversed.control_points for x in reversed(self._curves))
 
     def _split_to_curves(self, beg_time: float, end_time: float) -> list[BezierCurve]:
         """Split a BezierSpline into multiple Bezier curves.

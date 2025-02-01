@@ -173,6 +173,6 @@ class TestReversed:
     def test_reversed(self, points: FArray, time: float) -> None:
         """At time n.p, return nth curve at p"""
         spline = BezierSpline(points)
-        reversed_spline = spline.reversed()
+        reversed_spline = spline.reversed
         time = time * len(spline)
         np.testing.assert_allclose(spline(time), reversed_spline(len(spline) - time))

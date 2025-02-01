@@ -219,6 +219,7 @@ class BezierCurve:
         """
         return _get_approximate_curve_length(self)
 
+    @cached_property
     def reversed(self) -> BezierCurve:
         """Create a new curve, reversed.
 
