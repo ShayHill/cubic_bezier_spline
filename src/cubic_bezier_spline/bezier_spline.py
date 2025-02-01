@@ -9,14 +9,13 @@ A dead-simple container for lists of Bezier curves.
 from __future__ import annotations
 
 import dataclasses
+import itertools as it
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from math import floor
 from typing import TYPE_CHECKING, Annotated, Any, Callable, TypeVar, Union
-import operator as op
-import itertools as it
 
 import numpy as np
 import numpy.typing as npt
@@ -43,10 +42,6 @@ def _svg_d_join(*parts: str) -> str:
     joined = re.sub(r"\s+", " ", joined)
     joined = re.sub(r" -", "-", joined)
     return re.sub(r"\s*([A-Za-z])\s*", r"\1", joined)
-
-
-class TimeIntervalError(Exception):
-    """Time value out of range in BezierSpline.__call__."""
 
 
 def _format_number(num: float | str) -> str:
@@ -322,7 +317,6 @@ class BezierSpline:
         :param derivative: optional derivative at time
         :param normalized_time_interval: if True, time is in [0, 1]
         :return: xth non-rational Bezier at time
-        :raise TimeIntervalError: if time is not in [0, len(curves)]
 
         For a spline with 3 curves, spline(3) will return curve 2 at time=1
         """
@@ -341,9 +335,7 @@ class BezierSpline:
             try:
                 curve = self._curves[floor(time)]
                 return curve(time % 1, derivative)
-            except IndexError:
-                if time != total_length:
-                    breakpoint()
+            except IndexError:  # time == len(self)
                 return self._curves[-1](1, derivative)
 
         curve_ix = _find_curve_index(self.seams, time)
@@ -353,7 +345,7 @@ class BezierSpline:
         return curve(time, derivative)
 
 
-def _find_curve_index(seams:Sequence[float], time:float) -> int:
+def _find_curve_index(seams: Sequence[float], time: float) -> int:
     """Find the lowest gap where target could be inserted.
 
     :param seams: a list of sorted numbers representing the time intervals at which
@@ -361,7 +353,7 @@ def _find_curve_index(seams:Sequence[float], time:float) -> int:
     :param time: the time value for which you are seeking an interval.
     :return: int, the index of the first curve where time value is on that curve.
         Time will like on the interval [seams[index], seams[index+1]]
-
+    :raises ValueError: if time is out of bounds (this should not happen)
     """
     if seams[0] > time > seams[-1]:
         msg = "The time value is out of bounds of the seams."
@@ -377,7 +369,3 @@ def _find_curve_index(seams:Sequence[float], time:float) -> int:
         else:
             right = mid - 1
     return result
-
-if __name__ == "__main__":
-    for i in range(8):
-        print(i, _find_curve_index([0, 1, 3, 5, 7], i) ) # returns 2

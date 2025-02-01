@@ -16,7 +16,7 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Iterator, Sequence
 from functools import cached_property
-from typing import Annotated, Any, Literal, TypeVar, Union
+from typing import Annotated, Any, TypeVar, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -257,16 +257,14 @@ _LENGTH_ABS_TOL = 1e-5
 _LENGTH_REL_TOL = 1e-5
 
 
-def _get_cp_length(
-    control_points: Sequence[Sequence[float]],
-) -> float:
+def _get_cp_length(control_points: Sequence[Sequence[float]]) -> float:
     """Get the combined length of the control-point segments.
 
     :param control_points: control points
     :return: combined length of the control-point segments
     """
     cp_array = np.asarray(control_points, dtype=float)
-    pairwise = zip(cp_array, cp_array[1:], strict=False)
+    pairwise = zip(cp_array, cp_array[1:])
     return float(sum(np.linalg.norm(p1 - p0) for p0, p1 in pairwise))
 
 

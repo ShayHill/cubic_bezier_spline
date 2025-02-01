@@ -17,7 +17,7 @@ import pytest
 from conftest import random_bezier_curves, random_times
 from numpy import typing as npt
 
-from cubic_bezier_spline.bezier_spline import BezierSpline, TimeIntervalError
+from cubic_bezier_spline.bezier_spline import BezierSpline
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -42,15 +42,23 @@ class TestBezierSpline:
             [x(0) for x in spline], [x[0] for x in spline._curves]
         )
 
-    def test_call_low(self) -> None:
-        """Raise TimeIntervalError if time < 0"""
-        with pytest.raises(TimeIntervalError):
-            _ = SHORT_SPLINE(-0.01)
+    def test_call_low_open(self) -> None:
+        """Clamp low values for open splines."""
+        assert SHORT_SPLINE(-2.01) == SHORT_SPLINE(-800)
 
-    def test_call_high(self) -> None:
-        """Raise TimeIntervalError if time > len(curves)"""
-        with pytest.raises(TimeIntervalError):
-            _ = SHORT_SPLINE(2.01)
+    def test_call_high_open(self) -> None:
+        """Clamp high values for open splines."""
+        assert SHORT_SPLINE(2.01) == SHORT_SPLINE(800)
+
+    def test_call_low_closed(self) -> None:
+        """Loop low values for closed splines."""
+        spline = BezierSpline([[[0], [1]], [[1], [0]]])
+        assert math.isclose(spline(-2.01)[0], spline(1.99)[0])
+
+    def test_call_high_closed(self) -> None:
+        """Loop high values for closed splines."""
+        spline = BezierSpline([[[0], [1]], [[1], [0]]])
+        assert math.isclose(spline(2.01)[0], spline(0.01)[0])
 
     @pytest.mark.parametrize("time", (random.random() * 2 for _ in range(50)))
     def test_call_simple(self, time: float) -> None:
@@ -82,6 +90,10 @@ class TestBezierSpline:
     def test_derivative(self, time: float) -> None:
         """Return value of spline at derivative"""
         assert SHORT_SPLINE(time, 1) == 1
+
+    def test_uniform_high(self) -> None:
+        """Return uniform high value"""
+        assert SHORT_SPLINE(2) == 2
 
 
 class TestSplit:
@@ -135,7 +147,7 @@ class TestSplit:
         spline = SHORT_SPLINE
         split = spline.split(0.5, 1.5)
         assert math.isclose(split(0)[0], spline(0.5)[0])
-        assert math.isclose(split(1, normalized_time_interval=True)[0], spline(1.5)[0])
+        assert math.isclose(split(1, normalized=True)[0], spline(1.5)[0])
 
     def test_split_to_joint(self) -> None:
         """Don't leave any empty curves when splitting exactly at a joint."""

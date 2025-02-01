@@ -105,10 +105,7 @@ class TestInterpolatingOpen:
         """Spline hits control points at knots"""
         spline = new_open_interpolating_spline(points)
         for i in range(len(spline)):
-            try:
-                np.testing.assert_allclose(spline(i), points[i])
-            except AssertionError:
-                breakpoint()
+            np.testing.assert_allclose(spline(i), points[i])
 
 
 class TestInterpolatingClosed:
