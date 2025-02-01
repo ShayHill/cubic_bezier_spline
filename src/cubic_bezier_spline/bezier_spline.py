@@ -266,11 +266,20 @@ class BezierSpline:
         tail = [] if end_val == 0 else self._curves[end_idx].split(end_val)[:1]
         return head + body + tail
 
-    def split(self: _BezierSplineT, beg_time: float, end_time: float) -> _BezierSplineT:
+    def split(
+        self: _BezierSplineT,
+        beg_time: float,
+        end_time: float,
+        *,
+        uniform: bool | None = None,
+        normalized: bool | None = None,
+    ) -> _BezierSplineT:
         """Split a BezierSpline into two Bezier splines.
 
         :param beg_time: time at which to start the new spline
         :param end_time: time at which to end the new spline
+        :param uniform: if True, time is in [0, len(self)]
+        :param normalized: if True, time is in [0, 1]
         :return: new BezierSpline
 
         A split BezierSpline will be another spline with some number <, =, or 1
@@ -283,6 +292,9 @@ class BezierSpline:
         this method will assume the spline is closed, and return a spline from begin
         to end *through* spline(0).
         """
+        bool_kwargs = {"uniform": uniform, "normalized": normalized}
+        beg_time = sum(self.divmod_time(beg_time, **bool_kwargs))
+        end_time = sum(self.divmod_time(end_time, **bool_kwargs))
         curves = self._split_to_curves(beg_time, end_time)
         return type(self)([x.control_points for x in curves])
 
