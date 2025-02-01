@@ -302,6 +302,55 @@ class BezierSpline:
         """
         return [0, *it.accumulate(self.lengths)]
 
+    def divmod_time(
+        self,
+        time: float,
+        *,
+        normalized: bool | None = None,
+        uniform: bool | None = None,
+    ) -> tuple[int, float]:
+        """Return the curve index and time on curve for a given time value.
+
+        :param time: time value
+        :param normalized: if True, time is in [0, 1]
+        :param uniform: if True, time is in [0, len(self)]
+        :return: curve index, time on curve
+
+        For the default uniform, non-normalized case, time n.t will return the
+        evaluation of `self._curves[n](t)`.
+
+        The uniform, normalized case will scale time to n.t in [0, 1] to [0,
+        len(self)] then return the same `self._curves[n](t)`.
+
+        The non-uniform, normalized case will scale time to n.t in [0, 1] to [0,
+        spline_len] where spline_len is the sum of the lengths of all curves in the
+        spline. n.t will be evaluated such that n.t lies on the curve in the time
+        interval [<=n.t, >=n+1.t].
+
+        The non-uniform, non-normalized case would require knowing the spline_len
+        before passing time, but would find the interval without scaling time. I
+        don't expect to ever need this case.
+        """
+        uniform = uniform if uniform in {True, False} else True
+        normalized = normalized if normalized in {True, False} else not uniform
+
+        total_length = len(self) if uniform else self.seams[-1]
+        time = time * total_length if normalized else time
+
+        if self.is_closed:
+            time = time % total_length
+        else:
+            time = min(max(0, time), total_length)
+
+        if uniform:
+            if floor(time) == len(self):  # time == len(self)
+                return len(self) - 1, 1
+            return floor(time), time % 1
+
+        curve_ix = _find_curve_index(self.seams, time)
+        interval = self.seams[curve_ix : curve_ix + 2]
+        return curve_ix, (time - interval[0]) / (interval[1] - interval[0])
+
     def __call__(
         self,
         time: float,
@@ -320,29 +369,8 @@ class BezierSpline:
 
         For a spline with 3 curves, spline(3) will return curve 2 at time=1
         """
-        uniform = uniform if uniform in {True, False} else True
-        normalized = normalized if normalized in {True, False} else not uniform
-
-        total_length = len(self) if uniform else self.seams[-1]
-        time = time * total_length if normalized else time
-
-        if self.is_closed:
-            time = time % total_length
-        else:
-            time = min(max(0, time), total_length)
-
-        if uniform:
-            try:
-                curve = self._curves[floor(time)]
-                return curve(time % 1, derivative)
-            except IndexError:  # time == len(self)
-                return self._curves[-1](1, derivative)
-
-        curve_ix = _find_curve_index(self.seams, time)
-        curve = self._curves[curve_ix]
-        interval = self.seams[curve_ix : curve_ix + 2]
-        time = (time - interval[0]) / (interval[1] - interval[0])
-        return curve(time, derivative)
+        curve_idx, time = self.divmod_time(time, normalized=normalized, uniform=uniform)
+        return self._curves[curve_idx](time, derivative)
 
 
 def _find_curve_index(seams: Sequence[float], time: float) -> int:
