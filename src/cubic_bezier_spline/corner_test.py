@@ -4,33 +4,30 @@
 :created: 2025-02-04
 """
 
-import math
-import svg_ultralight as su
-from svg_ultralight.string_conversion import format_numbers_in_string
-import vec2_math as v2
-from offset_poly import offset_polyline
-from offset_poly.offset_corner import GapCorner
-from cubic_bezier_spline import (
-    new_open_interpolating_spline,
-    new_open_linear_spline,
-    new_open_approximating_spline,
-    BezierSpline,
-)
-from lxml.etree import _Element as EtreeElement  # type: ignore
-
-
 import itertools as it
+import math
+from typing import Any
 
+import numpy as np
+import svg_ultralight as su
+import vec2_math as v2
+from lxml.etree import _Element as EtreeElement  # type: ignore
+from numpy import typing as npt
+from svg_ultralight.string_conversion import format_numbers_in_string
+
+from cubic_bezier_spline import BezierSpline, new_open_approximating_spline
 
 STROKE_WIDTH = 0.005
+
+Vector = npt.ArrayLike
 
 Vec2 = tuple[float, float]
 
 pnt_sets: list[tuple[Vec2, Vec2, Vec2]] = []
 
 for x in range(0, 25, 3):
-# for x in [10]:
-    yy = -x / 30 + .25
+    # for x in [10]:
+    yy = -x / 30 + 0.25
     # yy = 0
     pnt_sets.append(
         (
@@ -64,6 +61,15 @@ def new_path(data: str, **kwargs: str | float) -> EtreeElement:
     )
 
 
+def move_toward(
+    pnt_a: npt.ArrayLike, pnt_b: npt.ArrayLike, dist: float
+) -> npt.NDArray[np.floating[Any]]:
+    """Move from pnt_a toward pnt_b by dist."""
+    delta = np.subtract(pnt_b, pnt_a)
+    norm = np.linalg.norm(delta)
+    return np.add(pnt_a, np.multiply(delta, dist / norm))
+
+
 def new_line(
     pnt_a: tuple[float, float], pnt_b: tuple[float, float], **kwargs: str | float
 ) -> EtreeElement:
@@ -80,47 +86,17 @@ def double_gap_interpolating(
     """Draw a corner by gapping the edges twice."""
     angle = abs(v2.get_signed_angle(v2.vsub(pnt_a, pnt_b), v2.vsub(pnt_c, pnt_b)))
 
-    num = math.sin(angle)
-    den = math.sin(math.pi - angle / 2)
-    # print(f"angle: {angle}, num: {num}, den: {den}, num/den: {num/den}")
+    rad = 0.25
 
-    den = math.sin(math.pi - angle / 2)
-    dip = 0.25
-    # dip = 1
+    tangent_length = rad / math.tan(angle / 2)
+    control_point_scalar = 1 / (2 * math.sin(angle / 2) + 1)
 
-    poly = [pnt_a, pnt_b, pnt_c]
-    gapped_out = GapCorner(*poly, dip, dip)
-    isos = v2.get_norm(v2.vsub(gapped_out.cpts[0], gapped_out.cpts[1]))
-    base = v2.get_norm(v2.vsub(gapped_out.cpts[0], gapped_out.cpts[2]))
-    scalar = base / isos + 1
-    # print(isos)
-    # print(base)
-
-    print(f"isos: {isos}, base: {base}, scalar: {scalar}")
-    ang_c = (math.pi - angle) / 2
-    test_val = dip * math.sin(ang_c) / math.sin(angle / 2)
-    test_val2 = dip * math.sin(ang_c) * 2
-
-    test_val3 = math.sin(angle / 2) + 1
-    print(f"test: {test_val}, test: {test_val2}, test: {test_val3}")
-    # print(f"test: {test_val2}")
-
-    dip1 = dip / (1 + num / den)
-    dip1 = dip / (1 + pow(2, 0.5))
-    dip1 = dip / scalar
-    dip2 = dip
-    # print(dip1, dip2)
-    gap_1 = offset_polyline(poly, dip1)[1].cpts
-    gap_2 = offset_polyline(poly, dip2)[1].cpts
-    # print(f"gap_1: {gap_1}")
-    # print(f"gap_2: {gap_2}")
-    cpts = [gap_2[0], gap_1[0], gap_1[2], gap_2[2]]
-    # print(cpts)
-
-    # print(v2.get_norm(v2.vsub(cpts[0], pnt_b)))
-    # print(v2.get_norm(v2.vsub(cpts[0], cpts[3])))
-    # print(dip/math.sin(angle))
-    # print(angle / math.pi)
+    cpts = [
+        move_toward(pnt_b, pnt_a, tangent_length),
+        move_toward(pnt_b, pnt_a, tangent_length * control_point_scalar),
+        move_toward(pnt_b, pnt_c, tangent_length * control_point_scalar),
+        move_toward(pnt_b, pnt_c, tangent_length),
+    ]
 
     cpt_edges = zip(cpts, cpts[1:])
     print([v2.get_norm(v2.vsub(b, a)) for a, b in cpt_edges])
@@ -128,14 +104,13 @@ def double_gap_interpolating(
     # print(cpts)
     _ = new_line(pnt_a, cpts[0], stroke="black")
     _ = new_line(cpts[3], pnt_c, stroke="black")
-    spline = new_open_approximating_spline(gap_2)
-    _ = new_path(spline.svg_data, stroke="red")
+
     spline = new_open_approximating_spline(cpts)
     _ = new_path(spline.svg_data, stroke="blue")
     spline = BezierSpline([cpts])
     _ = new_path(spline.svg_data, stroke="orange")
     arc_d = format_numbers_in_string(
-        f"M {cpts[0][0]}, {cpts[0][1]} A {dip},{dip} 0 0 1 {cpts[3][0]},{cpts[3][1]}"
+        f"M {cpts[0][0]}, {cpts[0][1]} A {rad},{rad} 0 0 1 {cpts[3][0]},{cpts[3][1]}"
     )
     _ = new_path(arc_d, stroke="green")
 
