@@ -186,6 +186,8 @@ class BezierSpline:
                 yield issue_cmd("H", pnts[0].x)
             elif len(pnts) == 1:
                 yield issue_cmd("L", pnts[0].xy)
+            elif len(pnts) == 2:
+                yield issue_cmd("Q", *(p.xy for p in pnts))
             elif len(pnts) == 3:
                 yield issue_cmd("C", *(p.xy for p in pnts))
             else:

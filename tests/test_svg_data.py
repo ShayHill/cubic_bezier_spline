@@ -51,3 +51,8 @@ class TestClosedC2Continuous:
         curves = list(pairwise(((0, 0), (3, 0), (3, 3), (0, 3))))
         spline = BezierSpline(curves)
         assert spline.svg_data == "M0 0H3V3H0"
+
+    def test_quadratic(self):
+        curves = [[(0, 0), (1, 0)], [(1, 0), (2, 0), (3, 1)]]
+        spline = BezierSpline(curves)
+        assert spline.svg_data == ("M0 0H1Q2 0 3 1")
