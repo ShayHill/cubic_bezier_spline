@@ -32,7 +32,7 @@ repos:
       - --pytest-test-first
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.15.0
+  rev: v1.16.1
   hooks:
   - id: mypy
     name: mypy
@@ -62,7 +62,7 @@ repos:
     args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.19.1
+  rev: v3.20.0
   hooks:
   - args:
     - --py39-plus
@@ -85,7 +85,7 @@ repos:
     exclude: "tests"
     name: pylint
     args:
-    - --good-names=i,j,_,f,x,y,n,nn,ps,k,xy
+    - --good-names=i,j,_,f,x,y,n,nn,ps,k,xy,x0,y0,x1,y1
     - --disable=protected-access
     - --disable=no-member
     - --disable=import-error
@@ -114,17 +114,19 @@ repos:
   # SIM108 Use ternary operator instead of multi-line if statement
   # PLR2004 Magic value used in comparison
   # PYI019 Use Self type (only works with py 3.11+)
-  rev: 'v0.11.10'
+  # C901 Function is too complex
+  # PLR0912 Too many branches in function
+  rev: 'v0.12.0'
   hooks:
     - id: ruff
       exclude: "tests"
       args:
       - --select=ALL
-      - --ignore=ANN201,ANN202,B905,COM812,D203,D213,I001,ISC003,N802,N806,PGH003,PLR0913,PTH108,SIM108,PLR2004,PYI019
+      - --ignore=ANN201,ANN202,B905,COM812,D203,D213,I001,ISC003,N802,N806,PGH003,PLR0913,PTH108,SIM108,PLR2004,PYI019,C901,PLR0912
       - --fix
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.401
+  rev: v1.1.402
   hooks:
     - id: pyright
