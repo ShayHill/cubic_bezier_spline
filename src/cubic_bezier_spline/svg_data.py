@@ -108,27 +108,39 @@ class _StrPoint:
         """
         return _svgd_join(self.x, self.y)
 
+    def __sub__(self, other: _StrPoint) -> _StrPoint:
+        """Subtract two points.
 
-def _yield_svg_commands(cpts: Iterable[Sequence[Sequence[float]]]) -> Iterator[str]:
+        :param other: another point
+        :return: a new point with the difference
+        """
+        return _StrPoint(
+            (float(self.x) - float(other.x), float(self.y) - float(other.y))
+        )
+
+
+def _yield_svg_commands(cpts: Iterable[Iterable[Sequence[float]]]) -> Iterator[str]:
     """Yield one SVG path data command for each set of control points.
 
     :return: SVG data
     :raise NotImplementedError: if the number of control points is not 1, 2, or 3
     """
+    if not cpts:
+        return
+    sp_cpts = [[_StrPoint(p) for p in curve] for curve in cpts]
+
     beg_path: _StrPoint | None = None
     prev_pnt: _StrPoint | None = None
 
     issue_cmd = _new_svg_command_issuer()
 
-    for command_cpts in cpts:
-        pnt, *pnts = map(_StrPoint, command_cpts)
-        if prev_pnt != pnt:
-            if pnt == beg_path:
-                yield issue_cmd("Z")
+    for i, (pnt, *pnts) in enumerate(sp_cpts):
+        at_path_beg = False
+        if i == 0 or pnt != sp_cpts[i - 1][-1]:
             yield issue_cmd("M", pnt.xy)
             beg_path = pnt
+            at_path_beg = True
         if len(pnts) == 1 and pnts[0] == beg_path:
-            # linear spline closing the path
             yield issue_cmd("Z")
         elif len(pnts) == 1 and pnts[0].x == pnt.x:
             yield issue_cmd("V", pnts[0].y)
@@ -136,8 +148,20 @@ def _yield_svg_commands(cpts: Iterable[Sequence[Sequence[float]]]) -> Iterator[s
             yield issue_cmd("H", pnts[0].x)
         elif len(pnts) == 1:
             yield issue_cmd("L", pnts[0].xy)
+        elif (
+            len(pnts) == 2
+            and not at_path_beg
+            and (pnts[0] - pnt) == (pnt - sp_cpts[i - 1][-2])
+        ):
+            yield issue_cmd("T", *(p.xy for p in pnts[1:]))
         elif len(pnts) == 2:
             yield issue_cmd("Q", *(p.xy for p in pnts))
+        elif (
+            len(pnts) == 3
+            and not at_path_beg
+            and (pnts[0] - pnt) == (pnt - sp_cpts[i - 1][-2])
+        ):
+            yield issue_cmd("S", *(p.xy for p in pnts[1:]))
         elif len(pnts) == 3:
             yield issue_cmd("C", *(p.xy for p in pnts))
         else:
@@ -221,8 +245,20 @@ def get_cpts_from_svgd(svgd: str) -> list[list[tuple[float, float]]]:
             cpts.append([(x0, y0), (x0, y1)])
         elif cmd == "L":
             cpts.append([(x0, y0), _pop_coordinate(parts)])
+        elif cmd == "T":
+            x_delta = cpts[-1][-1][0] - cpts[-1][-2][0]
+            y_delta = cpts[-1][-1][1] - cpts[-1][-2][1]
+            cpts.append(
+                [(x0, y0), (x0 + x_delta, y0 + y_delta), _pop_coordinate(parts)]
+            )
         elif cmd == "Q":
             cpts.append([(x0, y0), *_pop_coordinates(parts, 2)])
+        elif cmd == "S":
+            x_delta = cpts[-1][-1][0] - cpts[-1][-2][0]
+            y_delta = cpts[-1][-1][1] - cpts[-1][-2][1]
+            cpts.append(
+                [(x0, y0), (x0 + x_delta, y0 + y_delta), *_pop_coordinates(parts, 2)]
+            )
         elif cmd == "C":
             cpts.append([(x0, y0), *_pop_coordinates(parts, 3)])
         elif cmd in {"Z", "z"}:
@@ -235,7 +271,11 @@ def get_cpts_from_svgd(svgd: str) -> list[list[tuple[float, float]]]:
 
 
 if __name__ == "__main__":
+    # TODO: remove this test code.
     aaa = "M0.5 0.5C1 0 2 0 2.5 0.5 3 1 3 2 2.5 2.5 2 3 1 3 0.5 2.5 0 2 0 1 0.5 0.5Z"
     bbb = get_cpts_from_svgd(aaa)
     ccc = get_svgd_from_cpts(bbb)
     ddd = get_cpts_from_svgd(ccc)
+    print(aaa)
+    print(ccc)
+    print(bbb)

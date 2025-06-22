@@ -53,17 +53,12 @@ class TestClosedC2Continuous:
         spline = new_closed_approximating_spline([(0, 0), (3, 0), (3, 3), (0, 3)])
         assert_svgd_equal(
             spline.svg_data,
-            (
-                "M0.5 0.5C1 0 2 0 2.5 0.5 3 1 3 2 2.5"
-                + " 2.5 2 3 1 3 0.5 2.5 0 2 0 1 0.5 0.5Z"
-            ),
+            ("M0.5 0.5C1 0 2 0 2.5 0.5S3 2 2.5 2.5 1 3 0.5 2.5 0 1 0.5 0.5Z"),
         )
 
     def test_open_approximating_spline(self):
         spline = new_open_approximating_spline([(0, 0), (3, 0), (3, 3), (0, 3)])
-        assert_svgd_equal(
-            spline.svg_data, ("M0 0C1 0 2 0 2.5 0.5 3 1 3 2 2.5 2.5 2 3 1 3 0 3")
-        )
+        assert_svgd_equal(spline.svg_data, ("M0 0C1 0 2 0 2.5 0.5S3 2 2.5 2.5 1 3 0 3"))
 
     def test_linear_closed(self):
         curves = list(pairwise(((0, 0), (3, 0), (3, 3), (0, 3), (0, 0))))
@@ -78,4 +73,4 @@ class TestClosedC2Continuous:
     def test_quadratic(self):
         curves = [[(0, 0), (1, 0)], [(1, 0), (2, 0), (3, 1)]]
         spline = BezierSpline(curves)
-        assert_svgd_equal(spline.svg_data, ("M0 0H1Q2 0 3 1"))
+        assert_svgd_equal(spline.svg_data, ("M0 0H1T3 1"))

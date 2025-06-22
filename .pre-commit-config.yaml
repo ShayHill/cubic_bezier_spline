@@ -24,9 +24,6 @@ repos:
     - id: mixed-line-ending
     - id: requirements-txt-fixer
     - id: trailing-whitespace
-    - id: fix-encoding-pragma
-      args:
-      - --remove
     - id: name-tests-test
       args:
       - --pytest-test-first
@@ -90,6 +87,7 @@ repos:
     - --disable=no-member
     - --disable=import-error
     - --disable=no-name-in-module
+    - --disable=too-many-branches
     - --load-plugins=pylint.extensions.docparams
     - --accept-no-param-doc=n
     - --accept-no-raise-doc=n
