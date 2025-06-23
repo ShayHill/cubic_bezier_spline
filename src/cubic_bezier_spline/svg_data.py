@@ -1,5 +1,30 @@
 """Convert between control points and SVG path data.
 
+Splines in this library are represented as lists of, at a miminum, c0 continuous
+Bezier curves, with each curve represented as a list of control points.
+
+When starting from such a list, the svg data string representation will start with an
+"M" and perhaps end with a "Z" if the last point is the same as the first. When
+working from the other direction, SVG data strings are descriptions of (mostly)
+Bezier curves, but they are frequently *not* continuous. There may be several "M" and
+"Z" commands in one data string. If you convert this to control points, they may not
+function well at a spline, because evaluating the spline at a discontinuous point
+would have two possible values.
+
+The functions you may need:
+
+`get_svgd_from_cpts(cpts: Iterable[Sequence[Sequence[float]]]) -> str`
+    - Convert a list of lists of Bezier control points to an SVG path data string.
+
+`get_cpts_from_svgd(svgd: str) -> list[list[tuple[float, float]]`
+    - Convert an SVG path data string to a list of lists of Bezier control points.
+
+`make_relative(svgd: str) -> str`
+    - Convert an absolute SVG path data string to a relative one.
+
+`make_absolute(svgd: str) -> str`
+    - Convert a relative SVG path data string to an absolute one.
+
 :author: Shay Hill
 :created: 2025-06-18
 """
@@ -7,9 +32,9 @@
 from __future__ import annotations
 
 import dataclasses
-import re
-from typing import TYPE_CHECKING, Callable, TypeVar
 import itertools as it
+import re
+from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Sequence
@@ -83,7 +108,11 @@ def _svgd_join(*parts: str) -> str:
 
 @dataclasses.dataclass
 class _StrPoint:
-    """A point with string representation."""
+    """A point with string representation.
+
+    Stay in this format to compare "floats" by their less-precise string
+    representations. This improves consistency when moving between formats.
+    """
 
     x: str
     y: str
@@ -122,6 +151,12 @@ class _StrPoint:
 
 
 def _do_use_curve_shorthand(cmd_a: _CmdPts, cmd_b: _CmdPts) -> bool:
+    """Determine if the curve shorthand can be used.
+
+    :param cmd_a: the previous command
+    :param cmd_b: the current command
+    :return: True if the curve shorthand can be used, False otherwise
+    """
     if cmd_a.cmd not in {"Q", "T", "C", "S"}:
         return False
     if cmd_b.cmd not in {"Q", "C"}:
@@ -137,36 +172,53 @@ def _do_use_curve_shorthand(cmd_a: _CmdPts, cmd_b: _CmdPts) -> bool:
 
 @dataclasses.dataclass
 class _CmdPts:
-    """A command with points."""
+    """A command with points.
+
+    The nxt setter of this class does most of the work of identifying
+    character-saving steps to create an SVG path data string.
+
+    The str properties strip out unnecessary commands and points.
+    """
 
     cmd: str
     pts: list[_StrPoint]
-    _prv: _CmdPts | None = dataclasses.field(default=None, init=False)
+    prv: _CmdPts | None = dataclasses.field(default=None, init=False)
     _nxt: _CmdPts | None = dataclasses.field(default=None, init=False)
 
     @property
     def str_cmd(self) -> Iterator[str]:
-        """Get the SVG command for this command."""
-        if self._prv is None:
+        """Get the SVG command for this command.
+
+        :return: None
+        :yield: the SVG command (e.g. "M", "L", "Q", "C") if it differs from the
+            previous command
+        """
+        if self.prv is None:
             yield self.cmd
             return
-        if self.cmd == "L" and self._prv.cmd == "M":
+        if self.cmd == "L" and self.prv.cmd == "M":
             return
-        if self.cmd != self._prv.cmd:
+        if self.cmd != self.prv.cmd:
             yield self.cmd
 
     @property
     def nxt(self) -> _CmdPts | None:
-        """Get the previous command."""
+        """Get the previous command.
+
+        :return: the next command or None if this is the last command
+        """
         return self._nxt
 
     @nxt.setter
     def nxt(self, value: _CmdPts | None) -> None:
-        """Set the previous command."""
+        """Set the previous command.
+
+        :param value: the next instance or None if this is the last command
+        """
         if value is None:
             self._nxt = None
             return
-        if value.cmd in "MLHV" and self.cmd != "Z":
+        if value.cmd in "LHV" and self.cmd != "Z":
             if value.pts[0].x == self.pts[0].x:
                 value.cmd = "V"
             elif value.pts[0].y == self.pts[0].y:
@@ -174,15 +226,15 @@ class _CmdPts:
         elif value.cmd in "tT" and len(value.pts) == 1:
             if self.cmd in "qQtT":
                 *_, pnt_a, pnt_b = self.pts
-                at = pnt_b if value.cmd == "t" else _StrPoint((0, 0))
-                value.pts.insert(0, at + (pnt_b - pnt_a))
+                start = pnt_b if value.cmd == "T" else _StrPoint((0, 0))
+                value.pts.insert(0, start + (pnt_b - pnt_a))
             else:
                 value.pts.insert(0, self.pts[-1])
         elif value.cmd in "sS" and len(value.pts) == 2:
             if self.cmd in "cCsS":
                 *_, pnt_a, pnt_b = self.pts
-                at = pnt_b if value.cmd == "S" else _StrPoint((0, 0))
-                value.pts.insert(0, at + (pnt_b - pnt_a))
+                start = pnt_b if value.cmd == "S" else _StrPoint((0, 0))
+                value.pts.insert(0, start + (pnt_b - pnt_a))
             else:
                 value.pts.insert(0, self.pts[-1])
 
@@ -190,12 +242,16 @@ class _CmdPts:
             value.cmd = "T" if _do_use_curve_shorthand(self, value) else "Q"
         elif value.cmd == "C":
             value.cmd = "S" if _do_use_curve_shorthand(self, value) else "C"
-        value._prv = self
+        value.prv = self
         self._nxt = value
 
     @property
     def str_pts(self) -> Iterator[str]:
-        """Get the points that will be used in the SVG data."""
+        """Get the points that will be used in the SVG data.
+
+        :return: None
+        :yield: the points as strings (e.g. "x y")
+        """
         if self.cmd in "hH":
             yield self.pts[0].x
         elif self.cmd in "vV":
@@ -207,94 +263,125 @@ class _CmdPts:
 
     @property
     def str(self) -> Iterator[str]:
-        """Get the SVG command and points for this command."""
+        """Get the SVG command and points for this command.
+
+        :return: None
+        :yield: the SVG command and points as strings
+        """
         yield from self.str_cmd
         yield from self.str_pts
 
 
-def cmd_pts_from_spline(spline: list[list[_StrPoint]]) -> _CmdPts:
+def _iter_cmds(cmd: _CmdPts, *, rev: bool = False) -> Iterator[_CmdPts]:
+    """Iterate over commands in a linked list.
+
+    :param cmd: the first command
+    :param rev: if True, iterate in reverse order
+    :return: an iterator over commands
+    """
+    if rev:
+        while cmd.nxt is not None:
+            cmd = cmd.nxt
+    else:
+        while cmd.prv is not None:
+            cmd = cmd.prv
+
+    cmd_: _CmdPts | None = cmd
+    while cmd_ is not None:
+        yield cmd_
+        cmd_ = cmd_.prv if rev else cmd_.nxt
+
+
+def _cmd_pts_from_spline(spline: list[list[_StrPoint]]) -> _CmdPts:
     """Create a linked list of _CmdPts from a list of control points.
 
-    :param spline: a list of curves, each curve is a list of _StrPoint
+    :param spline: a list of curves, each curve is a list of _StrPoint. These must be
+        at least c0 continuous.
     :return: a linked list of _CmdPts
     """
     n2cmd = {2: "L", 3: "Q", 4: "C"}
 
-    commanded = [
+    cmds = [
         _CmdPts("M", [spline[0][0]]),
         *(_CmdPts(n2cmd[len(c)], c[1:]) for c in spline),
     ]
 
     if spline[-1][-1] == spline[0][0]:
         if len(spline[-1]) == 2:
-            commanded[-1] = _CmdPts("Z", [])
+            cmds[-1] = _CmdPts("Z", [])
         else:
-            commanded.append(_CmdPts("Z", []))
+            cmds.append(_CmdPts("Z", []))
 
-    for prev, this in _pairwise(commanded):
+    for prev, this in _pairwise(cmds):
         prev.nxt = this
 
-    return commanded[0]
+    return cmds[0]
 
 
-def cmd_pts_from_string(svgd: str) -> list[_CmdPts]:
+def _cmd_pts_from_string(svgd: str) -> _CmdPts:
     """Create a linked list of _CmdPts from an SVG path data string.
 
     :param svgd: an ABSOLUTE SVG path data string
     :return: a linked list of _CmdPts
+    :raises ValueError: if the SVG data string contains arc commands
     """
     if "a" in svgd.lower():
         msg = f"Arc commands cannot be converted to Bezier control points in {svgd}."
         raise ValueError(msg)
 
-    parts = _svgd_split(svgd)
+    parts = _svgd_split(svgd)  # e.g., ["M", "0", "0", "H", "1", "V", "2"]
     cmd2len = {"m": 2, "l": 2, "h": 1, "v": 1, "q": 4, "t": 2, "c": 6, "s": 4, "z": 0}
-    commanded: list[tuple[str, list[str]]] = []
 
+    str_groups: list[list[str]] = []  # e.g., [["M", "0", "0"], ["H", "1"]]
     cmd = parts.pop(0).upper()
     while parts:
-        if parts[0].lower() in cmd2len.keys():
+        if parts[0].lower() in cmd2len:
             cmd = parts.pop(0)
         num = cmd2len[cmd.lower()]
-        commanded.append((cmd, [parts.pop(0) for _ in range(num)]))
+        str_groups.append([cmd, *(parts.pop(0) for _ in range(num))])
 
-    for prev, this in _pairwise(commanded):
+    # Fill in inferred values for H and V commands.
+    for prev, this in _pairwise(str_groups):
         if this[0] == "V":
-            this[1].insert(0, prev[1][-2])
+            this.insert(1, prev[-2])
         elif this[0] == "H":
-            this[1].append(prev[1][-1])
+            this.append(prev[-1])
         elif this[0] == "v":
-            this[1].insert(0, 0)
+            this.insert(1, "0")
         elif this[0] == "h":
-            this[1].append(0)
+            this.append("0")
+
+    cmd_pts = [
+        _CmdPts(x, list(map(_StrPoint, _chunk_pairs(xs)))) for x, *xs in str_groups
+    ]
+
+    for prev_cmd, this_cmd in _pairwise(cmd_pts):
+        prev_cmd.nxt = this_cmd
+        if this_cmd.cmd == this_cmd.cmd.lower():
+            this_cmd.cmd = this_cmd.cmd.upper()
+            this_cmd.pts = [x + prev_cmd.pts[-1] for x in this_cmd.pts]
+
+    return cmd_pts[0]
 
 
-    cmd_pts = [_CmdPts(x[0], [_StrPoint(x) for x in chunk_pairs(x[1])]) for x in commanded]
+def _yield_svgd_spline_cmds(cpts: list[list[_StrPoint]]) -> Iterator[str]:
+    """Yield SVG commands and points from a list of control points.
 
-    # aaa = [x.cmd for x in cmd_pts], [x.pts for x in cmd_pts]
-    # breakpoint()
+    :param cpts: a list of curves, each curve is a list of _StrPoint
+    :return: None
+    :yield: SVG commands and points
+        "Mx0 y0",
+        "Lx1 y1",
+        "Qx1 y1 x2 y2",
+        "Cx1 y1 x2 y2 x3 y3",
 
-
-    for prev, this in _pairwise(cmd_pts):
-        prev.nxt = this
-        if this.cmd == this.cmd.lower():
-            this.cmd = this.cmd.upper()
-            this.pts = [x + prev.pts[-1] for x in this.pts]
-
-    return cmd_pts
-
-
-def _yield_svgd_spline(cpts: list[list[_StrPoint]]) -> Iterator[str]:
-
-    this_cmd: _CmdPts | None = cmd_pts_from_spline(cpts)
-    while this_cmd is not None:
-        yield from this_cmd.str
-        this_cmd = this_cmd.nxt
+    A subroutine of _yield_svgd.
+    """
+    cmd = _cmd_pts_from_spline(cpts)
+    yield from it.chain.from_iterable(x.str for x in _iter_cmds(cmd))
 
 
-def _yield_svgd(
-    cpts: Iterable[Iterable[Sequence[float]]],
-) -> Iterator[str]:
+def _yield_svgd_cmds(cpts: Iterable[Iterable[Sequence[float]]]) -> Iterator[str]:
     """Determine the SVG command for each curve. Convert control points to _StrPoint.
 
     :param cpts: control points
@@ -303,26 +390,25 @@ def _yield_svgd(
             [(x0, y0), (x1, y1), (x2, y2)],  # quadratic Bezier curve
             [(x0, y0), (x1, y1), (x2, y2), (x3, y3)],  # cubic Bezier curve
         ]
-    :return: list of tuples with command and control points
-        [
-            ("M", [StrPoint(x0, y0)]),
-            ("L", [StrPoint(x1, y1)]),
-            ("Q", [StrPoint(x1, y1), StrPoint(x2, y2)]),
-            ("C", [StrPoint(x1, y1), StrPoint(x2, y2), StrPoint(x3, y3)]),
-        ]
+    :return: None
+    :yield: SVG commands and points
+        "Mx0 y0",
+        "Lx1 y1",
+        "Qx1 y1 x2 y2",
+        "Cx1 y1 x2 y2 x3 y3",
+
+    Split the curves into continuous splines and pass each spline to
+    yield_svgd_spline.
     """
     cpts_sp = [[_StrPoint(p) for p in curve] for curve in cpts]
     spline: list[list[_StrPoint]] = []
     while cpts_sp:
         spline.append(cpts_sp.pop(0))
         if not cpts_sp:
-            yield from _yield_svgd_spline(spline)
+            yield from _yield_svgd_spline_cmds(spline)
         elif spline[-1][-1] != cpts_sp[0][0]:
-            yield from _yield_svgd_spline(spline)
+            yield from _yield_svgd_spline_cmds(spline)
             spline.clear()
-
-# def yield_cpts(svgd: str) -> Iterator[list[_StrPoint]]:
-
 
 
 def get_svgd_from_cpts(cpts: Iterable[Sequence[Sequence[float]]]) -> str:
@@ -331,36 +417,23 @@ def get_svgd_from_cpts(cpts: Iterable[Sequence[Sequence[float]]]) -> str:
     :param cpts: control points
     :return: SVG path data string
     """
-    return _svgd_join(*_yield_svgd(cpts))
+    return _svgd_join(*_yield_svgd_cmds(cpts))
 
 
-def _pop_coordinate(svgd_parts: list[str]) -> tuple[float, float]:
-    """Pop a coordinate from the SVG data parts.
+def _chunk_pairs(items: Sequence[_T]) -> Iterator[tuple[_T, _T]]:
+    """Yield pairs of items from a sequence.
 
-    :param svgd_parts: SVG data parts
-    :return: coordinate as a tuple of floats
+    :param items: a sequence of items
+    :return: None
+    :yield: pairs (without overlap) of items from the sequence
+    :raises ValueError: if the number of items is not even
     """
-    x = float(svgd_parts.pop(0))
-    y = float(svgd_parts.pop(0))
-    return x, y
-
-
-def _pop_coordinates(svgd_parts: list[str], num: int) -> Iterator[tuple[float, float]]:
-    """Pop a number of coordinates from the SVG data parts.
-
-    :param svgd_parts: SVG data parts
-    :param num: number of coordinates to pop
-    :return: list of coordinates
-    """
-    for _ in range(num):
-        yield _pop_coordinate(svgd_parts)
-
-def chunk_pairs(items: Sequence[_T]) -> Iterator[tuple[_T, _T]]:
     if len(items) % 2 != 0:
         msg = f"Expected an even number of items, got {len(items)}."
         raise ValueError(msg)
     for i in range(0, len(items), 2):
-        yield (items[i], items[i+1])
+        yield (items[i], items[i + 1])
+
 
 def get_cpts_from_svgd(svgd: str) -> list[list[tuple[float, float]]]:
     """Get a list of lists (curves) of xy coordinates from SVG data.
@@ -376,22 +449,21 @@ def get_cpts_from_svgd(svgd: str) -> list[list[tuple[float, float]]]:
         with "M"
     :raise NotImplementedError: if the SVG data string contains an unexpected command
     """
-    cmd_pts = cmd_pts_from_string(svgd)
+    head_cmd = _cmd_pts_from_string(svgd)
     lists: list[list[_StrPoint]] = []
     beg_idx = 0
-    for cmd in cmd_pts:
+    for cmd in _iter_cmds(head_cmd):
         if cmd.cmd == "M":
             beg_idx = len(lists)
-            continue
-        if cmd.cmd == "Z":
+        elif cmd.cmd == "Z":
             beg = lists[beg_idx][0]
             end = lists[-1][-1]
             if beg != end:
                 lists.append([end, beg])
-            continue
-        lists.append([cmd._prv.pts[-1], *cmd.pts])
+        elif cmd.prv is not None:
+            lists.append([cmd.prv.pts[-1], *cmd.pts])
 
-    return [[(float(p.x), float(p.y)) for p in curve] for curve in lists]   
+    return [[(float(p.x), float(p.y)) for p in curve] for curve in lists]
 
 
 def make_relative(svgd: str) -> str:
@@ -400,78 +472,20 @@ def make_relative(svgd: str) -> str:
     :param svgd: an ABSOLUTE SVG path data string
     :return: a RELATIVE SVG path data string
     """
-    cmd_pts = cmd_pts_from_string(svgd)
-    for cmd in reversed(cmd_pts):
-        if cmd._prv is None:
-            continue
-        if cmd.cmd in "MZ":
+    head_cmd = _cmd_pts_from_string(svgd)
+    for cmd in _iter_cmds(head_cmd, rev=True):
+        if cmd.cmd in "MZ" or cmd.prv is None:
             continue
         cmd.cmd = cmd.cmd.lower()
-        cmd.pts = [p - cmd._prv.pts[-1] for p in cmd.pts]
-    return _svgd_join(*it.chain.from_iterable(cmd.str for cmd in cmd_pts))
+        cmd.pts = [p - cmd.prv.pts[-1] for p in cmd.pts]
+    return _svgd_join(*it.chain.from_iterable(x.str for x in _iter_cmds(head_cmd)))
 
 
+def make_absolute(svgd: str) -> str:
+    """Convert a relative SVG path data string to an absolute one.
 
-from paragraphs import par
-if __name__ == "__main__":
-    potrace_output = par(
-        """M338 236 c-5 -3 -6 -6 -3 -6 1 -1 2 -2 2 -3 0 -2 1 -2 2 -2 2 0 3 0 4 -1 2
-        -2 2 -2 4 -1 1 2 2 2 3 1 2 -3 6 0 6 6 1 8 -4 9 -11 3 l-3 -3 0 4 c0 3 -1 4 -4
-        2z M170 235 h1v2c-2 0 -5 -1 -5 -1 -1 -1 -3 -1 -4 -1 -3 0 -13 -5 -14 -6 -1 -1
-        -2 -2 -4 -2 -3 0 -6 -2 -4 -3 1 -1 1 -1 0 -1 -1 -1 -1 -1 -1 0 0 1 -1 1 -1 1 -2
-        0 -5 -4 -4 -5 0 -1 -1 -1 -2 -2 -1 0 -4 -3 -8 -6 -4 -4 -9 -8 -11 -9 -6 -5 -15
-        -14 -14 -15 1 -1 0 -1 -2 -2 -4 0 -8 -4 -11 -10 -4 -7 -1 -6 3 1 2 4 3 5 2 3 0
-        -2 -1 -4 -2 -5 -1 0 -1 -1 -1 -1 1 -1 5 1 5 2 0 1 0 1 1 1 1 0 1 0 1 -1 -2 -2 2
-        -8 4 -8 0 1 2 1 2 1 1 0 1 1 1 1 0 1 2 4 4 7 5 6 5 6 -2 7 l-4 1 5 0 c4 -1 5 0
-        7 2 2 2 4 3 4 3 1 0 0 -1 -2 -3 -3 -3 -3 -3 -1 -5 1 -1 1 -1 0 -1 -2 1 -11 -10
-        -9 -12 2 -3 6 -2 9 3 3 2 5 4 6 3 1 0 0 -1 -3 -3 -6 -5 -8 -8 -6 -10 2 -1 3 -1
-        4 2 3 6 9 9 12 6 2 -1 6 -2 6 0 0 1 -6 6 -7 6 -3 0 2 5 7 8 3 1 4 6 3 9 -1 1 8
-        5 11 5 1 0 0 -1 -2 -2 -7 -2 -11 -9 -7 -10 4 -2 12 5 12 10 0 2 0 2 1 1 0 -1 1
-        -2 0 -3 0 -1 0 -1 1 0 2 1 1 4 -2 5 -2 0 -2 0 0 1 1 1 3 3 4 4 0 1 1 3 2 3 0 0
-        1 0 2 0 0 1 0 1 -1 1 0 -1 -1 -1 -1 0 0 0 2 1 4 2 2 1 4 3 4 3 0 1 0 1 1 0 2 -1
-        8 2 8 4 0 1 2 3 4 4 2 1 4 2 4 2 0 -1 -1 -2 -3 -3 -2 0 -3 -1 -3 -2 1 0 0 -2 -2
-        -3 -3 -2 -2 -4 2 -2 4 3 5 2 1 0 -4 -3 -10 -9 -9 -9 0 0 1 1 3 1 1 1 3 2 4 2 2
-        0 4 1 6 4 3 3 5 4 5 3 1 -1 2 0 4 1 l2 3 -2 -3 c-1 -2 -2 -3 -3 -2 -2 0 -9 -6
-        -9 -8 1 -3 4 -2 7 1 2 2 4 3 4 2 1 -1 1 -1 1 0 1 0 2 1 2 0 2 0 17 13 17 14 -1
-        1 6 5 8 5 2 1 10 3 12 4 3 1 5 1 5 0 0 -1 2 -2 6 -3 3 -1 8 -3 10 -5 3 -2 5 -3
-        6 -3 1 0 1 -1 1 -1 0 -1 1 -2 1 -3 1 0 3 -4 5 -8 2 -4 4 -7 5 -7 0 0 1 -1 2 -2
-        0 -2 1 -2 1 -1 1 1 0 2 -2 5 -1 2 -2 3 -1 2 1 -1 2 -1 2 0 0 0 1 1 1 1 1 0 1 0
-        1 1 0 2 1 2 2 1 3 -2 4 0 1 2 -1 1 -2 3 -2 3 0 1 -1 2 -1 3 -2 0 -2 3 0 3 2 1 2
-        1 1 -1 0 -3 5 -10 9 -11 1 0 2 1 1 1 0 0 1 1 2 2 0 1 1 2 1 3 0 2 3 3 16 3 5 1
-        6 1 4 0 -12 0 -14 -1 -14 -3 1 -3 4 -5 6 -3 1 1 4 1 6 2 1 0 4 0 5 1 1 0 2 0 2
-        -1 0 -1 0 -2 -1 -2 -1 0 -1 0 -1 -1 0 -1 1 0 2 1 2 1 3 2 2 2 0 1 1 1 2 0 2 -1
-        2 -1 0 -3 -2 -1 -3 -4 -1 -3 0 1 2 0 3 -1 2 -1 3 -1 3 0 0 1 1 1 3 1 4 0 5 1 2
-        3 -2 1 -2 1 0 1 2 0 3 0 4 1 0 1 1 1 1 1 1 0 0 -1 -1 -2 -1 -2 -1 -2 0 -3 1 -1
-        1 -1 2 0 1 1 1 1 2 0 2 -2 5 0 5 3 -1 4 0 6 1 4 1 -1 1 -1 1 1 0 2 -1 3 -1 2 -1
-        0 -1 2 -2 4 0 2 -1 3 -2 3 0 -1 -1 0 -2 1 -1 0 -1 1 -1 1 1 0 0 1 0 3 -2 3 -5 4
-        -5 2 0 -1 -1 -1 -1 1 0 1 -1 1 -1 0 0 -1 0 -1 -2 0 -1 2 -4 2 -17 2 -8 0 -15 0
-        -16 1 -2 0 -15 -3 -19 -4 -2 -2 -3 -1 -8 0 -4 1 -7 2 -8 1 -1 0 -2 0 -2 1 0 1
-        -6 3 -8 3 -1 0 -2 0 -2 1 -1 1 -1 1 -1 0 0 -1 -2 -1 -11 0 -2 0 -2 0 1 1 3 1 2
-        1 -2 1 -4 -1 -7 -1 -7 -2 0 -1 -1 -1 -2 0 -1 1 -2 1 -3 0 -2 -2 -5 -3 -3 -1 0 1
-        -4 1 -9 -1 -3 -1 -5 -1 -5 0 -1 1 -3 1 -5 1 -2 0 -6 1 -9 2 -4 0 -7 1 -8 1 -1 0
-        -4 -1 -6 -1z"""
-    )
-    # TODO: remove this test code.
-    aaa = "M0.5 0.5C1 0 2 0 2.5 0.5 3 1 3 2 2.5 2.5 2 3 1 3 0.5 2.5 0 2 0 1 0.5 0.5Z"
-    aaa = "M0 0H3V3H0Z"
-    aaa = "M0.5 0.5C1 0 2 0 2.5 0.5S3 2 2.5 2.5 1 3 0.5 2.5 0 1 0.5 0.5Z"
-    bbb = make_relative(aaa)
-    ccc = get_cpts_from_svgd(aaa)
-    ddd = get_cpts_from_svgd(bbb)
-    eee = cmd_pts_from_string(aaa)
-    fff = cmd_pts_from_string(bbb)
-    ggg = [x.cmd for x in eee], [x.pts for x in eee]
-    hhh = [x.cmd for x in fff], [x.pts for x in fff]
-    breakpoint()
-
-    # bbb = get_cpts_from_svgd(aaa)
-    # ccc = get_svgd_from_cpts(bbb)
-    # ddd = get_cpts_from_svgd(ccc)
-    # eee = get_svgd_from_cpts(ddd)
-    # fff = make_relative(eee)
-    # ggg = make_relative(fff)
-    # limit = 75
-    # print(aaa[:limit], len(aaa))
-    # print(ccc[:limit], len(ccc))
-    # print(eee[:limit], len(eee))
-    # print(fff[:limit], len(fff))
+    :param svgd: a RELATIVE SVG path data string
+    :return: an ABSOLUTE SVG path data string
+    """
+    cmd = _cmd_pts_from_string(svgd)
+    return _svgd_join(*it.chain.from_iterable(x.str for x in _iter_cmds(cmd)))
