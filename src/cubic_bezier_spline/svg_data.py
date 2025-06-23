@@ -132,6 +132,16 @@ class _StrPoint:
             (float(self.x) - float(other.x), float(self.y) - float(other.y))
         )
 
+    def __add__(self, other: _StrPoint) -> _StrPoint:
+        """Add two points.
+
+        :param other: another point
+        :return: a new point with the sum
+        """
+        return _StrPoint(
+            (float(self.x) + float(other.x), float(self.y) + float(other.y))
+        )
+
 
 def _is_c1_continuous(curve_a: list[_StrPoint], curve_b: list[_StrPoint]) -> bool:
     """Check if two curves are C1 continuous.
@@ -159,9 +169,7 @@ def _is_c1_continuous2(curve_a: list[_StrPoint], curve_b: list[_StrPoint]) -> bo
     return (pnt_b - pnt_a) == (pnt_c - pnt_b)
 
 
-def _do_allow_curve_shorthand(
-    cmd_a: _CmdPts, cmd_b: _CmdPts
-) -> bool:
+def _do_allow_curve_shorthand(cmd_a: _CmdPts, cmd_b: _CmdPts) -> bool:
     if cmd_a.cmd not in {"Q", "T", "C", "S"}:
         return False
     if cmd_b.cmd not in {"Q", "C"}:
@@ -175,69 +183,64 @@ def _do_allow_curve_shorthand(
     return pnt_c == pnt_b
 
 
-# class SvgCommand:
-#     """An intermediate representation of an SVG command."""
-
-#     def __init__(self, data: str | Iterable[tuple[float, float]]) -> None:
-#         """Create an SVG command.
-
-#         :param cmd: command, e.g. "M", "L", "Q", "C"
-#         :param pnts: points for the command
-#         """
-#         self._cmd: str | None = None
-#         if isinstance(data, str):
-#             parts = _svgd_split(data)
-#             self._cmd = parts.pop(0)
-#             self.points = [
-#                 _StrPoint((parts[i], parts[i + 1]))
-#                 for i in range(0, len(parts), 2)
-#             ]
-#         else:
-#             self.points = [_StrPoint(p) for p in data]
-#         self.prev_cmd: SvgCommand | None = None
-#         self.next_cmd: SvgCommand | None = None
-
-#     @property
-#     def cmd(self) -> str:
-#         if self._cmd is None:
-#             if self.prev
-
-
-
-# class SvgCommands:
-#     """A collection of SVG commands."""
-
-#     def __init__(self, *commands: SvgCommand) -> None:
-#         """Create a collection of SVG commands.
-
-#         :param commands: SVG commands
-#         """
-#         self.commands = list(commands)
-#         for prev_cmd, next_cmd in _pairwise(self.commands):
-#             prev_cmd.next_cmd = next_cmd
-#             next_cmd.prev_cmd = prev_cmd
-
-#     def __iter__(self) -> Iterator[SvgCommand]:
-#         """Iterate over the SVG commands."""
-#         return iter(self.commands)
-
-#     def __len__(self) -> int:
-#         """Get the number of SVG commands."""
-#         return len(self.commands)
-
-
-
 @dataclasses.dataclass
 class _CmdPts:
     """A command with points."""
 
     cmd: str
     pts: list[_StrPoint]
-    
+    _prv: _CmdPts | None = dataclasses.field(default=None, init=False)
+    _nxt: _CmdPts | None = dataclasses.field(default=None, init=False)
+
     @property
-    def net_pts(self) -> Iterator[str]:
-        """Get the points that will be used in the SVG data.
-        """
+    def str_cmd(self) -> Iterator[str]:
+        """Get the SVG command for this command."""
+        if self._prv is None:
+            yield self.cmd
+            return
+        if self.cmd == "L" and self._prv.cmd == "M":
+            return
+        if self.cmd != self._prv.cmd:
+            yield self.cmd
+
+    @property
+    def nxt(self) -> _CmdPts | None:
+        """Get the previous command."""
+        return self._nxt
+
+    @nxt.setter
+    def nxt(self, value: _CmdPts | None) -> None:
+        """Set the previous command."""
+        if value is None:
+            self._nxt = None
+            return
+        if value.cmd in "MLHV":
+            if value.pts[0].x == self.pts[0].x:
+                value.cmd = "V"
+            elif value.pts[0].y == self.pts[0].y:
+                value.cmd = "H"
+        elif value.cmd == "T" and len(value.pts) == 1:
+            if self.cmd in {"Q", "T"}:
+                *_, pnt_a, pnt_b = self.pts
+                value.pts.insert(0, pnt_b + (pnt_b - pnt_a))
+            else:
+                value.pts.insert(0, self.pts[-1])
+        elif value.cmd == "S" and len(value.pts) == 2:
+            if self.cmd in {"C", "S"}:
+                *_, pnt_a, pnt_b = self.pts
+                value.pts.insert(0, pnt_b + (pnt_b - pnt_a))
+            else:
+                value.pts.insert(0, self.pts[-1])
+        elif value.cmd == "Q":
+            value.cmd = "T" if _do_allow_curve_shorthand(self, value) else "Q"
+        elif value.cmd == "C":
+            value.cmd = "S" if _do_allow_curve_shorthand(self, value) else "C"
+        value._prv = self
+        self._nxt = value
+
+    @property
+    def str_pts(self) -> Iterator[str]:
+        """Get the points that will be used in the SVG data."""
         if self.cmd == "H":
             yield self.pts[0].x
         elif self.cmd == "V":
@@ -247,54 +250,47 @@ class _CmdPts:
         else:
             yield from (p.xy for p in self.pts)
 
+    @property
+    def str(self) -> Iterator[str]:
+        """Get the SVG command and points for this command."""
+        yield from self.str_cmd
+        yield from self.str_pts
 
-def _yield_spline_commands(cpts: list[list[_StrPoint]]) -> Iterator[str]:
+
+def cmd_pts_from_spline(spline: list[list[_StrPoint]]) -> _CmdPts:
+    """Create a linked list of _CmdPts from a list of control points.
+
+    :param spline: a list of curves, each curve is a list of _StrPoint
+    :return: a linked list of _CmdPts
+    """
     n2cmd = {2: "L", 3: "Q", 4: "C"}
 
     commanded = [
-        _CmdPts("M", [cpts[0][0]]),
-        *(_CmdPts(n2cmd[len(curve)], curve[1:]) for curve in cpts),
+        _CmdPts("M", [spline[0][0]]),
+        *(_CmdPts(n2cmd[len(c)], c[1:]) for c in spline),
     ]
 
-    # Replace L commands with H or V.
-    for prev, this in _pairwise(commanded):
-        if this.cmd != "L":
-            continue
-        if prev.pts[-1].x == this.pts[0].x:
-            this.cmd = "V"
-        elif prev.pts[-1].y == this.pts[0].y:
-            this.cmd = "H"
-
-    # Any linear segments following a move command do not need an "L" command.
-    for curve in commanded[1:]:
-        if curve.cmd == "L":
-            curve.cmd = "M"
-        else:
-            break
-
-    # Allow skipped points during shorthand conditions.
-    for prev, this in _pairwise(commanded):
-        if this.cmd == "Q":
-            this.cmd = "T" if _do_allow_curve_shorthand(prev, this) else "Q"
-        elif this.cmd == "C":
-            this.cmd = "S" if _do_allow_curve_shorthand(prev, this) else "C"
-
-    # Replace closing linear segment with Z
-    if commanded[-1].pts[-1] == commanded[0].pts[0]:
-        if len(commanded[-1].pts) == 1:
+    if spline[-1][-1] == spline[0][0]:
+        if len(spline[-1]) == 2:
             commanded[-1] = _CmdPts("Z", [])
         else:
             commanded.append(_CmdPts("Z", []))
 
-    yield commanded[0].cmd
-    yield from commanded[0].net_pts
     for prev, this in _pairwise(commanded):
-        if prev.cmd != this.cmd:
-            yield this.cmd
-        yield from this.net_pts
+        prev.nxt = this
+
+    return commanded[0]
 
 
-def _fill_cmds(
+def _yield_svgd_spline(cpts: list[list[_StrPoint]]) -> Iterator[str]:
+
+    this_cmd: _CmdPts | None = cmd_pts_from_spline(cpts)
+    while this_cmd is not None:
+        yield from this_cmd.str
+        this_cmd = this_cmd.nxt
+
+
+def _yield_svgd(
     cpts: Iterable[Iterable[Sequence[float]]],
 ) -> Iterator[str]:
     """Determine the SVG command for each curve. Convert control points to _StrPoint.
@@ -318,63 +314,12 @@ def _fill_cmds(
     while cpts_sp:
         spline.append(cpts_sp.pop(0))
         if not cpts_sp:
-            yield from _yield_spline_commands(spline)
+            yield from _yield_svgd_spline(spline)
         elif spline[-1][-1] != cpts_sp[0][0]:
-            yield from _yield_spline_commands(spline)
+            yield from _yield_svgd_spline(spline)
             spline.clear()
 
 
-# def _yield_svg_commands(cpts: Iterable[Iterable[Sequence[float]]]) -> Iterator[str]:
-#     """Yield one SVG path data command for each set of control points.
-
-#     :return: SVG data
-#     :raise NotImplementedError: if the number of control points is not 1, 2, or 3
-#     """
-#     if not cpts:
-#         return
-#     sp_cpts = [[_StrPoint(p) for p in curve] for curve in cpts]
-
-#     beg_path: _StrPoint | None = None
-#     prev_pnt: _StrPoint | None = None
-
-#     issue_cmd = _new_svg_command_issuer()
-
-#     for i, (pnt, *pnts) in enumerate(sp_cpts):
-#         at_path_beg = False
-#         if i == 0 or pnt != sp_cpts[i - 1][-1]:
-#             yield issue_cmd("M", pnt.xy)
-#             beg_path = pnt
-#             at_path_beg = True
-#         if len(pnts) == 1 and pnts[0] == beg_path:
-#             yield issue_cmd("Z")
-#         elif len(pnts) == 1 and pnts[0].x == pnt.x:
-#             yield issue_cmd("V", pnts[0].y)
-#         elif len(pnts) == 1 and pnts[0].y == pnt.y:
-#             yield issue_cmd("H", pnts[0].x)
-#         elif len(pnts) == 1:
-#             yield issue_cmd("L", pnts[0].xy)
-#         elif (
-#             len(pnts) == 2
-#             and not at_path_beg
-#             and (pnts[0] - pnt) == (pnt - sp_cpts[i - 1][-2])
-#         ):
-#             yield issue_cmd("T", *(p.xy for p in pnts[1:]))
-#         elif len(pnts) == 2:
-#             yield issue_cmd("Q", *(p.xy for p in pnts))
-#         elif (
-#             len(pnts) == 3
-#             and not at_path_beg
-#             and (pnts[0] - pnt) == (pnt - sp_cpts[i - 1][-2])
-#         ):
-#             yield issue_cmd("S", *(p.xy for p in pnts[1:]))
-#         elif len(pnts) == 3:
-#             yield issue_cmd("C", *(p.xy for p in pnts))
-#         else:
-#             msg = f"Unexpected number of control points: {len(pnts)}"
-#             raise NotImplementedError(msg)
-#         prev_pnt = pnts[-1]
-#     if prev_pnt == beg_path:
-#         yield issue_cmd("Z")
 
 
 def get_svgd_from_cpts(cpts: Iterable[Sequence[Sequence[float]]]) -> str:
@@ -383,7 +328,7 @@ def get_svgd_from_cpts(cpts: Iterable[Sequence[Sequence[float]]]) -> str:
     :param cpts: control points
     :return: SVG path data string
     """
-    return _svgd_join(*_fill_cmds(cpts))
+    return _svgd_join(*_yield_svgd(cpts))
 
 
 def _pop_coordinate(svgd_parts: list[str]) -> tuple[float, float]:
