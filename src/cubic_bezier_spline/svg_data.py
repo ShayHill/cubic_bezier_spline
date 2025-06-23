@@ -171,18 +171,21 @@ class _CmdPts:
                 value.cmd = "V"
             elif value.pts[0].y == self.pts[0].y:
                 value.cmd = "H"
-        elif value.cmd == "T" and len(value.pts) == 1:
-            if self.cmd in {"Q", "T"}:
+        elif value.cmd in "tT" and len(value.pts) == 1:
+            if self.cmd in "qQtT":
                 *_, pnt_a, pnt_b = self.pts
-                value.pts.insert(0, pnt_b + (pnt_b - pnt_a))
+                at = pnt_b if value.cmd == "t" else _StrPoint((0, 0))
+                value.pts.insert(0, at + (pnt_b - pnt_a))
             else:
                 value.pts.insert(0, self.pts[-1])
-        elif value.cmd == "S" and len(value.pts) == 2:
-            if self.cmd in {"C", "S"}:
+        elif value.cmd in "sS" and len(value.pts) == 2:
+            if self.cmd in "cCsS":
                 *_, pnt_a, pnt_b = self.pts
-                value.pts.insert(0, pnt_b + (pnt_b - pnt_a))
+                at = pnt_b if value.cmd == "S" else _StrPoint((0, 0))
+                value.pts.insert(0, at + (pnt_b - pnt_a))
             else:
                 value.pts.insert(0, self.pts[-1])
+
         elif value.cmd == "Q":
             value.cmd = "T" if _do_use_curve_shorthand(self, value) else "Q"
         elif value.cmd == "C":
@@ -193,11 +196,11 @@ class _CmdPts:
     @property
     def str_pts(self) -> Iterator[str]:
         """Get the points that will be used in the SVG data."""
-        if self.cmd == "H":
+        if self.cmd in "hH":
             yield self.pts[0].x
-        elif self.cmd == "V":
+        elif self.cmd in "vV":
             yield self.pts[0].y
-        elif self.cmd in {"T", "S"}:
+        elif self.cmd in "tTsS":
             yield from (p.xy for p in self.pts[1:])
         else:
             yield from (p.xy for p in self.pts)
@@ -256,12 +259,21 @@ def cmd_pts_from_string(svgd: str) -> list[_CmdPts]:
         commanded.append((cmd, [parts.pop(0) for _ in range(num)]))
 
     for prev, this in _pairwise(commanded):
-        if this[0].lower() == "v":
+        if this[0] == "V":
             this[1].insert(0, prev[1][-2])
-        elif this[0].lower() == "h":
+        elif this[0] == "H":
             this[1].append(prev[1][-1])
+        elif this[0] == "v":
+            this[1].insert(0, 0)
+        elif this[0] == "h":
+            this[1].append(0)
+
 
     cmd_pts = [_CmdPts(x[0], [_StrPoint(x) for x in chunk_pairs(x[1])]) for x in commanded]
+
+    # aaa = [x.cmd for x in cmd_pts], [x.pts for x in cmd_pts]
+    # breakpoint()
+
 
     for prev, this in _pairwise(cmd_pts):
         prev.nxt = this
@@ -382,15 +394,32 @@ def get_cpts_from_svgd(svgd: str) -> list[list[tuple[float, float]]]:
     return [[(float(p.x), float(p.y)) for p in curve] for curve in lists]   
 
 
+def make_relative(svgd: str) -> str:
+    """Convert an absolute SVG path data string to a relative one.
+
+    :param svgd: an ABSOLUTE SVG path data string
+    :return: a RELATIVE SVG path data string
+    """
+    cmd_pts = cmd_pts_from_string(svgd)
+    for cmd in reversed(cmd_pts):
+        if cmd._prv is None:
+            continue
+        if cmd.cmd in "MZ":
+            continue
+        cmd.cmd = cmd.cmd.lower()
+        cmd.pts = [p - cmd._prv.pts[-1] for p in cmd.pts]
+    return _svgd_join(*it.chain.from_iterable(cmd.str for cmd in cmd_pts))
+
+
 
 from paragraphs import par
 if __name__ == "__main__":
     potrace_output = par(
         """M338 236 c-5 -3 -6 -6 -3 -6 1 -1 2 -2 2 -3 0 -2 1 -2 2 -2 2 0 3 0 4 -1 2
         -2 2 -2 4 -1 1 2 2 2 3 1 2 -3 6 0 6 6 1 8 -4 9 -11 3 l-3 -3 0 4 c0 3 -1 4 -4
-        2z M170 235 c-2 0 -5 -1 -5 -1 -1 -1 -3 -1 -4 -1 -3 0 -13 -5 -14 -6 -1 -1 -2
-        -2 -4 -2 -3 0 -6 -2 -4 -3 1 -1 1 -1 0 -1 -1 -1 -1 -1 -1 0 0 1 -1 1 -1 1 -2 0
-        -5 -4 -4 -5 0 -1 -1 -1 -2 -2 -1 0 -4 -3 -8 -6 -4 -4 -9 -8 -11 -9 -6 -5 -15
+        2z M170 235 h1v2c-2 0 -5 -1 -5 -1 -1 -1 -3 -1 -4 -1 -3 0 -13 -5 -14 -6 -1 -1
+        -2 -2 -4 -2 -3 0 -6 -2 -4 -3 1 -1 1 -1 0 -1 -1 -1 -1 -1 -1 0 0 1 -1 1 -1 1 -2
+        0 -5 -4 -4 -5 0 -1 -1 -1 -2 -2 -1 0 -4 -3 -8 -6 -4 -4 -9 -8 -11 -9 -6 -5 -15
         -14 -14 -15 1 -1 0 -1 -2 -2 -4 0 -8 -4 -11 -10 -4 -7 -1 -6 3 1 2 4 3 5 2 3 0
         -2 -1 -4 -2 -5 -1 0 -1 -1 -1 -1 1 -1 5 1 5 2 0 1 0 1 1 1 1 0 1 0 1 -1 -2 -2 2
         -8 4 -8 0 1 2 1 2 1 1 0 1 1 1 1 0 1 2 4 4 7 5 6 5 6 -2 7 l-4 1 5 0 c4 -1 5 0
@@ -424,12 +453,25 @@ if __name__ == "__main__":
     )
     # TODO: remove this test code.
     aaa = "M0.5 0.5C1 0 2 0 2.5 0.5 3 1 3 2 2.5 2.5 2 3 1 3 0.5 2.5 0 2 0 1 0.5 0.5Z"
-    aaa = potrace_output
-    bbb = get_cpts_from_svgd(aaa)
-    ccc = get_svgd_from_cpts(bbb)
-    ddd = get_cpts_from_svgd(ccc)
-    eee = get_svgd_from_cpts(ddd)
-    limit = 75
-    print(aaa[:limit])
-    print(ccc[:limit])
-    print(eee[:limit])
+    aaa = "M0 0H3V3H0Z"
+    aaa = "M0.5 0.5C1 0 2 0 2.5 0.5S3 2 2.5 2.5 1 3 0.5 2.5 0 1 0.5 0.5Z"
+    bbb = make_relative(aaa)
+    ccc = get_cpts_from_svgd(aaa)
+    ddd = get_cpts_from_svgd(bbb)
+    eee = cmd_pts_from_string(aaa)
+    fff = cmd_pts_from_string(bbb)
+    ggg = [x.cmd for x in eee], [x.pts for x in eee]
+    hhh = [x.cmd for x in fff], [x.pts for x in fff]
+    breakpoint()
+
+    # bbb = get_cpts_from_svgd(aaa)
+    # ccc = get_svgd_from_cpts(bbb)
+    # ddd = get_cpts_from_svgd(ccc)
+    # eee = get_svgd_from_cpts(ddd)
+    # fff = make_relative(eee)
+    # ggg = make_relative(fff)
+    # limit = 75
+    # print(aaa[:limit], len(aaa))
+    # print(ccc[:limit], len(ccc))
+    # print(eee[:limit], len(eee))
+    # print(fff[:limit], len(fff))
