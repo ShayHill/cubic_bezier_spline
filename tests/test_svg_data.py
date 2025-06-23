@@ -73,4 +73,4 @@ class TestClosedC2Continuous:
     def test_quadratic(self):
         curves = [[(0, 0), (1, 0)], [(1, 0), (2, 0), (3, 1)]]
         spline = BezierSpline(curves)
-        assert_svgd_equal(spline.svg_data, ("M0 0H1T3 1"))
+        assert_svgd_equal(spline.svg_data, ("M0 0H1Q2 0 3 1"))
