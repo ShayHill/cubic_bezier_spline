@@ -1,6 +1,6 @@
 [project]
 name = "cubic_bezier_spline"
-version = "0.15.0"
+version = "0.16.0"
 description = "Approximate or interpolate a sequence of points into a sequence of c2-continuous, non-rational cubic Bézier curves."
 authors = [{ name = "Shay Hill", email = "shay_public@hotmail.com" }]
 license = {text = "MIT"}
@@ -20,7 +20,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.15.0"
+version = "0.16.0"
 tag_format = "$version"
 major-version-zero = true
 version_files = [
