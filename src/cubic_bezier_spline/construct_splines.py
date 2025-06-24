@@ -7,9 +7,8 @@
 from __future__ import annotations
 
 import enum
-import itertools as it
-from collections.abc import Iterable, Sequence
-from typing import Annotated, Any, TypeVar, Union
+from collections.abc import Sequence
+from typing import Annotated, Any, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -19,27 +18,13 @@ from cubic_bezier_spline.control_point_casting import (
     as_closed_points_array,
     as_open_points_array,
 )
-
-_T = TypeVar("_T")
+from cubic_bezier_spline.pairwise import pairwise
 
 Points = Union[Sequence[Sequence[float]], npt.NDArray[np.floating[Any]]]
 APoints = Annotated[npt.NDArray[np.floating[Any]], "(-1, -1)"]
 
 _LINEAR = 2
 _QUADRATIC = 3
-
-
-def pairwise(iterable: Iterable[_T]) -> Iterable[tuple[_T, _T]]:
-    """Yield pairs of items from an iterable.
-
-    :param iterable: items to pair
-    :return: pairs of items from the iterable
-
-    No it.pairwise in Python 3.9.
-    """
-    items_a, items_b = it.tee(iterable)
-    _ = next(items_b, None)
-    return zip(items_a, items_b)
 
 
 class _OpenOrClosed(enum.Enum):

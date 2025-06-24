@@ -36,6 +36,8 @@ import itertools as it
 import re
 from typing import TYPE_CHECKING, TypeVar
 
+from cubic_bezier_spline.pairwise import pairwise
+
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Sequence
 
@@ -44,17 +46,6 @@ if TYPE_CHECKING:
 PRECISION = 6
 
 _T = TypeVar("_T")
-
-
-def _pairwise(iterable: Iterable[_T]) -> Iterator[tuple[_T, _T]]:
-    """Return an iterator of pairs from an iterable.
-
-    :param iterable: an iterable
-    :return: an iterator of pairs
-    """
-    iter1, iter2 = it.tee(iterable)
-    _ = next(iter2, None)
-    return zip(iter1, iter2)
 
 
 def _format_number(num: float | str) -> str:
@@ -312,7 +303,7 @@ def _cmd_pts_from_spline(spline: list[list[_StrPoint]]) -> _CmdPts:
         else:
             cmds.append(_CmdPts("Z", []))
 
-    for prev, this in _pairwise(cmds):
+    for prev, this in pairwise(cmds):
         prev.nxt = this
 
     return cmds[0]
@@ -341,7 +332,7 @@ def _cmd_pts_from_string(svgd: str) -> _CmdPts:
         str_groups.append([cmd, *(parts.pop(0) for _ in range(num))])
 
     # Fill in inferred values for H and V commands.
-    for prev, this in _pairwise(str_groups):
+    for prev, this in pairwise(str_groups):
         if this[0] == "V":
             this.insert(1, prev[-2])
         elif this[0] == "H":
@@ -355,7 +346,7 @@ def _cmd_pts_from_string(svgd: str) -> _CmdPts:
         _CmdPts(x, list(map(_StrPoint, _chunk_pairs(xs)))) for x, *xs in str_groups
     ]
 
-    for prev_cmd, this_cmd in _pairwise(cmd_pts):
+    for prev_cmd, this_cmd in pairwise(cmd_pts):
         prev_cmd.nxt = this_cmd
         if this_cmd.cmd == this_cmd.cmd.lower():
             this_cmd.cmd = this_cmd.cmd.upper()

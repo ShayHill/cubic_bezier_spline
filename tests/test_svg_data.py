@@ -6,8 +6,6 @@
 
 # pyright: reportPrivateUsage = false
 
-import itertools as it
-from collections.abc import Iterable
 from typing import TypeVar
 
 from paragraphs import par
@@ -17,6 +15,7 @@ from cubic_bezier_spline import (
     new_closed_approximating_spline,
     new_open_approximating_spline,
 )
+from cubic_bezier_spline.pairwise import pairwise
 from cubic_bezier_spline.svg_data import (
     _CmdPts,
     _do_use_curve_shorthand,
@@ -31,19 +30,6 @@ from cubic_bezier_spline.svg_data import (
 )
 
 _T = TypeVar("_T")
-
-
-def _pairwise(iterable: Iterable[_T]) -> Iterable[tuple[_T, _T]]:
-    """Yield pairs of items from an iterable.
-
-    :param iterable: items to pair
-    :return: pairs of items from the iterable
-
-    No it.pairwise in Python 3.9.
-    """
-    a, b = it.tee(iterable)
-    _ = next(b, None)
-    return zip(a, b)
 
 
 def assert_svgd_equal(result: str, expect: str):
@@ -110,12 +96,12 @@ class TestClosedC2Continuous:
         )
 
     def test_linear_closed(self):
-        curves = list(_pairwise(((0, 0), (3, 0), (3, 3), (0, 3), (0, 0))))
+        curves = list(pairwise(((0, 0), (3, 0), (3, 3), (0, 3), (0, 0))))
         spline = BezierSpline(curves)
         assert_svgd_equal(spline.svg_data, "M0 0h3v3h-3z")
 
     def test_linear_open(self):
-        curves = list(_pairwise(((0, 0), (3, 0), (3, 3), (0, 3))))
+        curves = list(pairwise(((0, 0), (3, 0), (3, 3), (0, 3))))
         spline = BezierSpline(curves)
         assert_svgd_equal(spline.svg_data, "M0 0h3v3h-3")
 
