@@ -474,7 +474,7 @@ def make_relative(svgd: str) -> str:
     """
     head_cmd = _cmd_pts_from_string(svgd)
     for cmd in _iter_cmds(head_cmd, rev=True):
-        if cmd.cmd in "MZ" or cmd.prv is None:
+        if cmd.cmd == "M" or cmd.prv is None:
             continue
         cmd.cmd = cmd.cmd.lower()
         cmd.pts = [p - cmd.prv.pts[-1] for p in cmd.pts]

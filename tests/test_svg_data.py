@@ -53,10 +53,10 @@ def assert_svgd_equal(result: str, expect: str):
     """
     assert result == expect
     assert _svgd_join(*_svgd_split(expect)) == expect
-    assert get_svgd_from_cpts(get_cpts_from_svgd(expect)) == expect
+    assert get_svgd_from_cpts(get_cpts_from_svgd(expect)) == make_absolute(expect)
     cpts = get_cpts_from_svgd(expect)
     assert cpts == get_cpts_from_svgd(make_relative(expect))
-    assert make_absolute(make_relative(expect)) == expect
+    assert make_relative(make_absolute(expect)) == expect
 
 
 class TestFormatNumber:
@@ -77,8 +77,8 @@ class TestCptsWithMidClose:
             [(3, 9), (4, 9), (5, 9)],  # Another segment starting with M
             [(5, 9), (6, 9), (3, 9)],  # Close the path
         ]
-        expect = "M0 0Q1 0 2 0T4 0 0 0ZM0 5Q1 5 2 5T4 5M3 9Q4 9 5 9T3 9Z"
-        result = get_svgd_from_cpts(cpts)
+        expect = "M0 0q1 0 2 0t2 0-4 0zM0 5q1 0 2 0t2 0M3 9q1 0 2 0t-2 0z"
+        result = make_relative(get_svgd_from_cpts(cpts))
         assert_svgd_equal(result, expect)
 
 
@@ -100,27 +100,29 @@ class TestClosedC2Continuous:
         spline = new_closed_approximating_spline([(0, 0), (3, 0), (3, 3), (0, 3)])
         assert_svgd_equal(
             spline.svg_data,
-            ("M0.5 0.5C1 0 2 0 2.5 0.5S3 2 2.5 2.5 1 3 0.5 2.5 0 1 0.5 0.5Z"),
+            ("M0.5 0.5c0.5-0.5 1.5-0.5 2 0s0.5 1.5 0 2-1.5 0.5-2 0-0.5-1.5 0-2z"),
         )
 
     def test_open_approximating_spline(self):
         spline = new_open_approximating_spline([(0, 0), (3, 0), (3, 3), (0, 3)])
-        assert_svgd_equal(spline.svg_data, ("M0 0C1 0 2 0 2.5 0.5S3 2 2.5 2.5 1 3 0 3"))
+        assert_svgd_equal(
+            spline.svg_data, ("M0 0c1 0 2 0 2.5 0.5s0.5 1.5 0 2-1.5 0.5-2.5 0.5")
+        )
 
     def test_linear_closed(self):
         curves = list(_pairwise(((0, 0), (3, 0), (3, 3), (0, 3), (0, 0))))
         spline = BezierSpline(curves)
-        assert_svgd_equal(spline.svg_data, "M0 0H3V3H0Z")
+        assert_svgd_equal(spline.svg_data, "M0 0h3v3h-3z")
 
     def test_linear_open(self):
         curves = list(_pairwise(((0, 0), (3, 0), (3, 3), (0, 3))))
         spline = BezierSpline(curves)
-        assert_svgd_equal(spline.svg_data, "M0 0H3V3H0")
+        assert_svgd_equal(spline.svg_data, "M0 0h3v3h-3")
 
     def test_quadratic(self):
         curves = [[(0, 0), (1, 0)], [(1, 0), (2, 0), (3, 1)]]
         spline = BezierSpline(curves)
-        assert_svgd_equal(spline.svg_data, ("M0 0H1Q2 0 3 1"))
+        assert_svgd_equal(spline.svg_data, ("M0 0h1q1 0 2 1"))
 
 
 potrace_output = par(

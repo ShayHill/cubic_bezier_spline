@@ -19,7 +19,7 @@ import numpy as np
 import numpy.typing as npt
 
 from cubic_bezier_spline.bezier_curve import BezierCurve
-from cubic_bezier_spline.svg_data import get_svgd_from_cpts
+from cubic_bezier_spline.svg_data import get_svgd_from_cpts, make_relative
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
@@ -89,12 +89,28 @@ class BezierSpline:
         return self.__array__()
 
     @cached_property
+    def svg_data_absolute(self) -> str:
+        """Get the SVG data for the spline with absolute coordinates.
+
+        :return: SVG data string (the d="" attribute of an svg "path" element)
+        """
+        return get_svgd_from_cpts(self.control_points)
+
+    @cached_property
+    def svg_data_relative(self) -> str:
+        """Get the SVG data for the spline with relative coordinates.
+
+        :return: SVG data string (the d="" attribute of an svg "path" element)
+        """
+        return make_relative(self.svg_data_absolute)
+
+    @property
     def svg_data(self) -> str:
         """Get the SVG data for the spline.
 
         :return: SVG data string (the d="" attribute of an svg "path" element)
         """
-        return get_svgd_from_cpts(self.control_points)
+        return self.svg_data_relative
 
     def _divmod_time(self, time: float) -> tuple[int, float]:
         """Divmod a time value into curve index and time on curve.
