@@ -87,9 +87,33 @@ def get_approximate_curve_length(curve: BezierCurve) -> float:
     """Get the approximate length of a Bezier curve.
 
     :param curve: Bezier curve
-    :return: approximate length of the Bezier curve
-
-    This is a simple approximation that calculates the length of the control-point
-    segments. It is not very accurate, but it is fast.
+    :return: approximate (but close) length of the Bezier curve
     """
     return sum(_iter_sub_lengths(curve))
+
+
+def get_linear_approximation(
+    curve: BezierCurve, rel_tol: float = 1 / 5
+) -> Iterator[BezierCurve]:
+    """Get a linear approximation of a Bezier curve.
+
+    :param curve: Bezier curve
+    :param rel_tol: relative tolerance for error, default is 1/5, which is a coarse
+        approximation.
+    :return: linear approximation of the Bezier curve
+    """
+    if curve.degree == 0:
+        return
+    if curve.degree == 1:
+        yield curve
+        return
+
+    curves = [curve]
+    while curves:
+        norm, error = _get_cp_length_and_error(curves[0])
+        error /= norm
+        curve, *curves = curves
+        if error < rel_tol or np.isclose(error, 0):
+            yield curve
+        else:
+            curves = [*curve.split(0.5), *curves]

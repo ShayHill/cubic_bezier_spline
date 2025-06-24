@@ -17,11 +17,13 @@ from conftest import cbez_d1, cbez_d2, random_bezier_points, random_times
 from numpy import typing as npt
 
 from cubic_bezier_spline.bezier_curve import BezierCurve
+from cubic_bezier_spline.curve_length import get_linear_approximation
 from cubic_bezier_spline.other_solvers import (
     get_bezier_basis,
     get_decasteljau,
     get_split_decasteljau,
 )
+from cubic_bezier_spline.pairwise import pairwise
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -36,6 +38,17 @@ def test_arrayable(points: FArray) -> None:
     """Convert to array when passed to np.array()"""
     curve = BezierCurve(points)
     assert curve.as_array.shape == (len(points), len(points[0]))
+
+
+class TestLinearApproximation:
+    """Test linear approximation of BezierCurve"""
+
+    @pytest.mark.parametrize("points", random_bezier_points())
+    def test_linear_approximation(self, points: FArray) -> None:
+        """Test linear approximation against control points"""
+        curve = BezierCurve(points)
+        for prev, this in pairwise(get_linear_approximation(curve)):
+            np.testing.assert_allclose(prev.control_points[-1], this.control_points[0])
 
 
 class TestCall:
