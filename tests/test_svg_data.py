@@ -27,7 +27,10 @@ from cubic_bezier_spline.svg_data import (
     get_svgd_from_cpts,
     make_absolute,
     make_relative,
+    _Commands
 )
+
+
 
 _T = TypeVar("_T")
 
@@ -111,6 +114,7 @@ class TestClosedC2Continuous:
         assert_svgd_equal(spline.svg_data, ("M0 0h1q1 0 2 1"))
 
 
+
 potrace_output = par(
     """M338 236 c-5 -3 -6 -6 -3 -6 1 -1 2 -2 2 -3 0 -2 1 -2 2 -2 2 0 3 0 4 -1 2 -2 2
     -2 4 -1 1 2 2 2 3 1 2 -3 6 0 6 6 1 8 -4 9 -11 3 l-3 -3 0 4 c0 3 -1 4 -4 2z M170
@@ -144,9 +148,37 @@ potrace_output = par(
     -2 0 -15 -3 -19 -4 -2 -2 -3 -1 -8 0 -4 1 -7 2 -8 1 -1 0 -2 0 -2 1 0 1 -6 3 -8 3
     -1 0 -2 0 -2 1 -1 1 -1 1 -1 0 0 -1 -2 -1 -11 0 -2 0 -2 0 1 1 3 1 2 1 -2 1 -4 -1
     -7 -1 -7 -2 0 -1 -1 -1 -2 0 -1 1 -2 1 -3 0 -2 -2 -5 -3 -3 -1 0 1 -4 1 -9 -1 -3 -1
-    -5 -1 -5 0 -1 1 -3 1 -5 1 -2 0 -6 1 -9 2 -4 0 -7 1 -8 1 -1 0 -4 -1 -6 -1Q1 2 3 4Q4 2 5 3z"""
+    -5 -1 -5 0 -1 1 -3 1 -5 1 -2 0 -6 1 -9 2 -4 0 -7 1 -8 1 -1 0 -4 -1 -6 -1Q1 2 3
+    4Q4 2 5 3z"""
 )
 
+class TestCommandsLL:
+    """Test the SVG data for the LL command."""
+
+    def test_ll(self):
+        """Test that LL commands are formatted correctly."""
+        cpts = get_cpts_from_svgd(potrace_output)
+        cmds = _Commands.from_cpts(cpts)
+        aaa = cmds.abs_svgd
+        bbb = make_absolute(aaa)
+        ccc = get_svgd_from_cpts(cpts)
+        for i in range(60):
+            ddd = aaa[i*100:i*100+150]
+            eee = ccc[i*100:i*100+150]
+            if ddd != eee:
+                break
+        cpts2 = get_cpts_from_svgd(aaa)
+
+        for i, (aa, bb) in enumerate(zip(cpts, cpts2)):
+            if aa != bb:
+                fff = cpts[i-1:i+1]
+                ggg = cpts2[i-1:i+1]
+                break
+        breakpoint()
+
+        # result = make_relative("M0 0L1 1L2 2")
+        # expect = "M0 0L1 1L2 2"
+        # assert_svgd_equal(result, expect)
 
 class TestPotraceOutput:
     def test_cycle(self) -> None:
