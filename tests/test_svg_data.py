@@ -172,29 +172,19 @@ potrace_output = par(
     4Q4 2 5 3z"""
 )
 
-# class TestCommandsLL:
-#     """Test the SVG data for the LL command."""
 
-#     def test_ll(self):
-#         """Test that LL commands are formatted correctly."""
-#         cpts = get_cpts_from_svgd(potrace_output)
-#         cmds = _Commands.from_cpts(cpts)
-#         expect = get_svgd_from_cpts(cpts)
-#         result = cmds.abs_svgd
-#         assert result == expect
+class TestCloseWithAxis:
+    """Test that Z replaces V or H commands for closing paths."""
 
-#     def test_ll_from_svgd(self):
-#         """Test that LL commands are formatted correctly from SVG data."""
-#         expect = get_cpts_from_svgd(potrace_output)
-#         result = _Commands.from_svgd(potrace_output).cpts
-#         for i in range(len(expect)):
-#             if expect[i] != result[i]:
-#                 beg = max(0, i - 5)
-#                 end = i + 5
-#                 aaa = expect[beg:end]
-#                 bbb = result[beg:end]
-#                 break
-#         breakpoint()
+    def test_close_with_h(self):
+        """Test that a horizontal line is closed with Z."""
+        result = get_svgd_from_cpts([[(0, 0), (1, 0)], [(1, 0), (0, 0)]])
+        assert result == "M0 0H1Z"
+
+    def test_close_with_v(self):
+        """Test that a horizontal line is closed with Z."""
+        result = get_svgd_from_cpts([[(0, 0), (0, 1)], [(0, 1), (0, 0)]])
+        assert result == "M0 0V1Z"
 
 
 class TestPotraceOutput:
