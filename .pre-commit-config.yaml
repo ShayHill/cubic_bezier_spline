@@ -82,12 +82,14 @@ repos:
     exclude: "tests"
     name: pylint
     args:
-    - --good-names=i,j,_,f,x,y,n,nn,ps,k,xy,x0,y0,x1,y1
+    - --good-names=i,j,_,f,x,y,n,nn,ps,k,xy,x0,y0,x1,y1,xs,ys,vx,vy
     - --disable=protected-access
     - --disable=no-member
     - --disable=import-error
     - --disable=no-name-in-module
     - --disable=too-many-branches
+    - --disable=unnecessary-comprehension
+    - --disable=too-many-locals
     - --load-plugins=pylint.extensions.docparams
     - --accept-no-param-doc=n
     - --accept-no-raise-doc=n

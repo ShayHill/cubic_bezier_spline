@@ -145,9 +145,9 @@ class TestLiner:
     def test_linear_open(self) -> None:
         """Produce a linear spline between each pair of points."""
         spline = new_open_linear_spline([[0, 0], [1, 0], [1, 1], [0, 1]])
-        assert spline.svg_data == "M0 0h1v1h-1"
+        assert spline.svg_data == "m0 0h1v1h-1"
 
     def test_linear_closed(self) -> None:
         """Produce a linear spline between each pair of points."""
         spline = new_closed_linear_spline([[0, 0], [1, 0], [1, 1], [0, 1]])
-        assert spline.svg_data == "M0 0h1v1h-1z"
+        assert spline.svg_data == "m0 0h1v1h-1z"

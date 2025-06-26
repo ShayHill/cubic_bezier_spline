@@ -8,6 +8,7 @@
 
 from typing import TypeVar
 
+import pytest
 from paragraphs import par
 
 from cubic_bezier_spline import (
@@ -17,20 +18,17 @@ from cubic_bezier_spline import (
 )
 from cubic_bezier_spline.pairwise import pairwise
 from cubic_bezier_spline.svg_data import (
-    _CmdPts,
-    _do_use_curve_shorthand,
+    PathCommand,
+    PathCommands,
     _format_number,
-    _StrPoint,
+    _nums_print_equal,
     _svgd_join,
     _svgd_split,
     get_cpts_from_svgd,
     get_svgd_from_cpts,
     make_absolute,
     make_relative,
-    _Commands
 )
-
-
 
 _T = TypeVar("_T")
 
@@ -66,22 +64,45 @@ class TestCptsWithMidClose:
             [(3, 9), (4, 9), (5, 9)],  # Another segment starting with M
             [(5, 9), (6, 9), (3, 9)],  # Close the path
         ]
-        expect = "M0 0q1 0 2 0t2 0-4 0zM0 5q1 0 2 0t2 0M3 9q1 0 2 0t-2 0z"
+        expect = "m0 0q1 0 2 0t2 0-4 0zm0 5q1 0 2 0t2 0m-1 4q1 0 2 0t-2 0z"
         result = make_relative(get_svgd_from_cpts(cpts))
         assert_svgd_equal(result, expect)
 
 
-class TestDoUseCurveShorthand:
-    def test_first_arg_not_a_curve(self):
-        """Silently return False for non-curve commands."""
-        cmd_a, cmd_b = (_CmdPts("L", [_StrPoint((0, 0))]) for _ in range(2))
-        assert _do_use_curve_shorthand(cmd_a, cmd_b) is False
+def test_nums_print_equal():
+    """Raise a ValueError if number of arguments is not equal."""
+    with pytest.raises(ValueError):
+        _ = _nums_print_equal(1, 2, 3)
 
-    def test_second_arg_not_a_curve(self):
-        """Silently return False for non-curve commands."""
-        cmd_a = _CmdPts("Q", [_StrPoint((x, 0)) for x in range(2)])
-        cmd_b = _CmdPts("L", [_StrPoint((0, 0))])
-        assert _do_use_curve_shorthand(cmd_a, cmd_b) is False
+
+class TestBreakCommand:
+    """Test bad paths in Command and Commands."""
+
+    def test_repr(self):
+        """Test that the repr of a Command is correct."""
+        cmd = PathCommand("m", [0], [0])
+        assert repr(cmd) == "Command('M', [0.0], [0.0])"
+
+    def test_empty_cpts(self):
+        """Test that an empty list of control points raises a ValueError."""
+        with pytest.raises(ValueError):
+            _ = PathCommands.from_cpts([])
+
+    def test_bad_relative_or_absolute(self):
+        """Test that a ValueError is raised if the command is not relative or absolute."""
+        cmd = PathCommand("x", [0], [0])
+        with pytest.raises(ValueError) as excinfo:
+            _ = next(
+                cmd.iter_str_pts("relativeee")  # pyright: ignore[reportArgumentType]
+            )
+        assert "Unknown relative" in str(excinfo.value)
+
+    def test_arc_command(self):
+        """Test that an arc command raises a ValueError."""
+        svgd = "M0 0 A 1 1 0 0 1 1 1"
+        with pytest.raises(ValueError) as excinfo:
+            _ = PathCommands.from_svgd(svgd)
+        assert "Arc commands cannot be converted" in str(excinfo.value)
 
 
 class TestClosedC2Continuous:
@@ -89,30 +110,29 @@ class TestClosedC2Continuous:
         spline = new_closed_approximating_spline([(0, 0), (3, 0), (3, 3), (0, 3)])
         assert_svgd_equal(
             spline.svg_data,
-            ("M0.5 0.5c0.5-0.5 1.5-0.5 2 0s0.5 1.5 0 2-1.5 0.5-2 0-0.5-1.5 0-2z"),
+            ("m0.5 0.5c0.5-0.5 1.5-0.5 2 0s0.5 1.5 0 2-1.5 0.5-2 0-0.5-1.5 0-2z"),
         )
 
     def test_open_approximating_spline(self):
         spline = new_open_approximating_spline([(0, 0), (3, 0), (3, 3), (0, 3)])
         assert_svgd_equal(
-            spline.svg_data, ("M0 0c1 0 2 0 2.5 0.5s0.5 1.5 0 2-1.5 0.5-2.5 0.5")
+            spline.svg_data, ("m0 0c1 0 2 0 2.5 0.5s0.5 1.5 0 2-1.5 0.5-2.5 0.5")
         )
 
     def test_linear_closed(self):
         curves = list(pairwise(((0, 0), (3, 0), (3, 3), (0, 3), (0, 0))))
         spline = BezierSpline(curves)
-        assert_svgd_equal(spline.svg_data, "M0 0h3v3h-3z")
+        assert_svgd_equal(spline.svg_data, "m0 0h3v3h-3z")
 
     def test_linear_open(self):
         curves = list(pairwise(((0, 0), (3, 0), (3, 3), (0, 3))))
         spline = BezierSpline(curves)
-        assert_svgd_equal(spline.svg_data, "M0 0h3v3h-3")
+        assert_svgd_equal(spline.svg_data, "m0 0h3v3h-3")
 
     def test_quadratic(self):
         curves = [[(0, 0), (1, 0)], [(1, 0), (2, 0), (3, 1)]]
         spline = BezierSpline(curves)
-        assert_svgd_equal(spline.svg_data, ("M0 0h1q1 0 2 1"))
-
+        assert_svgd_equal(spline.svg_data, ("m0 0h1q1 0 2 1"))
 
 
 potrace_output = par(
@@ -152,33 +172,30 @@ potrace_output = par(
     4Q4 2 5 3z"""
 )
 
-class TestCommandsLL:
-    """Test the SVG data for the LL command."""
+# class TestCommandsLL:
+#     """Test the SVG data for the LL command."""
 
-    def test_ll(self):
-        """Test that LL commands are formatted correctly."""
-        cpts = get_cpts_from_svgd(potrace_output)
-        cmds = _Commands.from_cpts(cpts)
-        aaa = cmds.abs_svgd
-        bbb = make_absolute(aaa)
-        ccc = get_svgd_from_cpts(cpts)
-        for i in range(60):
-            ddd = aaa[i*100:i*100+150]
-            eee = ccc[i*100:i*100+150]
-            if ddd != eee:
-                break
-        cpts2 = get_cpts_from_svgd(aaa)
+#     def test_ll(self):
+#         """Test that LL commands are formatted correctly."""
+#         cpts = get_cpts_from_svgd(potrace_output)
+#         cmds = _Commands.from_cpts(cpts)
+#         expect = get_svgd_from_cpts(cpts)
+#         result = cmds.abs_svgd
+#         assert result == expect
 
-        for i, (aa, bb) in enumerate(zip(cpts, cpts2)):
-            if aa != bb:
-                fff = cpts[i-1:i+1]
-                ggg = cpts2[i-1:i+1]
-                break
-        breakpoint()
+#     def test_ll_from_svgd(self):
+#         """Test that LL commands are formatted correctly from SVG data."""
+#         expect = get_cpts_from_svgd(potrace_output)
+#         result = _Commands.from_svgd(potrace_output).cpts
+#         for i in range(len(expect)):
+#             if expect[i] != result[i]:
+#                 beg = max(0, i - 5)
+#                 end = i + 5
+#                 aaa = expect[beg:end]
+#                 bbb = result[beg:end]
+#                 break
+#         breakpoint()
 
-        # result = make_relative("M0 0L1 1L2 2")
-        # expect = "M0 0L1 1L2 2"
-        # assert_svgd_equal(result, expect)
 
 class TestPotraceOutput:
     def test_cycle(self) -> None:
