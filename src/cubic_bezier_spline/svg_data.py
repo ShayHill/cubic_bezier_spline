@@ -333,10 +333,10 @@ class PathCommand:
         elif self.str_cmd == "H":
             yield _format_number(xs[0])
         elif self.str_cmd in "TS":
-            xys = zip(xs[1:], ys[1:], strict=True)
+            xys = zip(xs[1:], ys[1:])
             yield from map(_format_number, it.chain(*xys))
         else:
-            xys = zip(xs, ys, strict=True)
+            xys = zip(xs, ys)
             yield from map(_format_number, it.chain(*xys))
 
 
