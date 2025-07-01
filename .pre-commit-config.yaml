@@ -116,7 +116,7 @@ repos:
   # PYI019 Use Self type (only works with py 3.11+)
   # C901 Function is too complex
   # PLR0912 Too many branches in function
-  rev: 'v0.12.0'
+  rev: 'v0.12.1'
   hooks:
     - id: ruff
       exclude: "tests"
