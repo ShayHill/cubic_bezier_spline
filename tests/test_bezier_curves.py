@@ -48,7 +48,7 @@ class TestLinearApproximation:
         """Test linear approximation against control points"""
         curve = BezierCurve(points)
         for prev, this in pairwise(get_linear_approximation(curve)):
-            np.testing.assert_allclose(prev.control_points[-1], this.control_points[0])
+            np.testing.assert_allclose(prev.cpts[-1], this.cpts[0])
 
 
 class TestCall:
@@ -82,7 +82,7 @@ class TestCubicBezierDerivatives:
     def test_d1(self, points: FArray, time: float) -> None:
         """Test against formula"""
         curve = BezierCurve(points)
-        p0, p1, p2, p3 = curve.control_points
+        p0, p1, p2, p3 = curve.cpts
         cubic_d1 = cbez_d1(p0, p1, p2, p3, time)
         np.testing.assert_allclose(curve(time, 1), cubic_d1)
 
@@ -92,8 +92,8 @@ class TestCubicBezierDerivatives:
     def test_d2(self, points: FArray, time: float) -> None:
         """Test against formula"""
         curve = BezierCurve(points)
-        # p0, p1, p2, p3 = p(tuple, curve.control_points))
-        p0, p1, p2, p3 = map(tuple, curve.control_points)
+        # p0, p1, p2, p3 = p(tuple, curve.cpts))
+        p0, p1, p2, p3 = map(tuple, curve.cpts)
         cubic_d2 = cbez_d2(p0, p1, p2, p3, time)
         np.testing.assert_allclose(curve(time, 2), cubic_d2)
 
@@ -151,8 +151,8 @@ class TestSplit:
         aaa = get_split_decasteljau(point_sequence, time)
         curve = BezierCurve(points)
         bbb = curve.split(time)
-        np.testing.assert_allclose(aaa[0], bbb[0].control_points)
-        np.testing.assert_allclose(aaa[1], bbb[1].control_points)
+        np.testing.assert_allclose(aaa[0], bbb[0].cpts)
+        np.testing.assert_allclose(aaa[1], bbb[1].cpts)
 
     @pytest.mark.parametrize(
         "points,time", zip(random_bezier_points(degree_limits=(0, 5)), random_times())
@@ -161,7 +161,7 @@ class TestSplit:
         """Last point of first curve == first point of second"""
         curve = BezierCurve(points)
         beg, end = curve.split(time)
-        np.testing.assert_array_equal(beg.control_points[-1], end.control_points[0])
+        np.testing.assert_array_equal(beg.cpts[-1], end.cpts[0])
 
     @pytest.mark.parametrize("points", random_bezier_points())
     def test_split_0(self, points: FArray) -> None:
@@ -171,7 +171,7 @@ class TestSplit:
         """
         curve = BezierCurve(points)
         point, curve_ = curve.split(0)
-        assert len(set(point.control_points)) == 1
+        assert len(set(point.cpts)) == 1
         assert curve_ is curve
 
     @pytest.mark.parametrize("points", random_bezier_points())
@@ -182,7 +182,7 @@ class TestSplit:
         """
         curve = BezierCurve(points)
         curve_, point = curve.split(1)
-        assert len(set(point.control_points)) == 1
+        assert len(set(point.cpts)) == 1
         assert curve_ is curve
 
     @pytest.mark.parametrize("points", random_bezier_points())
@@ -193,10 +193,10 @@ class TestSplit:
         """
         curve = BezierCurve(points)
         beg, curve_, end = curve.split(0, 1)
-        assert len(set(beg.control_points)) == 1
-        assert beg.control_points[0] == curve_.control_points[0]
-        assert len(set(end.control_points)) == 1
-        assert end.control_points[0] == curve_.control_points[-1]
+        assert len(set(beg.cpts)) == 1
+        assert beg.cpts[0] == curve_.cpts[0]
+        assert len(set(end.cpts)) == 1
+        assert end.cpts[0] == curve_.cpts[-1]
         assert curve_ is curve
 
     @pytest.mark.parametrize("points", random_bezier_points())

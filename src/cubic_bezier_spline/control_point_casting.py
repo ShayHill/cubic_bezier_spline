@@ -11,12 +11,12 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-    from typing import Annotated, Union
+    from collections.abc import Iterable
+    from typing import Annotated
 
     import numpy.typing as npt
 
-    Points = Union[Sequence[Sequence[float]], npt.NDArray[np.floating[Any]]]
+    Points = Iterable[Iterable[float]]
     APoints = Annotated[npt.NDArray[np.floating[Any]], "(-1, -1)"]
     TPoints = tuple[tuple[float, ...], ...]
 
@@ -30,7 +30,10 @@ def as_points_array(points: Points) -> APoints:
     :return: True if x is a 2D shape
     :raises ValueError: if x is not a 2D shape
     """
-    apoints = np.asarray(points).astype(float)
+    if isinstance(points, np.ndarray):
+        apoints = np.asarray(points, dtype=float)
+    else:
+        apoints = np.array([list(p) for p in points], dtype=float)
     if apoints.ndim != _TWO:
         msg = f"Expected 2D array or nested sequence, got {apoints.ndim}"
         raise ValueError(msg)

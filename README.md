@@ -46,7 +46,7 @@ Any of these will return a BezierSpline object. This object has a some of the us
 
     # an svg data string
     # (the d="" attribute of an SVG path object)
-    spline.svg_data
+    spline.svgd
 
 ### Examples
 

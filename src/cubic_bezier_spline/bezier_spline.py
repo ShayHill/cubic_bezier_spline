@@ -9,51 +9,57 @@ A dead-simple container for lists of Bezier curves.
 from __future__ import annotations
 
 import itertools as it
-from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from math import floor
-from typing import TYPE_CHECKING, Annotated, Any, TypeVar, Union
+from typing import TYPE_CHECKING, Annotated, Any, TypeVar
 
 import numpy as np
 import numpy.typing as npt
-from svg_path_data import (
-    format_svgd_absolute,
-    format_svgd_relative,
-    format_svgd_shortest,
-    get_svgd_from_cpts,
-)
+from svg_path_data import get_svgd_from_cpts
 
 from cubic_bezier_spline.bezier_curve import BezierCurve
+from cubic_bezier_spline.control_point_casting import as_nested_tuple
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
-
-
-Point = Union[Sequence[float], npt.NDArray[np.floating[Any]]]
-Points = Union[Sequence[Sequence[float]], npt.NDArray[np.floating[Any]]]
+    from collections.abc import Iterable, Iterator, Sequence
 
 
 _BezierSplineT = TypeVar("_BezierSplineT", bound="BezierSpline")
 
 
-@dataclass
+@dataclass(frozen=True)
 class BezierSpline:
-    """A list of non-rational Bezier curves."""
+    """A sequence of non-rational Bezier curves."""
 
-    _curves: list[BezierCurve]
+    cpts_: Iterable[Iterable[Iterable[float]]]
 
-    def __init__(self, curves: Iterable[Sequence[Sequence[float]]]) -> None:
-        """Create a spline from a list of Bezier curves."""
-        self._curves = [BezierCurve(x) for x in curves]
-        self.control_points = tuple(x.control_points for x in self._curves)
+    def __post_init__(self) -> None:
+        """Set cpts_ to cpts for __str___."""
+        object.__setattr__(self, "cpts_", self.cpts)
+
+    @cached_property
+    def cpts(self) -> tuple[tuple[tuple[float, ...], ...], ...]:
+        """Get the control points of the spline.
+
+        :return: tuple of control points for each curve
+        """
+        return tuple(as_nested_tuple(x) for x in self.cpts_)
+
+    @cached_property
+    def curves(self) -> list[BezierCurve]:
+        """Get the curves in the spline.
+
+        :return: list of Bezier curves
+        """
+        return [BezierCurve(x) for x in self.cpts]
 
     def __iter__(self) -> Iterator[BezierCurve]:
         """Iterate over the curves in the spline.
 
         :return: iterator over Bezier curves
         """
-        return iter(self._curves)
+        return iter(self.curves)
 
     def __getitem__(self, item: int) -> BezierCurve:
         """Get a curve from the spline.
@@ -61,21 +67,21 @@ class BezierSpline:
         :param item: index of curve
         :return: Bezier curve
         """
-        return self._curves[item]
+        return self.curves[item]
 
     def __len__(self) -> int:
         """Get the number of curves in the spline.
 
         :return: number of curves
         """
-        return len(self._curves)
+        return len(self.curves)
 
     def __array__(self) -> Annotated[npt.NDArray[np.floating[Any]], (-1, -1, -1)]:
         """Get the spline as a numpy array.
 
         :return: numpy array of curves
         """
-        return np.array([x.as_array for x in self._curves])
+        return np.array([x.as_array for x in self.curves])
 
     @cached_property
     def is_closed(self) -> bool:
@@ -83,39 +89,15 @@ class BezierSpline:
 
         :return: True if the spline is closed, False otherwise
         """
-        return self.control_points[0][0] == self.control_points[-1][-1]
-
-    @property
-    def as_array(self) -> Annotated[npt.NDArray[np.floating[Any]], (-1, -1, -1)]:
-        """Get the spline as a numpy array.
-
-        :return: numpy array of curves
-        """
-        return self.__array__()
+        return self.cpts[0][0] == self.cpts[-1][-1]
 
     @cached_property
-    def svg_data_absolute(self) -> str:
-        """Get the SVG data for the spline with absolute coordinates.
-
-        :return: SVG data string (the d="" attribute of an svg "path" element)
-        """
-        return format_svgd_absolute(get_svgd_from_cpts(self.control_points), 6)
-
-    @cached_property
-    def svg_data_relative(self) -> str:
-        """Get the SVG data for the spline with relative coordinates.
-
-        :return: SVG data string (the d="" attribute of an svg "path" element)
-        """
-        return format_svgd_relative(self.svg_data_absolute, 6)
-
-    @property
-    def svg_data(self) -> str:
+    def svgd(self) -> str:
         """Get the SVG data for the spline.
 
         :return: SVG data string (the d="" attribute of an svg "path" element)
         """
-        return format_svgd_shortest(self.svg_data_relative, 6)
+        return get_svgd_from_cpts(self.cpts, 6)
 
     def _divmod_time(self, time: float) -> tuple[int, float]:
         """Divmod a time value into curve index and time on curve.
@@ -135,7 +117,7 @@ class BezierSpline:
 
         :return: reversed BezierSpline
         """
-        return type(self)(x.reversed.control_points for x in reversed(self._curves))
+        return type(self)(x.reversed.cpts for x in reversed(self.curves))
 
     def _split_to_curves(self, beg_time: float, end_time: float) -> list[BezierCurve]:
         """Split a BezierSpline into multiple Bezier curves.
@@ -149,13 +131,13 @@ class BezierSpline:
         end_time = min(max(0, end_time), len(self))
 
         if beg_time in {0, len(self)} and end_time in {0, len(self)}:
-            return self._curves
+            return self.curves
 
         beg_idx, beg_val = self._divmod_time(beg_time)
         end_idx, end_val = self._divmod_time(end_time)
 
         if beg_time >= end_time:
-            if self.control_points[0][0] != self.control_points[-1][-1]:
+            if self.cpts[0][0] != self.cpts[-1][-1]:
                 msg = "Cannot split an open spline from high to low time"
                 raise ValueError(msg)
             curves: list[BezierCurve] = []
@@ -166,11 +148,11 @@ class BezierSpline:
             return curves
 
         if beg_idx == end_idx:
-            return self._curves[beg_idx].split(beg_val, end_val)[1:-1]
+            return self.curves[beg_idx].split(beg_val, end_val)[1:-1]
 
-        head = [] if beg_val == 1 else self._curves[beg_idx].split(beg_val)[1:]
-        body = self._curves[beg_idx + 1 : end_idx]
-        tail = [] if end_val == 0 else self._curves[end_idx].split(end_val)[:1]
+        head = [] if beg_val == 1 else self.curves[beg_idx].split(beg_val)[1:]
+        body = self.curves[beg_idx + 1 : end_idx]
+        tail = [] if end_val == 0 else self.curves[end_idx].split(end_val)[:1]
         return head + body + tail
 
     def split(
@@ -203,7 +185,7 @@ class BezierSpline:
         beg_time = sum(self.divmod_time(beg_time, **bool_kwargs))
         end_time = sum(self.divmod_time(end_time, **bool_kwargs))
         curves = self._split_to_curves(beg_time, end_time)
-        return type(self)([x.control_points for x in curves])
+        return type(self)([x.cpts for x in curves])
 
     @cached_property
     def lengths(self) -> list[float]:
@@ -211,7 +193,7 @@ class BezierSpline:
 
         :return: list of curve lengths
         """
-        return [x.length for x in self._curves]
+        return [x.length for x in self.curves]
 
     @cached_property
     def seams(self) -> list[float]:
@@ -236,10 +218,10 @@ class BezierSpline:
         :return: curve index, time on curve
 
         For the default uniform, non-normalized case, time n.t will return the
-        evaluation of `self._curves[n](t)`.
+        evaluation of `self.curves[n](t)`.
 
         The uniform, normalized case will scale time to n.t in [0, 1] to [0,
-        len(self)] then return the same `self._curves[n](t)`.
+        len(self)] then return the same `self.curves[n](t)`.
 
         The non-uniform, normalized case will scale time to n.t in [0, 1] to [0,
         spline_len] where spline_len is the sum of the lengths of all curves in the
@@ -277,7 +259,7 @@ class BezierSpline:
         *,
         normalized: bool | None = None,
         uniform: bool | None = None,
-    ) -> Point:
+    ) -> npt.NDArray[np.floating[Any]]:
         """Given x.y, call curve x at time y.
 
         :param time: x.y -> curve index x and time on curve y
@@ -289,7 +271,7 @@ class BezierSpline:
         For a spline with 3 curves, spline(3) will return curve 2 at time=1
         """
         curve_idx, time = self.divmod_time(time, normalized=normalized, uniform=uniform)
-        return self._curves[curve_idx](time, derivative)
+        return self.curves[curve_idx](time, derivative)
 
 
 def _find_curve_index(seams: Sequence[float], time: float) -> int:

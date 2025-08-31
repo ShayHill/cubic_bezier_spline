@@ -25,24 +25,24 @@ if TYPE_CHECKING:
     from cubic_bezier_spline.bezier_curve import BezierCurve
 
 
-def _get_cp_length(control_points: Sequence[Sequence[float]]) -> float:
+def _get_cp_length(cpts: Sequence[Sequence[float]]) -> float:
     """Get the combined length of the control-point segments.
 
-    :param control_points: control points
+    :param cpts: control points
     :return: combined length of the control-point segments
     """
-    cp_array = np.asarray(control_points, dtype=float)
+    cp_array = np.asarray(cpts, dtype=float)
     pairwise = zip(cp_array, cp_array[1:])
     return float(sum(np.linalg.norm(p1 - p0) for p0, p1 in pairwise))
 
 
-def _get_ep_length(control_points: Sequence[Sequence[float]]) -> np.floating[Any]:
+def _get_ep_length(cpts: Sequence[Sequence[float]]) -> np.floating[Any]:
     """Get the length between the first and last control points.
 
-    :param control_points: control points
+    :param cpts: control points
     :return: length between the first and last control points
     """
-    cp_array = np.asarray(control_points, dtype=float)
+    cp_array = np.asarray(cpts, dtype=float)
     return np.linalg.norm(cp_array[-1] - cp_array[0])
 
 
@@ -52,7 +52,7 @@ def _get_cp_length_and_error(curve: BezierCurve) -> tuple[float, np.floating[Any
     :param curve: Bezier curve
     :return: a tuple: length of cp segments, error
     """
-    cpts = curve.control_points
+    cpts = curve.cpts
     ep_norm = _get_ep_length(cpts)
     cp_norm = _get_cp_length(cpts)
     return cp_norm, cp_norm - ep_norm
@@ -69,7 +69,7 @@ def _iter_sub_lengths(curve: BezierCurve) -> Iterator[float]:
     if curve.degree == 0:
         return
     if curve.degree == 1:
-        yield _get_cp_length(curve.control_points)
+        yield _get_cp_length(curve.cpts)
         return
 
     curves = [curve]

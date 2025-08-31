@@ -103,7 +103,7 @@ def draw_examples(infix: str):
             group.append(
                 new_element(
                     "path",
-                    d=spline.svg_data,
+                    d=spline.svgd,
                     stroke_width=0.01,
                     stroke="#444444",
                     fill="none",
@@ -120,13 +120,13 @@ def draw_examples(infix: str):
 
             # show spline control points
             for curve in spline:
-                for p in curve.control_points:
+                for p in curve.cpts:
                     group.append(
                         new_element(
                             "circle", cx=p[0], cy=p[1], r=0.02, fill="blue", opacity=0.5
                         )
                     )
-                a, b, c, d = curve.control_points
+                a, b, c, d = curve.cpts
                 a_to_b = f"M {a[0]} {a[1]} L {b[0]} {b[1]}"
                 c_to_d = f"M {c[0]} {c[1]} L {d[0]} {d[1]}"
                 new_sub_element(group, "path", d=a_to_b, **cp_stroke)

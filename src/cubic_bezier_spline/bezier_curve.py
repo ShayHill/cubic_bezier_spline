@@ -21,6 +21,7 @@ from typing import Annotated, Any, TypeVar, Union
 import numpy as np
 import numpy.typing as npt
 from paragraphs import par
+from svg_path_data import get_svgd_from_cpts
 
 from cubic_bezier_spline.control_point_casting import as_nested_tuple, as_points_array
 from cubic_bezier_spline.curve_length import get_approximate_curve_length
@@ -47,7 +48,7 @@ class BezierCurve:
     * the `zmat` array is a 2D array of shape (p, p).
     """
 
-    control_points: TPoints
+    cpts: TPoints
     as_array: APoints = dataclasses.field(init=False, repr=False, compare=False)
 
     def __init__(self, points: Points) -> None:
@@ -55,21 +56,21 @@ class BezierCurve:
 
         :param points: control points, each a sequence of floats
 
-        Stores points internally as a tuple of tuples (`.control_points`) as a
+        Stores points internally as a tuple of tuples (`.cpts`) as a
         canonical representation. Also stores an array of the same information
         (`.points`), for convenience and to give argument validation through
         `as_points_array`.
         """
         object.__setattr__(self, "as_array", as_points_array(points))  # validates
-        object.__setattr__(self, "control_points", as_nested_tuple(self.as_array))
+        object.__setattr__(self, "cpts", as_nested_tuple(self.as_array))
 
     @property
     def degree(self) -> int:
         """Degree of curve.
 
-        :return: len(self.control_points) - 1
+        :return: len(self.cpts) - 1
         """
-        return len(self.control_points) - 1
+        return len(self.cpts) - 1
 
     def __getitem__(self, item: int) -> npt.NDArray[np.floating[Any]]:
         """Return item-th point.
@@ -167,7 +168,7 @@ class BezierCurve:
                 curves[-1:] = [type(self)(point), curves[-1]]
                 continue
             if time_prime == 1:
-                point = np.array(self.control_points[-1:] * (self.degree + 1))
+                point = np.array(self.cpts[-1:] * (self.degree + 1))
                 curves[-1:] = [curves[-1], type(self)(point)]
                 time_at = 1
                 continue
@@ -205,7 +206,7 @@ class BezierCurve:
                 degree={to_degree}"""
             )
             raise ValueError(msg)
-        nn, ps = len(self.control_points), self.as_array
+        nn, ps = len(self.cpts), self.as_array
         # mypy likes linspace more that arange
         rats = np.linspace(1, nn - 1, nn - 1)[:, None] / nn
         return type(self)(
@@ -248,3 +249,11 @@ class BezierCurve:
             raise ValueError(msg)
         points = (self.as_array[1:] - self.as_array[:-1]) * self.degree
         return type(self)(points).derivative(derivative - 1)
+
+    @cached_property
+    def svgd(self) -> str:
+        """Get the SVG data for the spline.
+
+        :return: SVG data string (the d="" attribute of an svg "path" element)
+        """
+        return get_svgd_from_cpts([self.cpts])
