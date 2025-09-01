@@ -256,4 +256,4 @@ class BezierCurve:
 
         :return: SVG data string (the d="" attribute of an svg "path" element)
         """
-        return get_svgd_from_cpts([self.cpts])
+        return get_svgd_from_cpts([self.cpts], 6)
