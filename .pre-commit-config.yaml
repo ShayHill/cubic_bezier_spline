@@ -1,24 +1,31 @@
 ci:
-
-  autofix_commit_msg: 'style: pre-commit fixes'
-  autoupdate_commit_msg: 'chore: update pre-commit hooks'
+  skip: [pyright]
 
 exclude: resources|doc
 
 repos:
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0
+  rev: v6.0.0
   hooks:
     - id: check-added-large-files
     - id: check-ast
     - id: check-case-conflict
+    - id: check-docstring-first
+    - id: check-executables-have-shebangs
+    - id: check-json
     - id: check-merge-conflict
+      args:
+        - --assume-in-merge
+    - id: check-shebang-scripts-are-executable
     - id: check-symlinks
-    - id: check-yaml
     - id: check-toml
+    - id: check-vcs-permalinks
     - id: check-xml
+    - id: check-yaml
     - id: debug-statements
+    - id: destroyed-symlinks
+    # - id: detect-aws-credentials
     - id: detect-private-key
     - id: end-of-file-fixer
     - id: mixed-line-ending
@@ -27,36 +34,27 @@ repos:
     - id: name-tests-test
       args:
       - --pytest-test-first
+    - id: no-commit-to-branch
+    - id: pretty-format-json
+      args: ['--autofix']
+    # - id: sort-simple-yaml
+        # files: .pre-commit-config.yaml
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.16.1
+  rev: v1.18.2
   hooks:
   - id: mypy
     name: mypy
     language: python
-    language_version: python 3.11
-    python_version: python3.9
+    language_version: python 3.9
     types: [python]
     require_serial: true
     verbose: true
-    # additional_dependencies: ['types-requests', ']
+    additional_dependencies: ['types-requests']
     # exclude: "tests"
     # args:
     # - --ignore-missing-imports
     # files: ^(src/|tests/)
-
-- repo: https://github.com/PyCQA/isort
-  rev: 6.0.1
-  hooks:
-  - id: isort
-    args: ["--profile", "black", "--filter-files", "--combine-as"]
-
-- repo: https://github.com/psf/black
-  rev: 25.1.0
-  hooks:
-  - id: black
-    language_version: python3.9
-    args: ["--skip-magic-trailing-comma"]
 
 - repo: https://github.com/asottile/pyupgrade
   rev: v3.20.0
@@ -74,6 +72,7 @@ repos:
 #   rev: v2.40.0
 #   hooks:
 #   - id: commitizen
+
 
 - repo: https://github.com/pre-commit/mirrors-pylint
   rev: v3.0.0a5
@@ -116,17 +115,25 @@ repos:
   # PYI019 Use Self type (only works with py 3.11+)
   # C901 Function is too complex
   # PLR0912 Too many branches in function
-  rev: 'v0.12.1'
+  # ISC003 Explicitly concatenated string should be implicitly concatenated
+  # FLY Use f-string instead of ...
+  rev: 'v0.13.3'
   hooks:
     - id: ruff
       exclude: "tests"
       args:
+      - --target-version=py39
       - --select=ALL
       - --ignore=ANN201,ANN202,B905,COM812,D203,D213,I001,ISC003,N802,N806,PGH003,PLR0913,PTH108,SIM108,PLR2004,PYI019,C901,PLR0912
       - --fix
+      - --fixable=RUF022
+    - id: ruff
+      args: ["check", "--select", "I", "--fix"]
+    - id: ruff-format
+      name: "ruff-format"
 
 # reads pyproject.toml for additional config
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.402
+  rev: v1.1.406
   hooks:
     - id: pyright
