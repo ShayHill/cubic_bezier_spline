@@ -1,5 +1,5 @@
-"""Cubic spline creation and evaluation.
+"""Mark the 'tests' directory as a package.
 
-:author: Shay Hill
+:author: ShayHill
 :created: 2023-02-08
 """

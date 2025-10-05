@@ -1,4 +1,4 @@
-"""Configure tests for pytest.
+"""See full diffs in pytest.
 
 :author: Shay Hill
 :created: 2024-12-02
@@ -23,6 +23,16 @@ else:
 
 FArray: TypeAlias = npt.NDArray[np.floating[Any]]
 Point = Sequence[float]
+
+
+def pytest_assertrepr_compare(
+    config: Any, op: str, left: str, right: str
+) -> list[str] | None:
+    """See full error diffs"""
+    del config
+    if op in ("==", "!="):
+        return [f"{left} {op} {right}"]
+    return None
 
 
 def random_bezier_points(
