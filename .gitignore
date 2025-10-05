@@ -1,3 +1,17 @@
-Update-PythonVenv.ps1
-requirements.txt
-dev-requirements.txt
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Vim config
+.vimrc
+.vimspector.json
+
+# lock files
+uv.lock
