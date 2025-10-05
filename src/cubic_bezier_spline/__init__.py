@@ -1,6 +1,6 @@
-"""Import all the functions from construct_splines to top level.
+"""Import functions into the package namespace.
 
-:author: Shay Hill
+:author: ShayHill
 :created: 2023-02-08
 """
 
