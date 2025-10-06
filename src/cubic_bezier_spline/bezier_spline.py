@@ -160,15 +160,17 @@ class BezierSpline:
         beg_time: float,
         end_time: float,
         *,
-        uniform: bool | None = None,
         normalized: bool | None = None,
+        uniform: bool | None = None,
     ) -> _BezierSplineT:
         """Split a BezierSpline into two Bezier splines.
 
         :param beg_time: time at which to start the new spline
         :param end_time: time at which to end the new spline
-        :param uniform: if True, time is in [0, len(self)]
-        :param normalized: if True, time is in [0, 1]
+        :param normalized: if True (default False), time is in [0, 1]
+            instead of [0, len(curves)]
+        :param uniform: if True (default), treat all curves as equal in length,
+            else longer curves will take up more of the time interval.
         :return: new BezierSpline
 
         A split BezierSpline will be another spline with some number <, =, or 1
@@ -213,17 +215,21 @@ class BezierSpline:
         """Return the curve index and time on curve for a given time value.
 
         :param time: time value
-        :param normalized: if True, time is in [0, 1]
-        :param uniform: if True, time is in [0, len(self)]
+        :param normalized: if True (default False), time is in [0, 1]
+            instead of [0, len(curves)]
+        :param uniform: if True (default), treat all curves as equal in length,
+            else longer curves will take up more of the time interval.
         :return: curve index, time on curve
 
         For the default uniform, non-normalized case, time n.t will return the
         evaluation of `self.curves[n](t)`.
+        time = 2.5 -> curve 2 evaluated at time=0.5
 
-        The uniform, normalized case will scale time to n.t in [0, 1] to [0,
-        len(self)] then return the same `self.curves[n](t)`.
+        The uniform, normalized case will scale n.t in [0, 1] to [0, len(self)]
+        then return the same `self.curves[n](t)`.
+        time = 0.5 with 5 curves -> curve 2 evaluated at time=0.5
 
-        The non-uniform, normalized case will scale time to n.t in [0, 1] to [0,
+        The non-uniform, normalized case will scale time from n.t in [0, 1] to [0,
         spline_len] where spline_len is the sum of the lengths of all curves in the
         spline. n.t will be evaluated such that n.t lies on the curve in the time
         interval [<=n.t, >=n+1.t].
@@ -265,7 +271,10 @@ class BezierSpline:
         :param time: x.y -> curve index x and time on curve y
             between 0 and len(curves)
         :param derivative: optional derivative at time
-        :param normalized_time_interval: if True, time is in [0, 1]
+        :param normalized: if True (default False), time is in [0, 1]
+            instead of [0, len(curves)]
+        :param uniform: if True (default), treat all curves as equal in length,
+            else longer curves will take up more of the time interval.
         :return: xth non-rational Bezier at time
 
         For a spline with 3 curves, spline(3) will return curve 2 at time=1

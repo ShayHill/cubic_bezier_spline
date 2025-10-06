@@ -13,16 +13,16 @@ Should be relatively fast, but this isn't suited for heavy math. This is for tak
 * Evaluate, differentiate, elevate, and split non-rational Bezier curves of any degree
 * Construct non-rational cubic Bezier splines (open and closed, approximating and interpolating)
 * Evaluate and differentiate non-rational Bezier splines of any degree
+* Approximate (closely) the length of a curve
 
-### this package will not**
+### this package will not \*\*
 
 * Work with rational Bezier splines, b-splines, NURBS, or any other generalization of Bezier curves
 * Decrease curve degree
 * Approximate curve intersections
-* Approximate the length of a curve
 * "Stroke" (move left or right) a curve<br/>
 
-** much of the "will not" features can be found here: https://github.com/dhermes/bezier
+\*\* much of the "will not" features can be found here: https://github.com/dhermes/bezier
 
 ### Public classes / functions
 
@@ -42,7 +42,26 @@ Any of these will return a BezierSpline object. This object has a some of the us
 
     # plot the spline at a given point, where time is 0 to
     # (number of input points + 1)
-    spline(time: float)
+    def __call__(self,
+        time: float,
+        derivative: int = 0,
+        *,
+        normalized: bool | None = None,
+        uniform: bool | None = None,
+    ) -> npt.NDArray[np.floating[Any]]:
+        """Given x.y, call curve x at time y.
+
+        :param time: x.y -> curve index x and time on curve y
+            between 0 and len(curves)
+        :param derivative: optional derivative at time
+        :param normalized: if True (default False), time is in [0, 1]
+            instead of [0, len(curves)]
+        :param uniform: if True (default), treat all curves as equal in length,
+            else longer curves will take up more of the time interval.
+        :return: xth non-rational Bezier at time
+
+        For a spline with 3 curves, spline(3) will return curve 2 at time=1
+        """
 
     # an svg data string
     # (the d="" attribute of an SVG path object)
