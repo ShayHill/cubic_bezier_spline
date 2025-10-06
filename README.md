@@ -26,46 +26,50 @@ Should be relatively fast, but this isn't suited for heavy math. This is for tak
 
 ### Public classes / functions
 
-    # a c2-continuous cubic Bezier spline near the control points
-    new_open_approximating_spline([(x0, y0), (x1, y1), ...])
+```python
+# a c2-continuous cubic Bezier spline near the control points
+new_open_approximating_spline([(x0, y0), (x1, y1), ...])
 
-    # a c2-continuous cubic Bezier spline near the control points
-    new_closed_approximating_spline([(x0, y0), (x1, y1), ...])
+# a c2-continuous cubic Bezier spline near the control points
+new_closed_approximating_spline([(x0, y0), (x1, y1), ...])
 
-    # a c2-continuous cubic Bezier spline through the control points
-    new_open_interpolating_spline([(x0, y0), (x1, y1), ...])
+# a c2-continuous cubic Bezier spline through the control points
+new_open_interpolating_spline([(x0, y0), (x1, y1), ...])
 
-    # a c2-continuous cubic Bezier spline through the control points
-    new_closed_interpolating_spline([(x0, y0), (x1, y1), ...])
+# a c2-continuous cubic Bezier spline through the control points
+new_closed_interpolating_spline([(x0, y0), (x1, y1), ...])
+```
 
 Any of these will return a BezierSpline object. This object has a some of the usual methods (e.g., elevate, derivative, split) to help find path normals or do some light modeling, but you may be most interested in.
 
-    # plot the spline at a given point, where time is 0 to
-    # (number of input points + 1)
-    def __call__(self,
-        time: float,
-        derivative: int = 0,
-        *,
-        normalized: bool | None = None,
-        uniform: bool | None = None,
-    ) -> npt.NDArray[np.floating[Any]]:
-        """Given x.y, call curve x at time y.
+```python
+# plot the spline at a given point, where time is 0 to
+# (number of input points + 1)
+def __call__(self,
+    time: float,
+    derivative: int = 0,
+    *,
+    normalized: bool | None = None,
+    uniform: bool | None = None,
+) -> npt.NDArray[np.floating[Any]]:
+    """Given x.y, call curve x at time y.
 
-        :param time: x.y -> curve index x and time on curve y
-            between 0 and len(curves)
-        :param derivative: optional derivative at time
-        :param normalized: if True (default False), time is in [0, 1]
-            instead of [0, len(curves)]
-        :param uniform: if True (default), treat all curves as equal in length,
-            else longer curves will take up more of the time interval.
-        :return: xth non-rational Bezier at time
+    :param time: x.y -> curve index x and time on curve y
+        between 0 and len(curves)
+    :param derivative: optional derivative at time
+    :param normalized: if True (default False), time is in [0, 1]
+        instead of [0, len(curves)]
+    :param uniform: if True (default), treat all curves as equal in length,
+        else longer curves will take up more of the time interval.
+    :return: xth non-rational Bezier at time
 
-        For a spline with 3 curves, spline(3) will return curve 2 at time=1
-        """
+    For a spline with 3 curves, spline(3) will return curve 2 at time=1
+    """
 
-    # an svg data string
-    # (the d="" attribute of an SVG path object)
-    spline.svgd
+# an svg data string
+# (the d="" attribute of an SVG path object)
+spline.svgd
+```
 
 ### Examples
 
