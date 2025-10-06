@@ -6,7 +6,6 @@
 
 # pyright: reportPrivateUsage = false
 
-
 import math
 import random
 import sys
@@ -29,7 +28,6 @@ SHORT_SPLINE = BezierSpline([[[0], [1]], [[1], [2]]])
 
 
 class TestBezierSpline:
-
     @pytest.mark.parametrize("points", random_bezier_curves())
     def test_iter(self, points: FArray) -> None:
         """Iter spline.curves"""

@@ -112,8 +112,8 @@ def get_linear_approximation(
     while curves:
         norm, error = _get_cp_length_and_error(curves[0])
         error /= norm
-        curve, *curves = curves
+        curve, *curves[:] = curves
         if error < rel_tol or np.isclose(error, 0):
             yield curve
         else:
-            curves = [*curve.split(0.5), *curves]
+            curves[:] = [*curve.split(0.5), *curves]

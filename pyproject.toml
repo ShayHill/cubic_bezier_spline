@@ -54,7 +54,7 @@ envlist = py{313,312,311,310,39}
 
 [testenv]
 deps = pytest
-commands = pytest
+commands = pytest tests
 """
 
 [tool.ruff.lint.pydocstyle]
