@@ -1,6 +1,6 @@
 [project]
 name = "cubic-bezier-spline"
-version = "0.1.0"
+version = "0.20.0"
 description = "Approximate or interpolate a sequence of points into a sequence of c2-continuous, non-rational cubic Bézier curves."
 readme = "README.md"
 license = "MIT"
@@ -31,7 +31,7 @@ dev = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.0"
+version = "0.20.0"
 tag_format = "$version"
 major-version-zero = true
 version_files = ["pyproject.toml:^version"]
